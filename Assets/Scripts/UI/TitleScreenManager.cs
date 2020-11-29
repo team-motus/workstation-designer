@@ -5,21 +5,23 @@ namespace WorkstationDesigner
 {
     public class TitleScreenManager : VisualElement
     {
+        public static TitleScreenManager Instance = null;
+
         private VisualElement titleScreenElement;
         private VisualElement optionsScreenElement;
 
         public new class UxmlFactory : UxmlFactory<TitleScreenManager, UxmlTraits> { }
 
-        public new class UxmlTraits : VisualElement.UxmlTraits
-        {
-            public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
-            {
-                base.Init(ve, bag, cc);
-            }
-        }
-
         public TitleScreenManager()
         {
+            if(Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                throw new System.Exception("Cannot create more than one TitleScreenManager instance");
+            }
             RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
 
