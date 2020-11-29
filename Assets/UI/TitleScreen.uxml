@@ -4,7 +4,7 @@
             <ui:Label text="MODS Workstation Designer&#x9;" display-tooltip-when-elided="True" style="-unity-text-align: upper-center; color: rgb(255, 255, 255); font-size: 40px;" />
         </ui:VisualElement>
         <ui:VisualElement style="align-items: center; flex-grow: 1; justify-content: flex-start; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-top: 15px;">
-            <ui:Button text="Create New Workstation&#10;" display-tooltip-when-elided="True" name="create-new-worstation" style="width: 150px; height: 30px; margin-left: 7px; margin-right: 7px; margin-top: 7px; margin-bottom: 7px;" />
+            <ui:Button text="Create New Workstation&#10;" display-tooltip-when-elided="True" name="create-new-workstation" style="width: 150px; height: 30px; margin-left: 7px; margin-right: 7px; margin-top: 7px; margin-bottom: 7px;" />
             <ui:Button text="Load Workstation" display-tooltip-when-elided="True" name="load-workstation" style="width: 150px; height: 30px; margin-left: 7px; margin-right: 7px; margin-top: 7px; margin-bottom: 7px;" />
             <ui:Button text="Options" display-tooltip-when-elided="True" name="options" style="width: 150px; height: 30px; margin-left: 7px; margin-right: 7px; margin-top: 7px; margin-bottom: 7px;" />
             <ui:Button text="Exit" display-tooltip-when-elided="True" name="exit" style="width: 150px; height: 30px; margin-left: 7px; margin-right: 7px; margin-top: 7px; margin-bottom: 7px;" />
