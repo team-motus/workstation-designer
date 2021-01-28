@@ -5,8 +5,6 @@ namespace WorkstationDesigner
 {
     public class TitleScreenManager : VisualElement
     {
-        public static TitleScreenManager Instance = null;
-
         private VisualElement titleScreenElement;
         private VisualElement optionsScreenElement;
 
@@ -14,14 +12,6 @@ namespace WorkstationDesigner
 
         public TitleScreenManager()
         {
-            if(Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                throw new System.Exception("Cannot create more than one TitleScreenManager instance");
-            }
             RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
 
