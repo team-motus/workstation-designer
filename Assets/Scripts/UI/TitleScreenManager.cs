@@ -1,4 +1,5 @@
-﻿using UnityEngine.UIElements;
+﻿using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.UI
@@ -12,7 +13,7 @@ namespace WorkstationDesigner.UI
 
         public TitleScreenManager()
         {
-            RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
+            RegisterCallback<GeometryChangedEvent>(OnGeometryChange);   
         }
 
         void OnGeometryChange(GeometryChangedEvent evt)
@@ -46,8 +47,8 @@ namespace WorkstationDesigner.UI
         {
             titleScreenElement.style.display = DisplayStyle.None;
             optionsScreenElement.style.display = DisplayStyle.None;
-
-            // TODO
+            
+            SceneManager.LoadSceneAsync(AppUtil.MainSceneName);
         }
 
         void LoadWorkstation()

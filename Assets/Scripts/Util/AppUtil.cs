@@ -4,6 +4,8 @@ namespace WorkstationDesigner.Util
 {
     public static class AppUtil
     {
+        public static string MainSceneName = "MainScene";
+
         public static void Exit()
         {
             if (Application.isEditor)

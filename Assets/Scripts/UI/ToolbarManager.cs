@@ -66,7 +66,7 @@ namespace WorkstationDesigner.UI
                 {
                     SetDropdownVisible(toolbarButton, dropdownMenu, false);
                 }
-            }, TrickleDown.TrickleDown); 
+            }); 
             
             
             if (dropdownCallbacks != null && dropdownCallbacks.Count > 0)
