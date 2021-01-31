@@ -1,0 +1,1 @@
+Integrated the NavMeshComponents project created by Unity-Technologies. Link: https://github.com/Unity-Technologies/NavMeshComponents/tree/2020.2
