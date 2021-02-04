@@ -19,7 +19,15 @@ namespace WorkstationDesigner.UI
             RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
 
-        void OnGeometryChange(GeometryChangedEvent evt)
+        /// <summary>
+        /// This function sets up the UI after the after the GeometryChangedEvent, which occurs after layout calculations result in changes
+        /// 
+        /// In example code by Unity Technologies, this is where they set up user interfaces for custom visual elements.
+        /// It sets things up once the layout calculations are complete, and then it unregisters itself as a callback because we won't 
+        /// need to set things up again
+        /// </summary>
+        /// <param name="evt"></param>
+        private void OnGeometryChange(GeometryChangedEvent evt)
         {
             toolbar = this.Q("Toolbar");
 
@@ -40,7 +48,7 @@ namespace WorkstationDesigner.UI
         /// </summary>
         /// <param name="name">The name of the toolbar button in the UXML</param>
         /// <param name="dropdownCallbacks">A dictionary of dropdown button names to ClickEvent callbacks</param>
-        void SetupToolbarButton(string name, Dictionary<string, EventCallback<ClickEvent>> dropdownCallbacks = null)
+        private void SetupToolbarButton(string name, Dictionary<string, EventCallback<ClickEvent>> dropdownCallbacks = null)
         {
             var toolbarButtonParent = toolbar.Q(name);
             var toolbarButton = toolbarButtonParent.Q("button");
@@ -48,10 +56,12 @@ namespace WorkstationDesigner.UI
 
             if (!defaultButtonBackgroundColor.HasValue)
             {
+                // Backup button background color so we can restore it after changing it programatically later
                 defaultButtonBackgroundColor = toolbarButton.resolvedStyle.backgroundColor;
             }
             if (!defaultDropdownBackgroundColor.HasValue)
             {
+                // Determine dropdown background color so we can change selected toolbar button's background color to match
                 defaultDropdownBackgroundColor = dropdownMenu.resolvedStyle.backgroundColor;
             }
 
@@ -85,7 +95,7 @@ namespace WorkstationDesigner.UI
         /// <param name="dropdownMenu">The dropdown menu in which the button lies</param>
         /// <param name="buttonName">The name of the button</param>
         /// <param name="callback">The callback to perform when the button is clicked</param>
-        void SetupDropdownCallback(VisualElement toolbarButton, VisualElement dropdownMenu, string buttonName, EventCallback<ClickEvent> callback)
+        private void SetupDropdownCallback(VisualElement toolbarButton, VisualElement dropdownMenu, string buttonName, EventCallback<ClickEvent> callback)
         {
             var dropdownButton = dropdownMenu.Q(buttonName);
             if (dropdownButton == null)
@@ -96,7 +106,7 @@ namespace WorkstationDesigner.UI
             {
                 // These callbacks are used to track when the mouse is over a dropdown button
                 dropdownButton.RegisterCallback<MouseEnterEvent>(e => mouseOverDropdownButton = true);
-                dropdownMenu.RegisterCallback<MouseLeaveEvent>(e => mouseOverDropdownButton = false);
+                dropdownButton.RegisterCallback<MouseLeaveEvent>(e => mouseOverDropdownButton = false);
 
                 // When the button is clicked, close the dropdown menu then call the provided callback
                 dropdownButton.RegisterCallback<ClickEvent>(e =>
