@@ -7,9 +7,12 @@ namespace WorkstationDesigner.Workstation
         public static void PromptLoadWorkstation()
         {
             var paths = SFB.StandaloneFileBrowser.OpenFilePanel("Load Workstation", "", "", false);
+
+            Debug.Log("TODO Load workstation");
+
             if (paths.Length > 0)
             {
-                Debug.Log("TODO Load workstation");
+                // TODO
             }
         }
     }

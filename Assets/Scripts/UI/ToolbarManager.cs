@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine.UIElements;
 using WorkstationDesigner.Util;
 using WorkstationDesigner.Workstation;
@@ -32,9 +32,9 @@ namespace WorkstationDesigner.UI
         {
             toolbar = this.Q("Toolbar");
 
-            SetupToolbarButton("file-button", new Dictionary<string, EventCallback<ClickEvent>>{
-                { "load-workstation-button", e => WorkstationManager.PromptLoadWorkstation() },
-                { "exit-button", e => AppUtil.Exit() } 
+            SetupToolbarButton("file-button", new Dictionary<string, Action>{
+                { "load-workstation-button", () => WorkstationManager.PromptLoadWorkstation() },
+                { "exit-button", () => AppUtil.Exit() } 
             });
             SetupToolbarButton("edit-button");
             SetupToolbarButton("vr-button");
@@ -49,7 +49,7 @@ namespace WorkstationDesigner.UI
         /// </summary>
         /// <param name="name">The name of the toolbar button in the UXML</param>
         /// <param name="dropdownCallbacks">A dictionary of dropdown button names to ClickEvent callbacks</param>
-        private void SetupToolbarButton(string name, Dictionary<string, EventCallback<ClickEvent>> dropdownCallbacks = null)
+        private void SetupToolbarButton(string name, Dictionary<string, Action> dropdownCallbacks = null)
         {
             var toolbarButtonParent = toolbar.Q(name);
             var toolbarButton = toolbarButtonParent.Q("button");
@@ -96,12 +96,12 @@ namespace WorkstationDesigner.UI
         /// <param name="dropdownMenu">The dropdown menu in which the button lies</param>
         /// <param name="buttonName">The name of the button</param>
         /// <param name="callback">The callback to perform when the button is clicked</param>
-        private void SetupDropdownCallback(VisualElement toolbarButton, VisualElement dropdownMenu, string buttonName, EventCallback<ClickEvent> callback)
+        private void SetupDropdownCallback(VisualElement toolbarButton, VisualElement dropdownMenu, string buttonName, Action callback)
         {
             var dropdownButton = dropdownMenu.Q(buttonName);
             if (dropdownButton == null)
             {
-                throw new System.Exception($"ToolbarManager: failed to set up toolbar button dropdown callback for button with name \"{buttonName}\"");
+                throw new Exception($"ToolbarManager: failed to set up toolbar button dropdown callback for button with name \"{buttonName}\"");
             }
             else
             {
@@ -113,7 +113,7 @@ namespace WorkstationDesigner.UI
                 dropdownButton.RegisterCallback<ClickEvent>(e =>
                 {
                     SetDropdownVisible(toolbarButton, dropdownMenu, false);
-                    callback(e);
+                    callback();
                 });
             }
         }
