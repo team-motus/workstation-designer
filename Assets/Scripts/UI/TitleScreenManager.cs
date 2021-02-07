@@ -1,6 +1,7 @@
 ﻿using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using WorkstationDesigner.Util;
+using WorkstationDesigner.Workstation;
 
 namespace WorkstationDesigner.UI
 {
@@ -48,7 +49,9 @@ namespace WorkstationDesigner.UI
             titleScreenElement.style.display = DisplayStyle.None;
             optionsScreenElement.style.display = DisplayStyle.None;
             
-            SceneManager.LoadSceneAsync(AppUtil.MainSceneName);
+            AppUtil.LoadSceneAsync(AppUtil.MainSceneName, () => {
+                UnityEngine.Debug.Log("TODO Create new workstation UI");
+            });
         }
 
         void LoadWorkstation()
@@ -56,7 +59,9 @@ namespace WorkstationDesigner.UI
             titleScreenElement.style.display = DisplayStyle.None;
             optionsScreenElement.style.display = DisplayStyle.None;
 
-            // TODO
+            AppUtil.LoadSceneAsync(AppUtil.MainSceneName, () => {
+                WorkstationManager.PromptLoadWorkstation();
+            });
         }
     }
 }

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using WorkstationDesigner.Util;
+using WorkstationDesigner.Workstation;
 
 namespace WorkstationDesigner.UI
 {
@@ -32,7 +33,7 @@ namespace WorkstationDesigner.UI
             toolbar = this.Q("Toolbar");
 
             SetupToolbarButton("file-button", new Dictionary<string, EventCallback<ClickEvent>>{
-                { "load-workstation-button", e => Debug.Log("TODO load-workstation-button") },
+                { "load-workstation-button", e => WorkstationManager.PromptLoadWorkstation() },
                 { "exit-button", e => AppUtil.Exit() } 
             });
             SetupToolbarButton("edit-button");
