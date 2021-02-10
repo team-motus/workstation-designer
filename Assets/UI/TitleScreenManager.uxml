@@ -1,8 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="TitleScreen" src="TitleScreen.uxml" />
     <ui:Template name="OptionsScreen" src="OptionsScreen.uxml" />
-    <WorkstationDesigner.TitleScreenManager style="flex-grow: 1;">
+    <WorkstationDesigner.UI.TitleScreenManager style="flex-grow: 1;">
         <ui:Instance template="TitleScreen" name="TitleScreen" style="flex-grow: 1;" />
         <ui:Instance template="OptionsScreen" name="OptionsScreen" style="display: none; flex-grow: 1;" />
-    </WorkstationDesigner.TitleScreenManager>
+    </WorkstationDesigner.UI.TitleScreenManager>
 </ui:UXML>

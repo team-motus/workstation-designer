@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using WorkstationDesigner.Util;
 
-namespace WorkstationDesigner
+namespace WorkstationDesigner.UI
 {
     public class TitleScreenManager : VisualElement
     {
@@ -12,7 +13,7 @@ namespace WorkstationDesigner
 
         public TitleScreenManager()
         {
-            RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
+            RegisterCallback<GeometryChangedEvent>(OnGeometryChange);   
         }
 
         void OnGeometryChange(GeometryChangedEvent evt)
@@ -23,7 +24,7 @@ namespace WorkstationDesigner
             titleScreenElement?.Q("create-new-workstation")?.RegisterCallback<ClickEvent>(e => CreateNewWorkstation());
             titleScreenElement?.Q("load-workstation")?.RegisterCallback<ClickEvent>(e => LoadWorkstation());
             titleScreenElement?.Q("options")?.RegisterCallback<ClickEvent>(e => OpenOptionsScreen());
-            titleScreenElement?.Q("exit")?.RegisterCallback<ClickEvent>(e => Exit());
+            titleScreenElement?.Q("exit")?.RegisterCallback<ClickEvent>(e => AppUtil.Exit());
 
             optionsScreenElement?.Q("back-button")?.RegisterCallback<ClickEvent>(ev => OpenTitleScreen());
 
@@ -46,8 +47,8 @@ namespace WorkstationDesigner
         {
             titleScreenElement.style.display = DisplayStyle.None;
             optionsScreenElement.style.display = DisplayStyle.None;
-
-            // TODO
+            
+            SceneManager.LoadSceneAsync(AppUtil.MainSceneName);
         }
 
         void LoadWorkstation()
@@ -56,18 +57,6 @@ namespace WorkstationDesigner
             optionsScreenElement.style.display = DisplayStyle.None;
 
             // TODO
-        }
-
-        void Exit()
-        {
-            if (Application.isEditor)
-            {
-                Debug.Log("Exited");
-            }
-            else
-            {
-                Application.Quit();
-            }
         }
     }
 }
