@@ -3,53 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+/*
+    The WorkerMove.cs script will direct a Worker object to a target object set within the Unity editor. The Worker needs a Nav Mesh Agent attribute.
+*/
+
+
 public class WorkerMove : MonoBehaviour
 {
-    Transform _destination;
-
     InteractionPoint point;
 
-    //List<GameObject> _interactionPoints;
-    protected Transform[] _interactionPoints;
+    protected Transform[] _interactionPoints; //list of interaction points on a target object
 
     [SerializeField]
-    public GameObject _target;
+    public GameObject _target; //target game object set in the inspector
 
     NavMeshAgent _navMeshAgent;
     int _currentInteractPoint;
-    // Start is called before the first frame update
+
+    //Start() will get the interaction points, set the current interaction point and set the destination
     void Start()
     {
-        _currentInteractPoint = 1; //put here for debugging
-        _navMeshAgent = this.GetComponent<NavMeshAgent>();
-
+        _navMeshAgent = this.GetComponent<NavMeshAgent>(); //get navmeshcomponent
+        //checks if nav mesh agent exists
         if(_navMeshAgent == null)
         {
             Debug.LogError("The nav mesh agent component is not attached to " + gameObject.name);
         }
         else
         {
-            //gets list of interaction points tied to target object
-            _interactionPoints = _target.GetComponentsInChildren<Transform>();
-            //getInteractionPoints(_interactionPoints, _target);
-            _currentInteractPoint = setCurrentInteractionPoint();
-            getScript(_currentInteractPoint);
+            _interactionPoints = _target.GetComponentsInChildren<Transform>(); //gets list of interaction points tied to target object
+            _currentInteractPoint = setCurrentInteractionPoint(); //sets current interaction point to first available point
             setDestination();
         }
     }
 
-
-    // Update is called once per frame
-    void Update()
-    {
-        //if(_interactionPoints[_currentInteractPoint].)
-        /*if(checkIfOccupied() == true))
-        {
-            //change current interaction point
-            //setDestination()
-        }*/
-    }
-
+    //setDestionation() sets the targetVector of the worker to the location of the interaction point
     private void setDestination()
     {
         Debug.Log(_interactionPoints[_currentInteractPoint].transform.position); //debug
@@ -66,8 +54,8 @@ public class WorkerMove : MonoBehaviour
         int count = 1;
         foreach (Transform obj in _interactionPoints)
         {
-            getScript(count);
-            if(point.inUse == false)
+            getScript(count); //get script of the current interaction point so we can see if it is being used or not
+            if(point.inUse == false) //continue looping if the point is in use
             {
                 selectedPoint = count;
                 break;
@@ -77,18 +65,13 @@ public class WorkerMove : MonoBehaviour
         return selectedPoint;
     }
 
-    /*private bool checkIfOccupied()
-    {
-
-    }*/
-
-    //not working
-    private void getInteractionPoints(Transform[] children, GameObject parent)
+    //not working, needs a rework
+    /*private void getInteractionPoints(Transform[] children, GameObject parent)
     {
         //will likely become more complicated. Might have to iterate through the _interactionPoints
         //array to see which objects have the InteractionPoint tag
         children = parent.GetComponentsInChildren<Transform>();
-    }
+    }*/
 
     //get script of the currently focused interaction point
     private void getScript(int num)
