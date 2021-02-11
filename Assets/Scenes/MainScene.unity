@@ -199,7 +199,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 0.97848594, b: 0.9198113, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -360,6 +360,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e90e19894d3ac25418b8258c4fd23955, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translationEnabled: 1
+  rotationEnabled: 1
+  movementEnabled: 1
 --- !u!1 &1032064252
 GameObject:
   m_ObjectHideFlags: 0
