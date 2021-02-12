@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.Scripts
@@ -113,7 +114,7 @@ namespace WorkstationDesigner.Scripts
         /// <returns>True if cursor was moved</returns>
         private bool UpdateCursorMotion()
         {
-            if (Input.GetMouseButton(0))
+            if (MouseButtonManager.GetMouseButton(0))
             {
                 cursorMotion.x = -Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_SCALAR;
                 cursorMotion.y = -Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_SCALAR;
