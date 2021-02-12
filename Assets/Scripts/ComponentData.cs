@@ -26,9 +26,9 @@ namespace WorkstationDesigner
 
         private void CreateSampleComponents()
         {
-            this.ComponentList.Add(new ComponentModel("Test Component 1", 12, 12));
-            this.ComponentList.Add(new ComponentModel("Test Component 2", 12, 24));
-            this.ComponentList.Add(new ComponentModel("Test Component 3", 48, 48));
+            this.ComponentList.Add(new ComponentModel("Test Component 1", 6, 6));
+            this.ComponentList.Add(new ComponentModel("Test Component 2", 6, 12));
+            this.ComponentList.Add(new ComponentModel("Test Component 3", 12, 12));
         }
 
         public List<ComponentModel> GetComponents()

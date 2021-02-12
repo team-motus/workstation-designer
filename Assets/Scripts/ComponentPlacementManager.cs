@@ -7,6 +7,7 @@ namespace WorkstationDesigner
 	public class ComponentPlacementManager : MonoBehaviour
 	{
 		private ComponentModel ActiveComponent;
+		private GameObject PlacementComponent;
 
 		public ComponentPlacementManager()
 		{
@@ -38,10 +39,14 @@ namespace WorkstationDesigner
 				Debug.Log(clickPosition);
 				Debug.Log(this.ActiveComponent.Name);
 
+				Destroy(this.PlacementComponent);
+				this.PlacementComponent = null;
+
 				GameObject componentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-				clickPosition.y += (float) 0.5;
+				componentObject.AddComponent<PlacedComponent>();
+				componentObject.transform.localScale = new Vector3(ActiveComponent.FootprintDimensions.Item1, 6, ActiveComponent.FootprintDimensions.Item2);
+				clickPosition.y += componentObject.transform.localScale.y / 2;
 				componentObject.transform.position = clickPosition;
-				componentObject.transform.localScale = new Vector3(ActiveComponent.FootprintDimensions.Item1, 1, ActiveComponent.FootprintDimensions.Item2);
 
 				this.ActiveComponent = null;
 			}
@@ -50,6 +55,11 @@ namespace WorkstationDesigner
 		public void ActivateComponent(ComponentModel component)
 		{
 			this.ActiveComponent = component;
+
+			this.PlacementComponent = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			this.PlacementComponent.layer = 2; // Ignore raycast
+			this.PlacementComponent.AddComponent<PlacementComponent>();
+			this.PlacementComponent.transform.localScale = new Vector3(component.FootprintDimensions.Item1, 6, component.FootprintDimensions.Item2);
 		}
 	}
 }
