@@ -66,7 +66,7 @@ namespace WorkstationDesigner.UI
                 defaultDropdownBackgroundColor = dropdownMenu.resolvedStyle.backgroundColor;
             }
 
-            toolbarButton.RegisterCallback<FocusInEvent>(e => {
+            toolbarButton.RegisterCallback<ClickEvent>(e => {
                 SetDropdownVisible(toolbarButton, dropdownMenu, true);
             }); 
             toolbarButton.RegisterCallback<FocusOutEvent>(e => {
