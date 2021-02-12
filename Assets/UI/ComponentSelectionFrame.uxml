@@ -1,7 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="ToolbarManager" src="ToolbarManager.uxml" />
-    <ui:Instance template="ToolbarManager" name="ToolbarManager" />
-    <WorkstationDesigner.UI.ComponentSelectionFrame name="ComponentSelectionFrame" style="flex-grow: 1; flex-direction: row-reverse;">
-        <ui:VisualElement name="ComponentListContainer" style="flex-basis: 20%; background-color: rgb(45, 45, 48); color: rgba(255, 255, 255, 255);" />
-    </WorkstationDesigner.UI.ComponentSelectionFrame>
-</ui:UXML>

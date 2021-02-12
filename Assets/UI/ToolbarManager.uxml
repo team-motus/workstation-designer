@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="Toolbar" src="Toolbar.uxml" />
     <WorkstationDesigner.UI.ToolbarManager style="flex-grow: 1;">
-        <ui:Instance template="Toolbar" name="Toolbar" />
+        <ui:Instance template="Toolbar" name="Toolbar" style="flex-basis: auto; flex-shrink: 1;" />
     </WorkstationDesigner.UI.ToolbarManager>
 </ui:UXML>
