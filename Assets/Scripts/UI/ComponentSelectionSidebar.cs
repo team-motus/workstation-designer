@@ -8,13 +8,13 @@ using UnityEngine.UIElements;
 
 namespace WorkstationDesigner.UI
 {
-    public class ComponentSelectionFrame : VisualElement
+    public class ComponentSelectionSidebar : VisualElement
     {
         private ComponentPlacementManager placementManager;
 
-        public new class UxmlFactory : UxmlFactory<ComponentSelectionFrame, UxmlTraits> { }
+        public new class UxmlFactory : UxmlFactory<ComponentSelectionSidebar, UxmlTraits> { }
 
-        public ComponentSelectionFrame()
+        public ComponentSelectionSidebar()
         {
             RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
