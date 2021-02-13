@@ -128,7 +128,8 @@ PlayerSettings:
     16:9: 1
     Others: 1
   bundleVersion: 0.0.1
-  preloadedAssets: []
+  preloadedAssets:
+  - {fileID: 118902715805398029, guid: a766134ed2c96d44eae2488ea6c5a569, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -588,8 +589,10 @@ PlayerSettings:
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
   gcIncremental: 0
+  assemblyVersionValidation: 1
   gcWBarrierValidation: 0
-  apiCompatibilityLevelPerPlatform: {}
+  apiCompatibilityLevelPerPlatform:
+    Standalone: 3
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: Template3D
@@ -637,6 +640,7 @@ PlayerSettings:
   XboxOneCapability: []
   XboxOneGameRating: {}
   XboxOneIsContentPackage: 0
+  XboxOneEnhancedXboxCompatibilityMode: 0
   XboxOneEnableGPUVariability: 1
   XboxOneSockets: {}
   XboxOneSplashScreen: {fileID: 0}
