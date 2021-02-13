@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace WorkstationDesigner
 {
+    /// <summary>
+    /// Stores the data associated with a single workstation component.
+    /// </summary>
     public class ComponentModel
     {
         public string Name { get; private set; }

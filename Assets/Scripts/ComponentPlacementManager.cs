@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace WorkstationDesigner
 {
+	/// <summary>
+	/// Manages the placement of components in the workstation.
+	/// </summary>
 	public class ComponentPlacementManager : MonoBehaviour
 	{
 		private ComponentModel ActiveComponent;

@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace WorkstationDesigner
 {
+    /// <summary>
+    /// Manages loading and providing access to database of components.
+    /// </summary>
     public class ComponentData
     {
         private static ComponentData Instance = null;

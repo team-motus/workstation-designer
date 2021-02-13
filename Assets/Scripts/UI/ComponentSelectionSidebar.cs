@@ -8,6 +8,9 @@ using UnityEngine.UIElements;
 
 namespace WorkstationDesigner.UI
 {
+    /// <summary>
+    /// A sidebar that contains the list of components, allowing them to be selected and placed in the workstation.
+    /// </summary>
     public class ComponentSelectionSidebar : VisualElement
     {
         private ComponentPlacementManager placementManager;

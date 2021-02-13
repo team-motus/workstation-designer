@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace WorkstationDesigner
 {
+    /// <summary>
+    /// A temporary version of a workstation component that is displayed when placing the component in the workspace.
+    /// </summary>
     public class PlacementComponent : MonoBehaviour
     {
         // Start is called before the first frame update
