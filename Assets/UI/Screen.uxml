@@ -1,9 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="Toolbar" src="Toolbar.uxml" />
-    <ui:VisualElement name="Screen" style="flex-grow: 1; width: 100%; height: 100%;">
-        <WorkstationDesigner.UI.UIBackdrop style="flex-grow: 1; position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0);" />
-        <WorkstationDesigner.UI.ToolbarManager style="flex-grow: 0;">
-            <ui:Instance template="Toolbar" name="Toolbar" />
-        </WorkstationDesigner.UI.ToolbarManager>
+    <ui:Template name="ComponentSelectionSidebar" src="ComponentSelectionSidebar.uxml" />
+    <ui:Template name="ToolbarManager" src="ToolbarManager.uxml" />
+    <ui:VisualElement name="OverallContainer" style="flex-grow: 1; flex-direction: column-reverse;">
+        <ui:VisualElement name="SidebarContainer" style="flex-grow: 1; flex-direction: row-reverse;">
+            <ui:Instance template="ComponentSelectionSidebar" name="ComponentSelectionSidebar" style="flex-direction: column; flex-grow: 0; flex-basis: 20%;" />
+            <WorkstationDesigner.UI.UIBackdrop style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ToolbarContainer" style="flex-basis: 5%; min-height: 30px;">
+            <ui:Instance template="ToolbarManager" name="ToolbarManager" style="flex-grow: 1;" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

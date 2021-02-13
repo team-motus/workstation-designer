@@ -114,7 +114,7 @@ namespace WorkstationDesigner.Scripts
         /// <returns>True if cursor was moved</returns>
         private bool UpdateCursorMotion()
         {
-            if (MouseButtonManager.GetMouseButton(0))
+            if (MouseButtonManager.GetMouseButton(0) && Camera.main.pixelRect.Contains(Input.mousePosition))
             {
                 cursorMotion.x = -Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_SCALAR;
                 cursorMotion.y = -Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_SCALAR;

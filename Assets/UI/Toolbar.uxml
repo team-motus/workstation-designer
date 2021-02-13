@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="Toolbar.uss" />
-    <ui:VisualElement style="background-color: rgb(45, 45, 48); width: 100%; height: 30px; flex-direction: row; padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 0;">
+    <ui:VisualElement style="background-color: rgb(45, 45, 48); width: 100%; height: 30px; flex-direction: row; padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 0; flex-grow: 1;">
         <ui:VisualElement name="file-button" style="overflow: visible; background-color: rgba(0, 0, 0, 0);">
             <ui:Button text="File" display-tooltip-when-elided="true" name="button" focusable="true" class="toolbar-button" style="padding-left: 5px;" />
             <ui:VisualElement name="dropdown-menu" style="position: absolute; background-color: rgb(27, 27, 28); width: 100px; height: auto; top: 100%; display: none; padding-left: 2px; padding-right: 2px; padding-top: 2px; padding-bottom: 2px; flex-grow: 1;">
