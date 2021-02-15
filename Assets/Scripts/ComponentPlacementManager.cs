@@ -64,6 +64,7 @@ namespace WorkstationDesigner
 				Destroy(this.PlacementComponent);
 			}
 			this.PlacementComponent = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			this.PlacementComponent.GetComponent<Renderer>().enabled = false;
 			this.PlacementComponent.layer = 2; // Ignore raycast
 			this.PlacementComponent.AddComponent<PlacementComponent>();
 			this.PlacementComponent.transform.localScale = new Vector3(component.FootprintDimensions.Item1, 6, component.FootprintDimensions.Item2);
