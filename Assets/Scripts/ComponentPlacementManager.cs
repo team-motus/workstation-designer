@@ -36,6 +36,8 @@ namespace WorkstationDesigner
 				if (Physics.Raycast(ray, out hit))
 				{
 					clickPosition = hit.point;
+					clickPosition.x = Mathf.Round(clickPosition.x);
+					clickPosition.z = Mathf.Round(clickPosition.z);
 				}
 
 				// Report raycast coordinates and active component.
