@@ -18,21 +18,13 @@ namespace WorkstationDesigner
         // Update is called once per frame
         void Update()
         {
-			Vector3 hitPoint = -Vector3.one;
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Vector3? maybePlacePoint = ComponentPlacementManager.GetPlacementPoint();
+            if (maybePlacePoint.HasValue)
+            {
+                Vector3 placePoint = maybePlacePoint.Value;
+                placePoint.y += this.transform.localScale.y / 2;
+                this.transform.position = placePoint;
 
-			// Emit raycast, and collect data on it's termination.
-			// If raycast hit 'nothing' default all cordinate values to -1.
-			RaycastHit hit;
-			if (Physics.Raycast(ray, out hit))
-			{
-                hitPoint = hit.point;
-                hitPoint.y += this.transform.localScale.y / 2;
-
-                hitPoint.x = Mathf.Round(hitPoint.x);
-                hitPoint.z = Mathf.Round(hitPoint.z);
-
-                this.transform.position = hitPoint;
                 this.GetComponent<Renderer>().enabled = true;
             }
             else
