@@ -59,6 +59,10 @@ namespace WorkstationDesigner
 		{
 			this.ActiveComponent = component;
 
+			if (this.PlacementComponent != null)
+			{
+				Destroy(this.PlacementComponent);
+			}
 			this.PlacementComponent = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			this.PlacementComponent.layer = 2; // Ignore raycast
 			this.PlacementComponent.AddComponent<PlacementComponent>();
