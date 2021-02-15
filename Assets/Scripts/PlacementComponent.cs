@@ -28,6 +28,10 @@ namespace WorkstationDesigner
 			{
                 hitPoint = hit.point;
                 hitPoint.y += this.transform.localScale.y / 2;
+
+                hitPoint.x = Mathf.Round(hitPoint.x);
+                hitPoint.z = Mathf.Round(hitPoint.z);
+
                 this.transform.position = hitPoint;
                 this.GetComponent<Renderer>().enabled = true;
             }
