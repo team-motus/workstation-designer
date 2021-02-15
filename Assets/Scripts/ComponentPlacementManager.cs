@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,34 +27,22 @@ namespace WorkstationDesigner
 		{
 			if (Input.GetMouseButtonDown(0) && this.ActiveComponent != null)
 			{
-				// set the position of a vector to originate from the main screen camera.
-				Vector3 clickPosition = -Vector3.one;
-				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+				Vector3? maybePlacePoint = ComponentPlacementManager.GetPlacementPoint();
+				if (maybePlacePoint.HasValue)
+                {
+					Vector3 placePoint = maybePlacePoint.Value;
 
-				// Emit raycast, and colect data on it's termination.
-				// If raycast hit 'nothing' default all cordinate values to -1.
-				RaycastHit hit;
-				if (Physics.Raycast(ray, out hit))
-				{
-					clickPosition = hit.point;
-					clickPosition.x = Mathf.Round(clickPosition.x);
-					clickPosition.z = Mathf.Round(clickPosition.z);
-				}
+					Destroy(this.PlacementComponent);
+					this.PlacementComponent = null;
 
-				// Report raycast coordinates and active component.
-				Debug.Log(clickPosition);
-				Debug.Log(this.ActiveComponent.Name);
+					GameObject componentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+					componentObject.AddComponent<PlacedComponent>();
+					componentObject.transform.localScale = new Vector3(ActiveComponent.FootprintDimensions.Item1, 6, ActiveComponent.FootprintDimensions.Item2);
+					placePoint.y += componentObject.transform.localScale.y / 2;
+					componentObject.transform.position = placePoint;
 
-				Destroy(this.PlacementComponent);
-				this.PlacementComponent = null;
-
-				GameObject componentObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-				componentObject.AddComponent<PlacedComponent>();
-				componentObject.transform.localScale = new Vector3(ActiveComponent.FootprintDimensions.Item1, 6, ActiveComponent.FootprintDimensions.Item2);
-				clickPosition.y += componentObject.transform.localScale.y / 2;
-				componentObject.transform.position = clickPosition;
-
-				this.ActiveComponent = null;
+					this.ActiveComponent = null;
+                }
 			}
 		}
 
@@ -70,6 +59,32 @@ namespace WorkstationDesigner
 			this.PlacementComponent.layer = 2; // Ignore raycast
 			this.PlacementComponent.AddComponent<PlacementComponent>();
 			this.PlacementComponent.transform.localScale = new Vector3(component.FootprintDimensions.Item1, 6, component.FootprintDimensions.Item2);
+		}
+
+		public static Vector3? GetPlacementPoint()
+        {
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+
+			// Make sure the raycast hit something
+			if (!Physics.Raycast(ray, out hit))
+			{
+				return null;
+			}
+
+			// Make sure the raycast hit the floor
+			if (hit.collider.gameObject != GameObject.Find("Grid"))
+			{
+				return null;
+			}
+
+			Vector3 placePoint = hit.point;
+
+			// Snap to grid
+			placePoint.x = Mathf.Round(placePoint.x);
+			placePoint.z = Mathf.Round(placePoint.z);
+
+			return placePoint;
 		}
 	}
 }
