@@ -9,6 +9,8 @@ namespace WorkstationDesigner
     /// </summary>
     public class PlacedComponent : MonoBehaviour
     {
+        public ComponentModel component { get; set; }
+
         // Start is called before the first frame update
         void Start()
         {
