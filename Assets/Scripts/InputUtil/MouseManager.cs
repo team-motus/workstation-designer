@@ -75,7 +75,7 @@ namespace WorkstationDesigner.InputUtil
         }
 
         /// <summary>
-        /// Get the pressed state of a mouse button, as you would with Unity's Input.GetMouseButton
+        /// Get whether the mouse is over the non-UI region.
         /// </summary>
         /// <returns>Whether the mouse is over the non-UI region</returns>
         public static bool GetMouseOver()
