@@ -9,28 +9,53 @@ namespace WorkstationDesigner
     /// </summary>
     public class PlacementComponent : MonoBehaviour
     {
+        public ComponentModel Component { get; set; }
+        public bool IsIntersecting { get; private set; }
+
         // Start is called before the first frame update
         void Start()
         {
-        
+            this.IsIntersecting = false;
         }
 
         // Update is called once per frame
         void Update()
         {
-            Vector3? maybePlacePoint = ComponentPlacementManager.GetPlacementPoint();
+            Vector3? maybePlacePoint = ComponentPlacementManager.GetPlacementPoint(this.Component);
             if (maybePlacePoint.HasValue)
             {
                 Vector3 placePoint = maybePlacePoint.Value;
                 placePoint.y += this.transform.localScale.y / 2;
                 this.transform.position = placePoint;
 
-                this.GetComponent<Renderer>().enabled = true;
+                if (!this.IsIntersecting) {
+                    this.GetComponent<Renderer>().enabled = true;
+                }
+                else
+                {
+                    this.GetComponent<Renderer>().enabled = false;
+                }
             }
             else
             {
                 this.GetComponent<Renderer>().enabled = false;
             }
 		}
+
+        private void OnTriggerEnter(Collider collider)
+        {
+            if (collider.gameObject.GetComponent<PlacedComponent>() != null)
+            {
+                this.IsIntersecting = true;
+            }
+        }
+
+        private void OnTriggerExit(Collider collider)
+        {
+            if (collider.gameObject.GetComponent<PlacedComponent>() != null)
+            {
+                this.IsIntersecting = false;
+            }
+        }
     }
 }
