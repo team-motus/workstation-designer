@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WorkstationDesigner.InputUtil;
 
 namespace WorkstationDesigner
 {
@@ -78,6 +79,9 @@ namespace WorkstationDesigner
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
+
+			// Make sure the mouse isn't over the UI
+			if (!MouseManager.GetMouseOver()) { return null; }
 
 			// Make sure the raycast hit something
 			if (!Physics.Raycast(ray, out hit)) { return null; }
