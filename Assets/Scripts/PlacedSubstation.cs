@@ -7,9 +7,9 @@ namespace WorkstationDesigner
     /// <summary>
     /// A component that has been placed in a workstation.
     /// </summary>
-    public class PlacedComponent : MonoBehaviour
+    public class PlacedSubstation : MonoBehaviour
     {
-        public ComponentModel component { get; set; }
+        public SubstationModel substation { get; set; }
 
         // Start is called before the first frame update
         void Start()

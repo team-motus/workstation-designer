@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 36506371}
   - component: {fileID: 36506372}
   m_Layer: 0
-  m_Name: ComponentPlacementManager
+  m_Name: SubstationPlacementManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
