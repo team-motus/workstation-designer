@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <WorkstationDesigner.UI.SubstationSelectionSidebar style="flex-grow: 1;">
+        <ui:VisualElement name="SubstationListContainer" style="flex-basis: auto; background-color: rgb(45, 45, 48); color: rgb(255, 255, 255); flex-shrink: 1; width: auto; height: auto; flex-grow: 1;" />
+    </WorkstationDesigner.UI.SubstationSelectionSidebar>
+</ui:UXML>

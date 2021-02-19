@@ -7,9 +7,9 @@ namespace WorkstationDesigner
     /// <summary>
     /// A temporary version of a workstation component that is displayed when placing the component in the workspace.
     /// </summary>
-    public class PlacementComponent : MonoBehaviour
+    public class PlacementSubstation : MonoBehaviour
     {
-        public ComponentModel Component { get; set; }
+        public SubstationModel Substation { get; set; }
         public bool IsIntersecting { get; private set; }
 
         // Start is called before the first frame update
@@ -21,7 +21,7 @@ namespace WorkstationDesigner
         // Update is called once per frame
         void Update()
         {
-            Vector3? maybePlacePoint = ComponentPlacementManager.GetPlacementPoint(this.Component);
+            Vector3? maybePlacePoint = SubstationPlacementManager.GetPlacementPoint(this.Substation);
             if (maybePlacePoint.HasValue)
             {
                 Vector3 placePoint = maybePlacePoint.Value;
@@ -44,7 +44,7 @@ namespace WorkstationDesigner
 
         private void OnTriggerEnter(Collider collider)
         {
-            if (collider.gameObject.GetComponent<PlacedComponent>() != null)
+            if (collider.gameObject.GetComponent<PlacedSubstation>() != null)
             {
                 this.IsIntersecting = true;
             }
@@ -52,7 +52,7 @@ namespace WorkstationDesigner
 
         private void OnTriggerExit(Collider collider)
         {
-            if (collider.gameObject.GetComponent<PlacedComponent>() != null)
+            if (collider.gameObject.GetComponent<PlacedSubstation>() != null)
             {
                 this.IsIntersecting = false;
             }
