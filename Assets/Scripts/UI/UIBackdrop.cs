@@ -17,10 +17,11 @@ namespace WorkstationDesigner.UI
 
         void OnGeometryChange(GeometryChangedEvent evt)
         {
-            RegisterCallback<PointerDownEvent>(e => MouseManager.SetMouseButtonDown(e.button, true)); // Set mouse button pressed when it's pressed on this VisualElement
             RegisterCallback<MouseDownEvent>(e => MouseManager.SetMouseButton(e.button, true)); // Set mouse button pressed when it's pressed on this VisualElement
+
             RegisterCallback<MouseOverEvent>(e => MouseManager.SetMouseOver(true));
             RegisterCallback<MouseOutEvent>(e => MouseManager.SetMouseOver(false));
+
             UnregisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
 

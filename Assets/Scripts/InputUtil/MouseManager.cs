@@ -31,10 +31,7 @@ namespace WorkstationDesigner.InputUtil
                 {
                     mouseButtonStates[i] = false;
                 }
-                if (!Input.GetMouseButtonDown(i))
-                {
-                    mouseDownButtonStates[i] = false;
-                }
+                mouseDownButtonStates[i] = Input.GetMouseButtonDown(i);
             }
         }
 
@@ -72,21 +69,6 @@ namespace WorkstationDesigner.InputUtil
         }
 
         /// <summary>
-        /// Never call this function. Only UIBackdrop should call this function in its event callbacks.
-        /// </summary>
-        public static void SetMouseButtonDown(int mouseButton, bool state)
-        {
-            if (mouseButton < 0 || mouseButton >= NUM_MOUSE_BUTTONS)
-            {
-                throw new Exception("Mouse button out of bounds");
-            }
-            else
-            {
-                mouseDownButtonStates[mouseButton] = state;
-            }
-        }
-
-        /// <summary>
         /// Get the pressed state of a mouse button, as you would with Unity's Input.GetMouseButton
         /// </summary>
         /// <param name="mouseButton">The index of the mouse button</param>
@@ -100,7 +82,7 @@ namespace WorkstationDesigner.InputUtil
             }
             else
             {
-                return mouseButtonStates[mouseButton];
+                return mouseDownButtonStates[mouseButton] && GetMouseOver();
             }
         }
 

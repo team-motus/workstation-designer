@@ -8,7 +8,7 @@ namespace WorkstationDesigner.UI
     /// <summary>
     /// Manages right click menus, their creation, opening, and callbacks
     /// </summary>
-    public static class RightClickMenuManager
+    public class RightClickMenuManager: MonoBehaviour
     {
         // Assets
         private static VisualTreeAsset rightClickMenuAsset = null;
@@ -28,7 +28,9 @@ namespace WorkstationDesigner.UI
         /// </summary>
         private static Dictionary<string, (object, VisualElement)> rightClickMenus = new Dictionary<string, (object, VisualElement)>();
 
-        static RightClickMenuManager()
+        private static bool openedThisFrame = false;
+
+        void Awake()
         {
             // Load assets
 
@@ -42,6 +44,19 @@ namespace WorkstationDesigner.UI
             {
                 throw new Exception("rightClickMenuItemAsset is null");
             }
+        }
+
+        void LateUpdate()
+        {
+            // Close the menu if the mouse clicks but it wasn't the click that opened the menu
+            if (!openedThisFrame)
+            {
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                {
+                    Close();
+                }
+            }
+            openedThisFrame = false;
         }
 
         /// <summary>
@@ -130,6 +145,8 @@ namespace WorkstationDesigner.UI
             // Set menu position
             activeRightClickMenu.style.top = Screen.height - position.y; // Flip y position so 0 is at top
             activeRightClickMenu.style.left = position.x;
+
+            openedThisFrame = true;
         }
     }
 }
