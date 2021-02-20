@@ -1,0 +1,3 @@
+.right-click-menu-item:hover {
+    background-color: rgba(51, 51, 52, 255);
+}
