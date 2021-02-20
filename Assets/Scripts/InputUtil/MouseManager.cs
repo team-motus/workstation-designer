@@ -10,6 +10,7 @@ namespace WorkstationDesigner.InputUtil
     {
         private const int NUM_MOUSE_BUTTONS = 3;
         private static readonly bool[] mouseButtonStates = new bool[NUM_MOUSE_BUTTONS];
+        private static readonly bool[] mouseDownButtonStates = new bool[NUM_MOUSE_BUTTONS];
         private static bool mouseOver;
 
         static MouseManager()
@@ -17,6 +18,7 @@ namespace WorkstationDesigner.InputUtil
             for (var i = 0; i < NUM_MOUSE_BUTTONS; i++)
             {
                 mouseButtonStates[i] = false;
+                mouseDownButtonStates[i] = false;
             }
             mouseOver = false;
         }
@@ -28,6 +30,10 @@ namespace WorkstationDesigner.InputUtil
                 if (!Input.GetMouseButton(i))
                 {
                     mouseButtonStates[i] = false;
+                }
+                if (!Input.GetMouseButtonDown(i))
+                {
+                    mouseDownButtonStates[i] = false;
                 }
             }
         }
@@ -53,6 +59,39 @@ namespace WorkstationDesigner.InputUtil
         /// <param name="mouseButton">The index of the mouse button</param>
         /// <returns></returns>
         public static bool GetMouseButton(int mouseButton)
+        {
+
+            if (mouseButton < 0 || mouseButton >= NUM_MOUSE_BUTTONS)
+            {
+                throw new Exception("Mouse button out of bounds");
+            }
+            else
+            {
+                return mouseButtonStates[mouseButton];
+            }
+        }
+
+        /// <summary>
+        /// Never call this function. Only UIBackdrop should call this function in its event callbacks.
+        /// </summary>
+        public static void SetMouseButtonDown(int mouseButton, bool state)
+        {
+            if (mouseButton < 0 || mouseButton >= NUM_MOUSE_BUTTONS)
+            {
+                throw new Exception("Mouse button out of bounds");
+            }
+            else
+            {
+                mouseDownButtonStates[mouseButton] = state;
+            }
+        }
+
+        /// <summary>
+        /// Get the pressed state of a mouse button, as you would with Unity's Input.GetMouseButton
+        /// </summary>
+        /// <param name="mouseButton">The index of the mouse button</param>
+        /// <returns></returns>
+        public static bool GetMouseButtonDown(int mouseButton)
         {
 
             if (mouseButton < 0 || mouseButton >= NUM_MOUSE_BUTTONS)
