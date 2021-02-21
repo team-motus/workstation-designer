@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace WorkstationDesigner
@@ -9,6 +7,8 @@ namespace WorkstationDesigner
     /// </summary>
     public class PlacementSubstation : MonoBehaviour
     {
+        private const float ROTATE_SCALAR = 100;
+
         public SubstationModel Substation { get; set; }
         public bool IsIntersecting { get; private set; }
 
@@ -40,7 +40,17 @@ namespace WorkstationDesigner
             {
                 this.GetComponent<Renderer>().enabled = false;
             }
-		}
+
+            if (Input.GetKey(KeyCode.X))
+            {
+                this.transform.Rotate(Vector3.up, ROTATE_SCALAR * Time.deltaTime, Space.World);
+            }
+            if (Input.GetKey(KeyCode.C))
+            {
+                this.transform.Rotate(Vector3.up, -ROTATE_SCALAR * Time.deltaTime, Space.World);
+            }
+
+        }
 
         private void OnTriggerEnter(Collider collider)
         {
