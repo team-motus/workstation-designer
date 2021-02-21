@@ -127,7 +127,7 @@ namespace WorkstationDesigner.UI
         /// <param name="key">The menu key</param>
         /// <param name="position">The position of the cursor</param>
         /// <param name="context">An object that is passed to the menu item button callbacks</param>
-        public static void Open(string key, Vector2 position, object context = null)
+        public static void Open(string key, Vector3 position, object context = null)
         {
             if (!ContainsKey(key))
             {
@@ -142,9 +142,11 @@ namespace WorkstationDesigner.UI
             // Place menu element in screen
             ScreenManager.OverallContainer.Add(activeRightClickMenu);
 
+
             // Set menu position
-            activeRightClickMenu.style.top = Screen.height - position.y; // Flip y position so 0 is at top
-            activeRightClickMenu.style.left = position.x;
+            var menu = activeRightClickMenu.Q("menu-container");
+            menu.style.top = (Screen.height - position.y) * ScreenManager.dpiScaler; // Flip y position so 0 is at top
+            menu.style.left = position.x * ScreenManager.dpiScaler;
 
             openedThisFrame = true;
         }

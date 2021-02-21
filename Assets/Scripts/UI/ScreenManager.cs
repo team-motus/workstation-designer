@@ -18,9 +18,13 @@ namespace WorkstationDesigner.UI
         /// </summary>
         public static VisualElement OverallContainer = null;
 
+        public static float dpiScaler = 1;
+
         private void Awake()
         {
             var screenComponent = GameObject.Find("UI").GetComponent<UIDocument>();
+
+            dpiScaler = screenComponent.panelSettings.referenceDpi / Screen.dpi;
 
             RootVisualElement = screenComponent.rootVisualElement;
 
