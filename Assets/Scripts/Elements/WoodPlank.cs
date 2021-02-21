@@ -12,5 +12,10 @@ namespace WorkstationDesigner.Elements
         {
             this.Length = length;
         }
+
+        public override string ToString()
+        {
+            return "Wood plank (" + Length + " inches)";
+        }
     }
 }

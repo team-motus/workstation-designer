@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace WorkstationDesigner.Jobs
 {
@@ -26,68 +27,81 @@ namespace WorkstationDesigner.Jobs
         private TransportationState TransportationState;
         private AssemblyState AssemblyState;
 
+        private NavMeshAgent NavMeshAgent;
+        private TextMesh ActionDescription;
+
         private Vector3 ToWorkerPos(Vector3 pos)
         {
-            return new Vector3(pos.x, 1, pos.z);
+            return new Vector3(pos.x, 0, pos.z);
         }
 
-        IEnumerator MoveToPickup()
+        private void StartMoveTo(Vector3 dest)
         {
-            Debug.Log("MOVING TO PICKUP");
-            this.TransportationState = TransportationState.MovingToPickUp;
+            this.NavMeshAgent.SetDestination(ToWorkerPos(dest));
+        }
+
+        private bool NavigationComplete()
+        {
+            return this.NavMeshAgent.isOnNavMesh && !this.NavMeshAgent.pathPending && (this.NavMeshAgent.remainingDistance <= this.NavMeshAgent.stoppingDistance) && (!this.NavMeshAgent.hasPath || this.NavMeshAgent.velocity.sqrMagnitude == 0f);
+        }
+
+        private IEnumerator MoveToPickup()
+        {
             TransportationJob job = (TransportationJob)CurrentJob;
-            yield return new WaitForSeconds(1);
-            this.transform.position = ToWorkerPos(job.StartPos);
+            ActionDescription.text = "Moving to pick up: " + job.Element.ToString();
+            this.TransportationState = TransportationState.MovingToPickUp;
+            StartMoveTo(job.StartPos);
+            while (!NavigationComplete()) { yield return null; }
             CompleteState();
         }
 
-        IEnumerator PickUp()
+        private IEnumerator PickUp()
         {
-            Debug.Log("PICKING UP");
-            this.TransportationState = TransportationState.PickingUp;
             TransportationJob job = (TransportationJob)CurrentJob;
-            yield return new WaitForSeconds(1);
+            ActionDescription.text = "Picking up: " + job.Element.ToString();
+            this.TransportationState = TransportationState.PickingUp;
+            yield return new WaitForSeconds(2);
             Inventory.AddElements(job.Element, job.Quantity);
             job.PickupCallback();
             CompleteState();
         }
 
-        IEnumerator MoveToDelivery()
+        private IEnumerator MoveToDelivery()
         {
-            Debug.Log("MOVING TO DELIVERY");
-            this.TransportationState = TransportationState.MovingToDelivery;
             TransportationJob job = (TransportationJob)CurrentJob;
-            yield return new WaitForSeconds(1);
-            this.transform.position = ToWorkerPos(job.EndPos);
+            ActionDescription.text = "Moving to deliver: " + job.Element.ToString();
+            this.TransportationState = TransportationState.MovingToDelivery;
+            StartMoveTo(job.EndPos);
+            while (!NavigationComplete()) { yield return null; }
             CompleteState();
         }
 
-        IEnumerator Deliver()
+        private IEnumerator Deliver()
         {
-            Debug.Log("DELIVERING");
-            this.TransportationState = TransportationState.Delivering;
             TransportationJob job = (TransportationJob)CurrentJob;
-            yield return new WaitForSeconds(1);
+            ActionDescription.text = "Delivering: " + job.Element.ToString();
+            this.TransportationState = TransportationState.Delivering;
+            yield return new WaitForSeconds(2);
             job.DeliveryCallback();
             CompleteState();
         }
 
-        IEnumerator MoveToAssembly()
+        private IEnumerator MoveToAssembly()
         {
-            Debug.Log("MOVING TO ASSEMBLY");
-            this.AssemblyState = AssemblyState.MovingToAssembly;
             AssemblyJob job = (AssemblyJob)CurrentJob;
-            yield return new WaitForSeconds(1);
-            this.transform.position = ToWorkerPos(job.Position);
+            ActionDescription.text = "Moving to assembly: " + job.Description;
+            this.AssemblyState = AssemblyState.MovingToAssembly;
+            StartMoveTo(job.Position);
+            while (!NavigationComplete()) { yield return null; }
             CompleteState();
         }
 
-        IEnumerator Assemble()
+        private IEnumerator Assemble()
         {
-            Debug.Log("ASSEMBLING");
-            this.AssemblyState = AssemblyState.Assembling;
             AssemblyJob job = (AssemblyJob)CurrentJob;
-            yield return new WaitForSeconds(1); // TODO: Should match set assembly time
+            ActionDescription.text = "Assembling: " + job.Description;
+            this.AssemblyState = AssemblyState.Assembling;
+            yield return new WaitForSeconds(job.ExecutionTime);
             job.CompletionCallback();
             CompleteState();
         }
@@ -109,6 +123,7 @@ namespace WorkstationDesigner.Jobs
                         break;
                     case TransportationState.Delivering:
                         this.CurrentJob = null;
+                        ActionDescription.text = "Idle";
                         break;
                 }
             }
@@ -122,6 +137,7 @@ namespace WorkstationDesigner.Jobs
                         break;
                     case AssemblyState.Assembling:
                         this.CurrentJob = null;
+                        ActionDescription.text = "Idle";
                         break;
                 }
             }
@@ -131,6 +147,8 @@ namespace WorkstationDesigner.Jobs
         void Start()
         {
             CurrentJob = null;
+            this.NavMeshAgent = this.GetComponent<NavMeshAgent>();
+            this.ActionDescription = this.GetComponentInChildren<TextMesh>();
         }
 
         // Update is called once per frame
