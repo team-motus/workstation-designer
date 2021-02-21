@@ -40,6 +40,11 @@ namespace WorkstationDesigner.Jobs
             this.NavMeshAgent.SetDestination(ToWorkerPos(dest));
         }
 
+        private void MoveToOrigin()
+        {
+            StartMoveTo(new Vector3(0, 0, 0));
+        }
+
         private bool NavigationComplete()
         {
             return this.NavMeshAgent.isOnNavMesh && !this.NavMeshAgent.pathPending && (this.NavMeshAgent.remainingDistance <= this.NavMeshAgent.stoppingDistance) && (!this.NavMeshAgent.hasPath || this.NavMeshAgent.velocity.sqrMagnitude == 0f);
@@ -124,6 +129,7 @@ namespace WorkstationDesigner.Jobs
                     case TransportationState.Delivering:
                         this.CurrentJob = null;
                         ActionDescription.text = "Idle";
+                        MoveToOrigin();
                         break;
                 }
             }
@@ -138,6 +144,7 @@ namespace WorkstationDesigner.Jobs
                     case AssemblyState.Assembling:
                         this.CurrentJob = null;
                         ActionDescription.text = "Idle";
+                        MoveToOrigin();
                         break;
                 }
             }
