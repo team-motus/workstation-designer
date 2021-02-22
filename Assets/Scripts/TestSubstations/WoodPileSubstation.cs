@@ -5,16 +5,27 @@ using WorkstationDesigner.Elements;
 
 namespace WorkstationDesigner.TestSubstations
 {
+    /// <summary>
+    /// A test substation representing a pile of wood.
+    /// </summary>
     public class WoodPileSubstation : SimSubstation
     {
         private WoodPlank WoodPlank;
         private SubstationInventory Inventory = new SubstationInventory();
 
+        /// <summary>
+        /// Callback used to get the quantity of wood plank available.
+        /// </summary>
+        /// <returns>The available quantity of wood planks</returns>
         public int GetWoodQuantity()
         {
             return Inventory.GetQuantity(this.WoodPlank);
         }
 
+        /// <summary>
+        /// Callback used to remove wood planks upon pickup.
+        /// </summary>
+        /// <param name="quantity">The quantity of wood planks to remove</param>
         public void RemoveWood(int quantity)
         {
             Inventory.RemoveElements(this.WoodPlank, quantity);

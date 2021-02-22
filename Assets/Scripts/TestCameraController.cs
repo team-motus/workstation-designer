@@ -5,8 +5,10 @@ using WorkstationDesigner.Util;
 namespace WorkstationDesigner.Scripts
 {
     /// <summary>
+    /// Camera controller only for viewing test simulations.w
+    ///
     /// Moves associated transform according to user input
-    /// 
+    ///
     /// WASD, Space/LeftShift, and panning with cursor
     /// </summary>
     public class TestCameraController : MonoBehaviour

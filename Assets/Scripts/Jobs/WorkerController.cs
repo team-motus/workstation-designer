@@ -5,6 +5,9 @@ using UnityEngine.AI;
 
 namespace WorkstationDesigner.Jobs
 {
+    /// <summary>
+    /// The states for the worker's state machine when working on a TransportationJob.
+    /// </summary>
     enum TransportationState
     {
         MovingToPickUp,
@@ -13,43 +16,69 @@ namespace WorkstationDesigner.Jobs
         Delivering
     }
 
+    /// <summary>
+    /// The states for the worker's state machine when working on an AssemblyJob.
+    /// </summary>
     enum AssemblyState
     {
         MovingToAssembly,
         Assembling
     }
 
+    /// <summary>
+    /// Controls the behavior of a single worker.
+    /// </summary>
     public class WorkerController : MonoBehaviour
     {
         private Job CurrentJob;
 
-        private SubstationInventory Inventory = new SubstationInventory(); // TODO: Rename/make subclass?
+        private SubstationInventory Inventory = new SubstationInventory(); // TODO: Should create subclass that can check worker constraints (e.g. worker can only carry so much)
         private TransportationState TransportationState;
         private AssemblyState AssemblyState;
 
         private NavMeshAgent NavMeshAgent;
         private TextMesh ActionDescription;
 
+        /// <summary>
+        /// Transforms a position in 3D space to an appropriate worker destination point.
+        /// </summary>
+        /// <param name="pos">The position to transform</param>
+        /// <returns>The transformed position</returns>
         private Vector3 ToWorkerPos(Vector3 pos)
         {
             return new Vector3(pos.x, 0, pos.z);
         }
 
+        /// <summary>
+        /// Begins navigation of the worker to a destination.
+        /// </summary>
+        /// <param name="dest">The point to navigate to</param>
         private void StartMoveTo(Vector3 dest)
         {
             this.NavMeshAgent.SetDestination(ToWorkerPos(dest));
         }
 
+        /// <summary>
+        /// Begins navigation of the worker to the origin.
+        /// </summary>
         private void MoveToOrigin()
         {
             StartMoveTo(new Vector3(0, 0, 0));
         }
 
+        /// <summary>
+        /// Determines whether the worker's current navigation has completed.
+        /// </summary>
+        /// <returns>Whether the worker's current navigation has completed</returns>
         private bool NavigationComplete()
         {
             return this.NavMeshAgent.isOnNavMesh && !this.NavMeshAgent.pathPending && (this.NavMeshAgent.remainingDistance <= this.NavMeshAgent.stoppingDistance) && (!this.NavMeshAgent.hasPath || this.NavMeshAgent.velocity.sqrMagnitude == 0f);
         }
 
+        /// <summary>
+        /// Coroutine corresponding to the MovingToPickup state of a TransportationJob.
+        /// </summary>
+        /// <returns>Required for coroutine definition</returns>
         private IEnumerator MoveToPickup()
         {
             TransportationJob job = (TransportationJob)CurrentJob;
@@ -60,6 +89,10 @@ namespace WorkstationDesigner.Jobs
             CompleteState();
         }
 
+        /// <summary>
+        /// Coroutine corresponding to the PickingUp state of a TransportationJob.
+        /// </summary>
+        /// <returns>Required for coroutine definition</returns>
         private IEnumerator PickUp()
         {
             TransportationJob job = (TransportationJob)CurrentJob;
@@ -71,6 +104,10 @@ namespace WorkstationDesigner.Jobs
             CompleteState();
         }
 
+        /// <summary>
+        /// Coroutine corresponding to the MovingToDelivery state of a TransportationJob.
+        /// </summary>
+        /// <returns>Required for coroutine definition</returns>
         private IEnumerator MoveToDelivery()
         {
             TransportationJob job = (TransportationJob)CurrentJob;
@@ -81,6 +118,10 @@ namespace WorkstationDesigner.Jobs
             CompleteState();
         }
 
+        /// <summary>
+        /// Coroutine corresponding to the Delivering state of a TransportationJob.
+        /// </summary>
+        /// <returns>Required for coroutine definition</returns>
         private IEnumerator Deliver()
         {
             TransportationJob job = (TransportationJob)CurrentJob;
@@ -91,6 +132,10 @@ namespace WorkstationDesigner.Jobs
             CompleteState();
         }
 
+        /// <summary>
+        /// Coroutine corresponding to the MovingToAssembly state of an AssemblyJob.
+        /// </summary>
+        /// <returns>Required for coroutine definition</returns>
         private IEnumerator MoveToAssembly()
         {
             AssemblyJob job = (AssemblyJob)CurrentJob;
@@ -101,6 +146,10 @@ namespace WorkstationDesigner.Jobs
             CompleteState();
         }
 
+        /// <summary>
+        /// Coroutine corresponding to the Assembling state of an AssemblyJob.
+        /// </summary>
+        /// <returns>Required for coroutine definition</returns>
         private IEnumerator Assemble()
         {
             AssemblyJob job = (AssemblyJob)CurrentJob;
@@ -111,6 +160,9 @@ namespace WorkstationDesigner.Jobs
             CompleteState();
         }
 
+        /// <summary>
+        /// Called to change states when a state has been completed.
+        /// </summary>
         private void CompleteState()
         {
             if (this.CurrentJob is TransportationJob)
@@ -161,11 +213,12 @@ namespace WorkstationDesigner.Jobs
         // Update is called once per frame
         void Update()
         {
+            // If the worker doesn't have a job, try to get one from the JobStack
             if (CurrentJob == null)
             {
                 CurrentJob = JobStack.PullJob();
 
-                // Stop if there were no jobs for the job stack to give
+                // Stop if there were no jobs for the JobStack to give
                 if (CurrentJob == null)
                 {
                     return;
@@ -182,8 +235,6 @@ namespace WorkstationDesigner.Jobs
                     StartCoroutine(MoveToAssembly());
                 }
             }
-
-            
         }
     }
 }

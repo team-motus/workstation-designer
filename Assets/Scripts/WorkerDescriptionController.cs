@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace WorkstationDesigner
 {
+    /// <summary>
+    /// Used to display a description of the workers's actions above their heads.
+    /// </summary>
     public class WorkerDescriptionController : MonoBehaviour
     {
         void Start()
