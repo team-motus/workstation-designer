@@ -107,7 +107,7 @@ namespace WorkstationDesigner
 
             // Check if requirements already exist that matches this production
             int quantityToProduce = 0;
-            IEnumerable<Requirement> matchingRequirements = Requirements.Where(requirement => !requirement.BeingProduced && requirement.FilterFunction(element));
+            List<Requirement> matchingRequirements = Requirements.Where(requirement => !requirement.BeingProduced && requirement.FilterFunction(element)).ToList();
             foreach (Requirement matchingRequirement in matchingRequirements)
             {
                 // If they do, mark them as being produced and add the quantity required
@@ -135,7 +135,7 @@ namespace WorkstationDesigner
             Availabilities.Add(availability);
 
             // Check if requirements already exist that matches this availability
-            IEnumerable<Requirement> matchingRequirements = Requirements.Where(requirement => requirement.FilterFunction(element));
+            List<Requirement> matchingRequirements = Requirements.Where(requirement => requirement.FilterFunction(element)).ToList();
             foreach (Requirement matchingRequirement in matchingRequirements)
             {
                 // If one does, create enough TransportationJobs to transport the available quantity
@@ -179,7 +179,7 @@ namespace WorkstationDesigner
             Requirement requirement = new Requirement(substation, filterFunction, quantity, addElements);
 
             // Check if matching availabilities already exist
-            IEnumerable<Availability> matchingAvailabilities = Availabilities.Where(availability => filterFunction(availability.Element));
+            List<Availability> matchingAvailabilities = Availabilities.Where(availability => filterFunction(availability.Element)).ToList();
             foreach (Availability matchingAvailability in matchingAvailabilities)
             {
                 // If one does, create enough TransportationJobs to transport the available quantity
