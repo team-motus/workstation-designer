@@ -106,7 +106,7 @@ namespace WorkstationDesigner
             Producables.Add(producable);
 
             // Check if a requirement already exists that matches this production
-            Requirement matchingRequirement = Requirements.Where(requirement => requirement.FilterFunction(elementTemplate)).FirstOrDefault();
+            Requirement matchingRequirement = Requirements.Where(requirement => !requirement.BeingProduced && requirement.FilterFunction(elementTemplate)).FirstOrDefault();
             if (matchingRequirement != null)
             {
                 // If one does, initiate the production
