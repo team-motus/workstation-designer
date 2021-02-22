@@ -35,7 +35,7 @@ namespace WorkstationDesigner.TestSubstations
             Inventory.AddElements(plank, quantity);
             if (Inventory.GetQuantity(plank) == PLANKS_NEEDED)
             {
-                JobStack.AddJob(new AssemblyJob(CompleteAssembly, GetCoords(), 5, "Add plank to assembly"));
+                JobList.AddJob(new AssemblyJob(CompleteAssembly, GetCoords(), 5, "Add plank to assembly"));
             }
         }
 

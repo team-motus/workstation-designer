@@ -45,7 +45,7 @@ namespace WorkstationDesigner.TestSubstations
         {
             Inventory.AddElements(plank, quantity);
             while (quantity > 0) {
-                JobStack.AddJob(new AssemblyJob(() => CompleteSawing(plank), this.GetCoords(), 5, "Cutting wood plank"));
+                JobList.AddJob(new AssemblyJob(() => CompleteSawing(plank), this.GetCoords(), 5, "Cutting wood plank"));
                 quantity -= 1;
             }
         }

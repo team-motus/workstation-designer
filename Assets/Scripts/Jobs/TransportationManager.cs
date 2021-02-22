@@ -25,7 +25,7 @@ namespace WorkstationDesigner
 
         public delegate void InitiateProductionMethod(int quantityToProduce);
 
-        public delegate bool FilterFunction(Element elementTemplate);
+        public delegate bool FilterFunction(Element element);
         public delegate void AddElementsMethod(Element element, int quantityToAdd);
 
         /// <summary>
@@ -46,11 +46,11 @@ namespace WorkstationDesigner
         /// </summary>
         private class Producable : Interface
         {
-            public Element ElementTemplate;
+            public Element Element;
             public InitiateProductionMethod InitiateProduction;
-            public Producable(SimSubstation substation, Element elementTemplate, InitiateProductionMethod initiateProduction) : base(substation)
+            public Producable(SimSubstation substation, Element element, InitiateProductionMethod initiateProduction) : base(substation)
             {
-                this.ElementTemplate = elementTemplate;
+                this.Element = element;
                 this.InitiateProduction = initiateProduction;
             }
         }
@@ -60,13 +60,13 @@ namespace WorkstationDesigner
         /// </summary>
         private class Availability : Interface
         {
-            public Element ElementTemplate;
+            public Element Element;
             public GetQuantityMethod GetQuantity;
             public RemoveQuantityMethod RemoveQuantity;
             
-            public Availability(SimSubstation substation, Element elementTemplate, GetQuantityMethod getQuantity, RemoveQuantityMethod removeQuantity) : base(substation)
+            public Availability(SimSubstation substation, Element element, GetQuantityMethod getQuantity, RemoveQuantityMethod removeQuantity) : base(substation)
             {
-                this.ElementTemplate = elementTemplate;
+                this.Element = element;
                 this.GetQuantity = getQuantity;
                 this.RemoveQuantity = removeQuantity;
             }
@@ -98,16 +98,16 @@ namespace WorkstationDesigner
         /// Registers that a substation can produce an element.
         /// </summary>
         /// <param name="substation">The substation that can produce the element</param>
-        /// <param name="elementTemplate">The element that can be produced</param>
+        /// <param name="element">The element that can be produced</param>
         /// <param name="initiateProduction">A callback used to initiate production of the element</param>
-        public static void RegisterProducable(SimSubstation substation, Element elementTemplate, InitiateProductionMethod initiateProduction)
+        public static void RegisterProducable(SimSubstation substation, Element element, InitiateProductionMethod initiateProduction)
         {
-            Producable producable = new Producable(substation, elementTemplate, initiateProduction);
+            Producable producable = new Producable(substation, element, initiateProduction);
             Producables.Add(producable);
 
             // Check if requirements already exist that matches this production
             int quantityToProduce = 0;
-            IEnumerable<Requirement> matchingRequirements = Requirements.Where(requirement => !requirement.BeingProduced && requirement.FilterFunction(elementTemplate));
+            IEnumerable<Requirement> matchingRequirements = Requirements.Where(requirement => !requirement.BeingProduced && requirement.FilterFunction(element));
             foreach (Requirement matchingRequirement in matchingRequirements)
             {
                 // If they do, mark them as being produced and add the quantity required
@@ -126,16 +126,16 @@ namespace WorkstationDesigner
         /// Registers that a substation has an element available.
         /// </summary>
         /// <param name="substation">The substation with the element available</param>
-        /// <param name="elementTemplate">The element that can be produced</param>
+        /// <param name="element">The element that can be produced</param>
         /// <param name="getQuantity">A callback to get the remaining quantity of the element</param>
         /// <param name="removeQuantity">A callback to remove a quantity of the element (upon pickup)</param>
-        public static void RegisterAvailability(SimSubstation substation, Element elementTemplate, GetQuantityMethod getQuantity, RemoveQuantityMethod removeQuantity)
+        public static void RegisterAvailability(SimSubstation substation, Element element, GetQuantityMethod getQuantity, RemoveQuantityMethod removeQuantity)
         {
-            Availability availability = new Availability(substation, elementTemplate, getQuantity, removeQuantity);
+            Availability availability = new Availability(substation, element, getQuantity, removeQuantity);
             Availabilities.Add(availability);
 
             // Check if requirements already exist that matches this availability
-            IEnumerable<Requirement> matchingRequirements = Requirements.Where(requirement => requirement.FilterFunction(elementTemplate));
+            IEnumerable<Requirement> matchingRequirements = Requirements.Where(requirement => requirement.FilterFunction(element));
             foreach (Requirement matchingRequirement in matchingRequirements)
             {
                 // If one does, create enough TransportationJobs to transport the available quantity
@@ -144,10 +144,10 @@ namespace WorkstationDesigner
                 int remaining = totalTransportQuantity;
                 while (remaining > 0)
                 {
-                    int transportQuantity = Math.Min(elementTemplate.MaxCarryable, remaining);
-                    TransportationJob job = new TransportationJob(() => availability.RemoveQuantity(transportQuantity), () => matchingRequirement.AddElements(elementTemplate, transportQuantity), elementTemplate, transportQuantity, substation.GetCoords(), matchingRequirement.Substation.GetCoords());
-                    JobStack.AddJob(job);
-                    remaining -= elementTemplate.MaxCarryable;
+                    int transportQuantity = Math.Min(element.MaxCarryable, remaining);
+                    TransportationJob job = new TransportationJob(() => availability.RemoveQuantity(transportQuantity), () => matchingRequirement.AddElements(element, transportQuantity), element, transportQuantity, substation.GetCoords(), matchingRequirement.Substation.GetCoords());
+                    JobList.AddJob(job);
+                    remaining -= element.MaxCarryable;
                 }
 
                 matchingRequirement.Quantity -= totalTransportQuantity;
@@ -179,7 +179,7 @@ namespace WorkstationDesigner
             Requirement requirement = new Requirement(substation, filterFunction, quantity, addElements);
 
             // Check if matching availabilities already exist
-            IEnumerable<Availability> matchingAvailabilities = Availabilities.Where(availability => filterFunction(availability.ElementTemplate));
+            IEnumerable<Availability> matchingAvailabilities = Availabilities.Where(availability => filterFunction(availability.Element));
             foreach (Availability matchingAvailability in matchingAvailabilities)
             {
                 // If one does, create enough TransportationJobs to transport the available quantity
@@ -188,10 +188,10 @@ namespace WorkstationDesigner
                 int remaining = totalTransportQuantity;
                 while (remaining > 0)
                 {
-                    int transportQuantity = Math.Min(matchingAvailability.ElementTemplate.MaxCarryable, remaining);
-                    TransportationJob job = new TransportationJob(() => matchingAvailability.RemoveQuantity(transportQuantity), () => addElements(matchingAvailability.ElementTemplate, transportQuantity), matchingAvailability.ElementTemplate, transportQuantity, matchingAvailability.Substation.GetCoords(), substation.GetCoords());
-                    JobStack.AddJob(job);
-                    remaining -= matchingAvailability.ElementTemplate.MaxCarryable;
+                    int transportQuantity = Math.Min(matchingAvailability.Element.MaxCarryable, remaining);
+                    TransportationJob job = new TransportationJob(() => matchingAvailability.RemoveQuantity(transportQuantity), () => addElements(matchingAvailability.Element, transportQuantity), matchingAvailability.Element, transportQuantity, matchingAvailability.Substation.GetCoords(), substation.GetCoords());
+                    JobList.AddJob(job);
+                    remaining -= matchingAvailability.Element.MaxCarryable;
                 }
 
                 requirement.Quantity -= totalTransportQuantity;
@@ -212,7 +212,7 @@ namespace WorkstationDesigner
 
             // Check if a matching producable already exists
             // Only need to look for one here since we're assuming producables can produce arbitrary quantities of their output
-            Producable matchingProducable = Producables.Where(producable => filterFunction(producable.ElementTemplate)).FirstOrDefault();
+            Producable matchingProducable = Producables.Where(producable => filterFunction(producable.Element)).FirstOrDefault();
             if (matchingProducable != null)
             {
                 // If one does, initiate production

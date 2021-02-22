@@ -213,12 +213,12 @@ namespace WorkstationDesigner.Jobs
         // Update is called once per frame
         void Update()
         {
-            // If the worker doesn't have a job, try to get one from the JobStack
+            // If the worker doesn't have a job, try to get one from the job list
             if (CurrentJob == null)
             {
-                CurrentJob = JobStack.PullJob();
+                CurrentJob = JobList.PullJob();
 
-                // Stop if there were no jobs for the JobStack to give
+                // Stop if there were no jobs for the job list to give
                 if (CurrentJob == null)
                 {
                     return;
