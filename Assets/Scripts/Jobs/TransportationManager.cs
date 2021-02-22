@@ -105,13 +105,20 @@ namespace WorkstationDesigner
             Producable producable = new Producable(substation, elementTemplate, initiateProduction);
             Producables.Add(producable);
 
-            // Check if a requirement already exists that matches this production
-            Requirement matchingRequirement = Requirements.Where(requirement => !requirement.BeingProduced && requirement.FilterFunction(elementTemplate)).FirstOrDefault();
-            if (matchingRequirement != null)
+            // Check if requirements already exist that matches this production
+            int quantityToProduce = 0;
+            IEnumerable<Requirement> matchingRequirements = Requirements.Where(requirement => !requirement.BeingProduced && requirement.FilterFunction(elementTemplate));
+            foreach (Requirement matchingRequirement in matchingRequirements)
             {
-                // If one does, initiate the production
-                initiateProduction(matchingRequirement.Quantity);
+                // If they do, mark them as being produced and add the quantity required
                 matchingRequirement.BeingProduced = true;
+                quantityToProduce += matchingRequirement.Quantity;
+            }
+
+            // Initiate production if matching requirements were found
+            if (quantityToProduce > 0)
+            {
+                initiateProduction(quantityToProduce);
             }
         }
 
@@ -127,12 +134,14 @@ namespace WorkstationDesigner
             Availability availability = new Availability(substation, elementTemplate, getQuantity, removeQuantity);
             Availabilities.Add(availability);
 
-            // Check if a requirement already exists that matches this availability
-            Requirement matchingRequirement = Requirements.Where(requirement => requirement.FilterFunction(elementTemplate)).FirstOrDefault();
-            if (matchingRequirement != null)
+            // Check if requirements already exist that matches this availability
+            IEnumerable<Requirement> matchingRequirements = Requirements.Where(requirement => requirement.FilterFunction(elementTemplate));
+            foreach (Requirement matchingRequirement in matchingRequirements)
             {
-                // If one does, create enough TransportationJobs to transport the required quantity
-                int remaining = matchingRequirement.Quantity;
+                // If one does, create enough TransportationJobs to transport the available quantity
+                int totalTransportQuantity = Math.Min(getQuantity(), matchingRequirement.Quantity);
+
+                int remaining = totalTransportQuantity;
                 while (remaining > 0)
                 {
                     int transportQuantity = Math.Min(elementTemplate.MaxCarryable, remaining);
@@ -140,11 +149,20 @@ namespace WorkstationDesigner
                     JobStack.AddJob(job);
                     remaining -= elementTemplate.MaxCarryable;
                 }
-                Requirements.Remove(matchingRequirement);
+
+                matchingRequirement.Quantity -= totalTransportQuantity;
+
+                // Remove the requirement if this transported the required quantity
+                if (matchingRequirement.Quantity == 0)
+                {
+                    Requirements.Remove(matchingRequirement);
+                }
+
                 // Remove the availability if this used up the remaining stock
                 if (availability.GetQuantity() == 0)
                 {
                     Availabilities.Remove(availability);
+                    break;
                 }
             }
         }
@@ -158,12 +176,16 @@ namespace WorkstationDesigner
         /// <param name="addElements">A callback to add the elements to the substation (upon delivery)</param>
         public static void RegisterRequirement(SimSubstation substation, FilterFunction filterFunction, int quantity, AddElementsMethod addElements)
         {
-            // Check if a matching availability already exists
-            Availability matchingAvailability = Availabilities.Where(availability => filterFunction(availability.ElementTemplate)).FirstOrDefault();
-            if (matchingAvailability != null)
+            Requirement requirement = new Requirement(substation, filterFunction, quantity, addElements);
+
+            // Check if matching availabilities already exist
+            IEnumerable<Availability> matchingAvailabilities = Availabilities.Where(availability => filterFunction(availability.ElementTemplate));
+            foreach (Availability matchingAvailability in matchingAvailabilities)
             {
-                // If one does, create enough TransportationJobs to transport the required quantity
-                int remaining = quantity;
+                // If one does, create enough TransportationJobs to transport the available quantity
+                int totalTransportQuantity = Math.Min(matchingAvailability.GetQuantity(), quantity);
+
+                int remaining = totalTransportQuantity;
                 while (remaining > 0)
                 {
                     int transportQuantity = Math.Min(matchingAvailability.ElementTemplate.MaxCarryable, remaining);
@@ -171,13 +193,25 @@ namespace WorkstationDesigner
                     JobStack.AddJob(job);
                     remaining -= matchingAvailability.ElementTemplate.MaxCarryable;
                 }
-                // Don't create a requirement in this case
-                return;
+
+                requirement.Quantity -= totalTransportQuantity;
+
+                // Remove the availability if this used up the remaining stock
+                if (matchingAvailability.GetQuantity() == 0)
+                {
+                    Availabilities.Remove(matchingAvailability);
+                    break;
+                }
+
+                // Stop if this will deliver the required quantity
+                if (requirement.Quantity == 0)
+                {
+                    return;
+                }
             }
 
-            Requirement requirement = new Requirement(substation, filterFunction, quantity, addElements);
-
             // Check if a matching producable already exists
+            // Only need to look for one here since we're assuming producables can produce arbitrary quantities of their output
             Producable matchingProducable = Producables.Where(producable => filterFunction(producable.ElementTemplate)).FirstOrDefault();
             if (matchingProducable != null)
             {
