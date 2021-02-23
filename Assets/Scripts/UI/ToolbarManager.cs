@@ -33,7 +33,10 @@ namespace WorkstationDesigner.UI
             toolbar = this.Q("Toolbar");
 
             SetupToolbarButton("file-button", new Dictionary<string, Action>{
-                { "load-workstation-button", () => WorkstationManager.PromptLoadWorkstation() },
+                { "new-workstation-button", () => WorkstationManager.New() },
+                { "open-workstation-button", () => WorkstationManager.PromptOpen() },
+                { "save-workstation-button", () => WorkstationManager.Save() },
+                { "save-as-workstation-button", () => WorkstationManager.PromptSaveAs() },
                 { "exit-button", () => AppUtil.Exit() } 
             });
             SetupToolbarButton("edit-button");

@@ -60,7 +60,7 @@ namespace WorkstationDesigner.UI
             optionsScreenElement.style.display = DisplayStyle.None;
 
             AppUtil.LoadSceneAsync(AppUtil.MainSceneName, () => {
-                WorkstationManager.PromptLoadWorkstation();
+                WorkstationManager.PromptOpen();
             });
         }
     }
