@@ -4,6 +4,7 @@ using UnityEngine;
 using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Substations;
 using WorkstationDesigner.UI;
+using WorkstationDesigner.Workstation;
 
 namespace WorkstationDesigner
 {
@@ -17,6 +18,8 @@ namespace WorkstationDesigner
 
         public void Awake()
         {
+            WorkstationManager.MarkUnsavedChanges();
+
             this.gameObject.layer = 0; // Default
 
             // Set up right click menu
@@ -24,11 +27,13 @@ namespace WorkstationDesigner
             {
                 RightClickMenuManager.Create(RIGHT_CLICK_MENU_KEY, new List<(string, Action<object>)>()
                 {
-                    ("Pick Up", obj => { 
+                    ("Pick Up", obj => {
+                        WorkstationManager.MarkUnsavedChanges();
                         SubstationPlacementManager.Instance.MakePlacementSubstation((GameObject)obj); 
                     }),
 
                     ("Delete", obj => {
+                        WorkstationManager.MarkUnsavedChanges();
                         Destroy((GameObject)obj);
                     })
                 });

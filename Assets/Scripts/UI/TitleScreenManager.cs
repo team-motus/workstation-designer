@@ -50,7 +50,7 @@ namespace WorkstationDesigner.UI
             optionsScreenElement.style.display = DisplayStyle.None;
             
             AppUtil.LoadSceneAsync(AppUtil.MainSceneName, () => {
-                UnityEngine.Debug.Log("TODO Create new workstation UI");
+                WorkstationManager.New();
             });
         }
 

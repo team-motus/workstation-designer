@@ -47,6 +47,26 @@ namespace WorkstationDesigner.UI
             UnregisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
 
+        public static void SetToolbarDropdownItemEnabled(string toolbarButtonName, string dropdownItemName, bool enabled)
+        {
+            var toolbar = ScreenManager.OverallContainer.Q("Toolbar");
+            if(toolbar == null)
+            {
+                throw new Exception("Failed to find toolbar");
+            }
+            var button = toolbar.Q(toolbarButtonName);
+            if(button == null)
+            {
+                throw new Exception("Failed to find toolbar button " + toolbarButtonName);
+            }
+            var dropdownItem = button.Q(dropdownItemName);
+            if(dropdownItem == null)
+            {
+                throw new Exception("Failed to find dropdown item " + dropdownItem);
+            }
+            dropdownItem.SetEnabled(enabled);
+        }
+
         /// <summary>
         /// Setup a toolbar button with a given name and callbacks for its dropdown buttons
         /// </summary>
