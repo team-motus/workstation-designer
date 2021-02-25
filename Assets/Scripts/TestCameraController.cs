@@ -1,15 +1,17 @@
-﻿using UnityEngine;
+using UnityEngine;
 using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.Scripts
 {
     /// <summary>
+    /// Camera controller only for viewing test simulations.w
+    ///
     /// Moves associated transform according to user input
-    /// 
+    ///
     /// WASD, Space/LeftShift, and panning with cursor
     /// </summary>
-    public class CameraController : MonoBehaviour
+    public class TestCameraController : MonoBehaviour
     {
         private const float TRANSLATE_SPEED_SCALAR = 25; // Experimentally chosen
         private const float MOUSE_SENSITIVITY_SCALAR = 3; // Experimentally chosen
@@ -114,7 +116,7 @@ namespace WorkstationDesigner.Scripts
         /// <returns>True if cursor was moved</returns>
         private bool UpdateCursorMotion()
         {
-            if (MouseManager.GetMouseButton(0) && Camera.main.pixelRect.Contains(Input.mousePosition))
+            if (Input.GetMouseButton(0) && Camera.main.pixelRect.Contains(Input.mousePosition))
             {
                 cursorMotion.x = -Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_SCALAR;
                 cursorMotion.y = -Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_SCALAR;

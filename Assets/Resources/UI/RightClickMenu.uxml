@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="menu-container" style="background-color: rgb(27, 27, 28); width: 100px; height: 100px; position: absolute; flex-grow: 1; border-left-color: rgb(51, 51, 55); border-right-color: rgb(51, 51, 55); border-top-color: rgb(51, 51, 55); border-bottom-color: rgb(51, 51, 55); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; padding-left: 2px; padding-right: 2px; padding-top: 2px; padding-bottom: 2px;" />
+</ui:UXML>

@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor.AI;
-using UnityEngine.AI;
 
 public class Test_NavMeshUpdater : MonoBehaviour
 {
