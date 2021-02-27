@@ -21,7 +21,7 @@ namespace WorkstationDesigner
         // Update is called once per frame
         void Update()
         {
-            c.selectAction.action.performed += Action_preformed; // calls Action_performed() when the select Action is activated
+            c.selectAction.action.performed += Action_performed; // calls Action_performed() when the select Action is activated
         }
 
         /// <summary>
