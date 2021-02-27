@@ -11,6 +11,7 @@ namespace WorkstationDesigner.TestSubstations
     public class WoodPileSubstation : SimSubstation
     {
         private WoodPlank WoodPlank;
+        private WoodPlank WoodPlank2;
         private SubstationInventory Inventory = new SubstationInventory();
 
         /// <summary>
@@ -21,6 +22,10 @@ namespace WorkstationDesigner.TestSubstations
         {
             return Inventory.GetQuantity(this.WoodPlank);
         }
+        public int GetWoodQuantity2()
+        {
+            return Inventory.GetQuantity(this.WoodPlank2);
+        }
 
         /// <summary>
         /// Callback used to remove wood planks upon pickup.
@@ -30,14 +35,21 @@ namespace WorkstationDesigner.TestSubstations
         {
             Inventory.RemoveElements(this.WoodPlank, quantity);
         }
+        public void RemoveWood2(int quantity)
+        {
+            Inventory.RemoveElements(this.WoodPlank2, quantity);
+        }
 
         // Start is called before the first frame update
         void Start()
         {
-            this.WoodPlank = new WoodPlank(10);
+            this.WoodPlank = new WoodPlank(8);
             this.Inventory.AddElements(this.WoodPlank, 50);
+            this.WoodPlank2 = new WoodPlank(10);
+            this.Inventory.AddElements(this.WoodPlank2, 50);
 
             TransportationManager.RegisterAvailability(this, this.WoodPlank, GetWoodQuantity, RemoveWood);
+            TransportationManager.RegisterAvailability(this, this.WoodPlank2, GetWoodQuantity, RemoveWood);
         }
 
         // Update is called once per frame

@@ -788,6 +788,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: SampleWall
       objectReference: {fileID: 0}
+    - target: {fileID: 4473536811220001074, guid: 5b35fc956b597404dbfa7720e537b2c6,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5168046823624483816, guid: 5b35fc956b597404dbfa7720e537b2c6,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5785194706730023803, guid: 5b35fc956b597404dbfa7720e537b2c6,
         type: 3}
       propertyPath: m_Enabled
@@ -869,6 +879,11 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7976988767081727672, guid: 5b35fc956b597404dbfa7720e537b2c6,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8063649000300433580, guid: 5b35fc956b597404dbfa7720e537b2c6,
         type: 3}
       propertyPath: m_Enabled
       value: 0
