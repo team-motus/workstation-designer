@@ -8,6 +8,7 @@ namespace WorkstationDesigner.UI
 {
     public class ToolbarManager : VisualElement
     {
+        private CameraSwitcher CamS;
         private VisualElement toolbar;
         private bool mouseOverDropdownButton = false;
         private StyleColor? defaultButtonBackgroundColor = null;
@@ -37,7 +38,9 @@ namespace WorkstationDesigner.UI
                 { "exit-button", () => AppUtil.Exit() } 
             });
             SetupToolbarButton("edit-button");
-            SetupToolbarButton("vr-button");
+            SetupToolbarButton("vr-button", new Dictionary<string, Action>{
+                //{ "view-in-vr-button", () => CameraSwitcher.activateXRRigCamera() }
+            });
             SetupToolbarButton("view-button");
             SetupToolbarButton("help-button");
 
