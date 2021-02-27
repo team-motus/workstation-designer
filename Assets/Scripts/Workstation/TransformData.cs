@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace WorkstationDesigner.Workstation
 {
+    /// <summary>
+    /// Represents the important data of a GameObject transform
+    /// 
+    /// This class is used to serialize data to a file and restore transform state from a file
+    /// </summary>
     [Serializable]
     public class TransformData
     {
@@ -16,6 +21,11 @@ namespace WorkstationDesigner.Workstation
         [JsonProperty]
         public Vector3 LocalScale { get; private set; }
 
+        /// <summary>
+        /// Create a new TransformData object populated with state from a GameObject's Transform
+        /// </summary>
+        /// <param name="transform"></param>
+        /// <returns></returns>
         public static TransformData FromTransform(Transform transform)
         {
             return new TransformData
@@ -26,6 +36,10 @@ namespace WorkstationDesigner.Workstation
             };
         }
 
+        /// <summary>
+        /// Set a GameObject's Transform to the data held by this class
+        /// </summary>
+        /// <param name="transform"></param>
         public void SetTransform(Transform transform)
         {
             transform.position = Position;

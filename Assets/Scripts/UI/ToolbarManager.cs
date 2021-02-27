@@ -47,6 +47,14 @@ namespace WorkstationDesigner.UI
             UnregisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
 
+        /// <summary>
+        /// For a given toolbar button name and dropdown item name under it, mark the item as enabled or disabled
+        /// 
+        /// Disabled items are grey-out and no longer respond to user input
+        /// </summary>
+        /// <param name="toolbarButtonName"></param>
+        /// <param name="dropdownItemName"></param>
+        /// <param name="enabled"></param>
         public static void SetToolbarDropdownItemEnabled(string toolbarButtonName, string dropdownItemName, bool enabled)
         {
             var toolbar = ScreenManager.OverallContainer.Q("Toolbar");

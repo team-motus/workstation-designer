@@ -6,18 +6,33 @@ namespace WorkstationDesigner.Workstation
 {
     public static class WorkstationManager
     {
-        public static string OpenWorkstation { get; private set; } = null;
+        /// <summary>
+        /// The name and path of the currently open workstation
+        /// 
+        /// If the open workstation is new (has not been saved), then this value is null
+        /// </summary>
+        public static string OpenWorkstationFullFilename { get; private set; } = null;
+
+        /// <summary>
+        /// If there are changes to the open workstation that have not been saved
+        /// </summary>
         public static bool UnsavedChanges { get; private set; } = false;
 
         private const string DefaultName = "new workstation";
         private const string DefaultPath = "";
         private const string FileExtension = "json";
 
+        /// <summary>
+        /// Indicate that the open workstation has changed and needs to be saved
+        /// </summary>
         public static void MarkUnsavedChanges()
         {
             UnsavedChanges = true;
         }
 
+        /// <summary>
+        /// Check if there are unsaved changes and warn the user
+        /// </summary>
         private static void CheckUnsavedChanges()
         {
             if (UnsavedChanges)
@@ -26,23 +41,33 @@ namespace WorkstationDesigner.Workstation
             }
         }
 
+        /// <summary>
+        /// Set the value of OpenWorkstation
+        /// 
+        /// This also greys out the Save button if it's a new workstation, which then forces the user to use the Save As button
+        /// </summary>
+        /// <param name="value"></param>
         private static void SetOpenWorkstation(string value)
         {
-            OpenWorkstation = value;
+            OpenWorkstationFullFilename = value;
             UnsavedChanges = false; // Mark changes as saved
 
-            ToolbarManager.SetToolbarDropdownItemEnabled("file-button", "save-workstation-button", OpenWorkstation != null);
+            ToolbarManager.SetToolbarDropdownItemEnabled("file-button", "save-workstation-button", OpenWorkstationFullFilename != null);
         }
 
+        /// <summary>
+        /// Create a new, empty workstation (closing any open workstation)
+        /// </summary>
         public static void New()
         {
             CheckUnsavedChanges();
 
-            SetOpenWorkstation(null);
-
-            ClearOpenWorkstation();
+            CloseOpenWorkstation();
         }
 
+        /// <summary>
+        /// Prompt the user to open a saved workstation file
+        /// </summary>
         public static void PromptOpen()
         {
             var paths = SFB.StandaloneFileBrowser.OpenFilePanel("Load Workstation", DefaultPath, FileExtension, false);
@@ -53,20 +78,24 @@ namespace WorkstationDesigner.Workstation
             }
         }
 
-        private static void Open(string filename)
+        /// <summary>
+        /// Open a workstation file with a given filename and path
+        /// </summary>
+        /// <param name="fullFilename"></param>
+        private static void Open(string fullFilename)
         {
             CheckUnsavedChanges();
 
-            if (File.Exists(filename))
+            if (File.Exists(fullFilename))
             {
-                ClearOpenWorkstation();
+                CloseOpenWorkstation();
 
-                string json = File.ReadAllText(filename);
+                string json = File.ReadAllText(fullFilename);
                 WorkstationData workstationData = WorkstationData.FromJson(json);
 
                 workstationData.PopulateWorkstationObject(SubstationPlacementManager.WorkstationParent);
 
-                SetOpenWorkstation(filename);
+                SetOpenWorkstation(fullFilename);
             }
             else 
             {
@@ -74,6 +103,9 @@ namespace WorkstationDesigner.Workstation
             }
         }
 
+        /// <summary>
+        /// Prompt the user to save the workstation with a new file name
+        /// </summary>
         public static void PromptSaveAs()
         {
             var path = SFB.StandaloneFileBrowser.SaveFilePanel("Save Workstation", DefaultPath, DefaultName, FileExtension);
@@ -88,11 +120,14 @@ namespace WorkstationDesigner.Workstation
             }
         }
 
+        /// <summary>
+        /// Save the open workstation to the currently open workstation file
+        /// </summary>
         public static void Save()
         {
-            if(OpenWorkstation != null)
+            if(OpenWorkstationFullFilename != null)
             {
-                Save(OpenWorkstation);
+                Save(OpenWorkstationFullFilename);
             }
             else
             {
@@ -100,21 +135,31 @@ namespace WorkstationDesigner.Workstation
             }
         }
 
-        private static void Save(string filename)
+        /// <summary>
+        /// Save the open workstation to a file with a given name and path
+        /// </summary>
+        /// <param name="fullFilename"></param>
+        private static void Save(string fullFilename)
         {
             WorkstationData workstationData = WorkstationData.FromGameObject(SubstationPlacementManager.WorkstationParent);
 
-            File.WriteAllText(filename, workstationData.ToJson());
+            File.WriteAllText(fullFilename, workstationData.ToJson());
 
-            SetOpenWorkstation(filename);
+            SetOpenWorkstation(fullFilename);
         }
 
-        public static void ClearOpenWorkstation()
+        /// <summary>
+        /// Close the open workstation
+        /// </summary>
+        public static void CloseOpenWorkstation()
         {
+            // Destroy all children of workstation parent GameObject
             foreach (Transform childTransform in SubstationPlacementManager.WorkstationParent.transform)
             {
                 GameObject.Destroy(childTransform.gameObject);
             }
+
+            SetOpenWorkstation(null);
         }
     }
 }

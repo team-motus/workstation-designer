@@ -2,6 +2,9 @@
 
 namespace WorkstationDesigner.Substations
 {
+    /// <summary>
+    /// An example substation that's simply a box the size of the substation footprint
+    /// </summary>
     public class CubeSubstation : SubstationBase
     {
         public CubeSubstation(string name, int footprintLength1, int footprintLength2): base(name, footprintLength1, footprintLength2) { }
