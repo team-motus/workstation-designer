@@ -87,6 +87,10 @@ namespace WorkstationDesigner
         /// <returns>The quantity stored of the element</returns>
         public int GetQuantity(Element element)
         {
+			Stock stock = FindStock(element);
+			if(stock == null){
+				return 0;
+			}
             return FindStock(element).Quantity;
         }
     }
