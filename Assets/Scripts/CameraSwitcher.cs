@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace WorkstationDesigner
 {
+    /// <summary>
+    /// Handles whether the XR Rig or editor camera is active
+    /// </summary>
     public class CameraSwitcher : MonoBehaviour
     {
         private GameObject XRRig;
@@ -16,12 +19,18 @@ namespace WorkstationDesigner
             activateEditorCamera();
         }
     
+        /// <summary>
+        /// Activates the XR rig and deactivates the editor camaera in the scene view
+        /// </summary>
         public void activateXRRigCamera()
         {
             XRRig.SetActive(true);
             EditorCamera.SetActive(false);
         }
 
+        /// <summary>
+        /// Activates the editor camera and deactivates the XR rig in the scene view
+        /// </summary>
         public void activateEditorCamera()
         {
             XRRig.SetActive(false);
