@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using WorkstationDesigner.Substations;
 
 namespace WorkstationDesigner
@@ -42,11 +43,11 @@ namespace WorkstationDesigner
                 this.GetComponent<Renderer>().enabled = false;
             }
 
-            if (Input.GetKey(KeyCode.X))
+            if (Keyboard.current[Key.X].isPressed)
             {
                 this.transform.Rotate(Vector3.up, ROTATE_SCALAR * Time.deltaTime, Space.World);
             }
-            if (Input.GetKey(KeyCode.C))
+            if (Keyboard.current[Key.C].isPressed)
             {
                 this.transform.Rotate(Vector3.up, -ROTATE_SCALAR * Time.deltaTime, Space.World);
             }

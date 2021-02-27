@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace WorkstationDesigner.UI
@@ -51,7 +52,7 @@ namespace WorkstationDesigner.UI
             // Close the menu if the mouse clicks but it wasn't the click that opened the menu
             if (!openedThisFrame)
             {
-                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                if (Mouse.current.leftButton.wasPressedThisFrame || Mouse.current.rightButton.wasPressedThisFrame)
                 {
                     Close();
                 }
