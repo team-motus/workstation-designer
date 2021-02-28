@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace WorkstationDesigner.InputUtil
 {
@@ -25,14 +26,22 @@ namespace WorkstationDesigner.InputUtil
 
         public void Update()
         {
-            for (var i = 0; i < NUM_MOUSE_BUTTONS; i++)
+            if (!Mouse.current.leftButton.isPressed)
             {
-                if (!Input.GetMouseButton(i))
-                {
-                    mouseButtonStates[i] = false;
-                }
-                mouseDownButtonStates[i] = Input.GetMouseButtonDown(i);
+                mouseButtonStates[0] = false;
             }
+            if (!Mouse.current.rightButton.isPressed)
+            {
+                mouseButtonStates[1] = false;
+            }
+            if (!Mouse.current.middleButton.isPressed)
+            {
+                mouseButtonStates[2] = false;
+            }
+
+            mouseDownButtonStates[0] = Mouse.current.leftButton.wasPressedThisFrame;
+            mouseDownButtonStates[1] = Mouse.current.rightButton.wasPressedThisFrame;
+            mouseDownButtonStates[2] = Mouse.current.middleButton.wasPressedThisFrame;
         }
 
         /// <summary>
