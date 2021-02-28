@@ -28,7 +28,6 @@ UIElementsSchema/
 *.svd
 *.pdb
 *.opendb
-.vsconfig
 
 # Unity3D generated meta files
 *.pidb.meta

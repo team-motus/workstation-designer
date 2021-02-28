@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
 using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Util;
 
@@ -13,7 +12,7 @@ namespace WorkstationDesigner.Scripts
     public class CameraController : MonoBehaviour
     {
         private const float TRANSLATE_SPEED_SCALAR = 25; // Experimentally chosen
-        private const float MOUSE_SENSITIVITY_SCALAR = 0.2f; // Experimentally chosen
+        private const float MOUSE_SENSITIVITY_SCALAR = 3; // Experimentally chosen
         private const float CURSOR_INERTIAL_SCALAR = 0.3f; // Experimentally chosen
         private const float MINIMUM_HEIGHT = 0.5f; // Experimentally chosen
 
@@ -70,32 +69,32 @@ namespace WorkstationDesigner.Scripts
             Vector3 planar_forward = transform.forward;
             planar_forward = new Vector3(planar_forward.x, 0, planar_forward.z).normalized;
 
-            if (Keyboard.current[Key.W].isPressed)
+            if (Input.GetKey(KeyCode.W))
             {
                 translateVector += planar_forward;
                 updated = true;
             }
-            if (Keyboard.current[Key.S].isPressed)
+            if (Input.GetKey(KeyCode.S))
             {
                 translateVector -= planar_forward;
                 updated = true;
             }
-            if (Keyboard.current[Key.A].isPressed)
+            if (Input.GetKey(KeyCode.A))
             {
                 translateVector += Vector3.Cross(planar_forward, Vector3.up); // Calculate right direction from cross between forward and up
                 updated = true;
             }
-            if (Keyboard.current[Key.D].isPressed)
+            if (Input.GetKey(KeyCode.D))
             {
                 translateVector -= Vector3.Cross(planar_forward, Vector3.up);
                 updated = true;
             }
-            if (Keyboard.current[Key.Space].isPressed)
+            if (Input.GetKey(KeyCode.Space))
             {
                 translateVector += Vector3.up;
                 updated = true;
             }
-            if (Keyboard.current[Key.LeftShift].isPressed)
+            if (Input.GetKey(KeyCode.LeftShift))
             {
                 translateVector -= Vector3.up;
                 updated = true;
@@ -115,10 +114,10 @@ namespace WorkstationDesigner.Scripts
         /// <returns>True if cursor was moved</returns>
         private bool UpdateCursorMotion()
         {
-            if (MouseManager.GetMouseButton(0) && Camera.main.pixelRect.Contains(Mouse.current.position.ReadValue()))
+            if (MouseManager.GetMouseButton(0) && Camera.main.pixelRect.Contains(Input.mousePosition))
             {
-                cursorMotion = -Mouse.current.delta.ReadValue() * MOUSE_SENSITIVITY_SCALAR;
-                // cursorMotion.y *= -1;
+                cursorMotion.x = -Input.GetAxis("Mouse X") * MOUSE_SENSITIVITY_SCALAR;
+                cursorMotion.y = -Input.GetAxis("Mouse Y") * MOUSE_SENSITIVITY_SCALAR;
 
                 // Add an intertial effect to camera movement
                 if (cursorMotion.x != 0 && MathUtil.SameSign(cursorMotion.x, lastCursorMotion.x))

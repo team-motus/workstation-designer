@@ -4,10 +4,7 @@
         <ui:VisualElement name="file-button" style="overflow: visible; background-color: rgba(0, 0, 0, 0);">
             <ui:Button text="File" display-tooltip-when-elided="true" name="button" focusable="true" class="toolbar-button" style="padding-left: 5px;" />
             <ui:VisualElement name="dropdown-menu" style="position: absolute; background-color: rgb(27, 27, 28); width: 100px; height: auto; top: 100%; display: none; padding-left: 2px; padding-right: 2px; padding-top: 2px; padding-bottom: 2px; flex-grow: 1;">
-                <ui:Button text="New&#10;" display-tooltip-when-elided="true" name="new-workstation-button" class="dropdown-menu-item" />
-                <ui:Button text="Open..." display-tooltip-when-elided="true" name="open-workstation-button" class="dropdown-menu-item" />
-                <ui:Button text="Save" display-tooltip-when-elided="true" name="save-workstation-button" class="dropdown-menu-item" />
-                <ui:Button text="Save As..." display-tooltip-when-elided="true" name="save-as-workstation-button" enable-rich-text="true" class="dropdown-menu-item" />
+                <ui:Button text="Load workstation&#10;" display-tooltip-when-elided="true" name="load-workstation-button" class="dropdown-menu-item" />
                 <ui:Button text="Exit" display-tooltip-when-elided="true" name="exit-button" class="dropdown-menu-item" />
             </ui:VisualElement>
         </ui:VisualElement>

@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using WorkstationDesigner.Substations;
 
 namespace WorkstationDesigner
 {
@@ -11,43 +9,43 @@ namespace WorkstationDesigner
     {
         private const float ROTATE_SCALAR = 100;
 
-        public SubstationBase Substation { get; set; }
+        public SubstationModel Substation { get; set; }
         public bool IsIntersecting { get; private set; }
 
-        public void Awake()
-        {
-            this.gameObject.layer = 2; // Ignore raycast
-        }
-
         // Start is called before the first frame update
-        public void Start()
+        void Start()
         {
             this.IsIntersecting = false;
         }
 
         // Update is called once per frame
-        public void Update()
+        void Update()
         {
-            Vector3? maybePlacePoint = SubstationPlacementManager.GetPlacementPoint();
+            Vector3? maybePlacePoint = SubstationPlacementManager.GetPlacementPoint(this.Substation);
             if (maybePlacePoint.HasValue)
             {
                 Vector3 placePoint = maybePlacePoint.Value;
                 placePoint.y += this.transform.localScale.y / 2;
                 this.transform.position = placePoint;
 
-
-                this.GetComponent<Renderer>().enabled = !this.IsIntersecting;
+                if (!this.IsIntersecting) {
+                    this.GetComponent<Renderer>().enabled = true;
+                }
+                else
+                {
+                    this.GetComponent<Renderer>().enabled = false;
+                }
             }
             else
             {
                 this.GetComponent<Renderer>().enabled = false;
             }
 
-            if (Keyboard.current[Key.X].isPressed)
+            if (Input.GetKey(KeyCode.X))
             {
                 this.transform.Rotate(Vector3.up, ROTATE_SCALAR * Time.deltaTime, Space.World);
             }
-            if (Keyboard.current[Key.C].isPressed)
+            if (Input.GetKey(KeyCode.C))
             {
                 this.transform.Rotate(Vector3.up, -ROTATE_SCALAR * Time.deltaTime, Space.World);
             }

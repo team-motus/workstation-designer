@@ -34,10 +34,7 @@ namespace WorkstationDesigner.UI
             toolbar = this.Q("Toolbar");
 
             SetupToolbarButton("file-button", new Dictionary<string, Action>{
-                { "new-workstation-button", () => WorkstationManager.New() },
-                { "open-workstation-button", () => WorkstationManager.PromptOpen() },
-                { "save-workstation-button", () => WorkstationManager.Save() },
-                { "save-as-workstation-button", () => WorkstationManager.PromptSaveAs() },
+                { "load-workstation-button", () => WorkstationManager.PromptLoadWorkstation() },
                 { "exit-button", () => AppUtil.Exit() } 
             });
             SetupToolbarButton("edit-button");
@@ -48,34 +45,6 @@ namespace WorkstationDesigner.UI
             SetupToolbarButton("help-button");
 
             UnregisterCallback<GeometryChangedEvent>(OnGeometryChange);
-        }
-
-        /// <summary>
-        /// For a given toolbar button name and dropdown item name under it, mark the item as enabled or disabled
-        /// 
-        /// Disabled items are grey-out and no longer respond to user input
-        /// </summary>
-        /// <param name="toolbarButtonName"></param>
-        /// <param name="dropdownItemName"></param>
-        /// <param name="enabled"></param>
-        public static void SetToolbarDropdownItemEnabled(string toolbarButtonName, string dropdownItemName, bool enabled)
-        {
-            var toolbar = ScreenManager.OverallContainer.Q("Toolbar");
-            if(toolbar == null)
-            {
-                throw new Exception("Failed to find toolbar");
-            }
-            var button = toolbar.Q(toolbarButtonName);
-            if(button == null)
-            {
-                throw new Exception("Failed to find toolbar button " + toolbarButtonName);
-            }
-            var dropdownItem = button.Q(dropdownItemName);
-            if(dropdownItem == null)
-            {
-                throw new Exception("Failed to find dropdown item " + dropdownItem);
-            }
-            dropdownItem.SetEnabled(enabled);
         }
 
         /// <summary>
