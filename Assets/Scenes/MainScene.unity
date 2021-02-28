@@ -418,6 +418,7 @@ GameObject:
   - component: {fileID: 977905017}
   - component: {fileID: 977905016}
   - component: {fileID: 977905015}
+  - component: {fileID: 977905019}
   m_Layer: 0
   m_Name: LeftHand Controller
   m_TagString: Untagged
@@ -862,6 +863,18 @@ MonoBehaviour:
     m_Reference: {fileID: 7779212132400271959, guid: c348712bda248c246b8c49b3db54643f,
       type: 3}
   m_ButtonPressPoint: 0.5
+--- !u!114 &977905019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977905013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a48e6dc450738834eac3ca15be3bab51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1032064252
 GameObject:
   m_ObjectHideFlags: 0
@@ -1724,7 +1737,7 @@ GameObject:
   - component: {fileID: 1258011319}
   m_Layer: 0
   m_Name: CameraHandler
-  m_TagString: Untagged
+  m_TagString: CameraHandler
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1755,6 +1768,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9987c014ea5fd4898265ba54ce99f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  XRRig: {fileID: 0}
+  EditorCamera: {fileID: 0}
 --- !u!1 &1696528805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1860,7 +1875,6 @@ GameObject:
   - component: {fileID: 2103421939}
   - component: {fileID: 2103421938}
   - component: {fileID: 2103421937}
-  - component: {fileID: 2103421940}
   m_Layer: 0
   m_Name: XR Rig
   m_TagString: XRRig
@@ -1915,15 +1929,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2103421940
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103421936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a48e6dc450738834eac3ca15be3bab51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

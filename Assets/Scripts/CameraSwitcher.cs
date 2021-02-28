@@ -9,8 +9,8 @@ namespace WorkstationDesigner
     /// </summary>
     public class CameraSwitcher : MonoBehaviour
     {
-        private GameObject XRRig;
-        private GameObject EditorCamera;
+        public GameObject XRRig;
+        public GameObject EditorCamera;
 
         void Start()
         {

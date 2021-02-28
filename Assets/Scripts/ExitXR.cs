@@ -11,25 +11,22 @@ namespace WorkstationDesigner
     /// </summary>
     public class ExitXR : MonoBehaviour
     {
-        private CameraSwitcher CamS;
+        private CameraSwitcher camS;
         private ActionBasedController c;
         void Start()
         {
+            GameObject temp = GameObject.FindWithTag("CameraHandler");
+            camS = temp.GetComponent<CameraSwitcher>();
             c = GetComponent<ActionBasedController>();
         }
 
-        // Update is called once per frame
+        // Checks to see if the trigger has been pressed every frame
         void Update()
         {
-            c.selectAction.action.performed += Action_preformed; // calls Action_performed() when the select Action is activated
-        }
-
-        /// <summary>
-        /// Activates the editor camera and deactivates the XR camera when called
-        /// </summary>
-        private void Action_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-        {
-            CamS.activateEditorCamera();
+            // Temporary solution for exiting XR camera state
+            // Future implementations will use an XR UI to exit XR
+            if(c.activateAction.action.triggered == true)
+                camS.activateEditorCamera(); // Switch to Editor camera
         }
     }
 }

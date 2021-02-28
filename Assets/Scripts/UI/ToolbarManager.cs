@@ -8,7 +8,7 @@ namespace WorkstationDesigner.UI
 {
     public class ToolbarManager : VisualElement
     {
-        private CameraSwitcher CamS;
+        //private CameraSwitcher camS = gameObject.GetComponent<CameraSwitcher>();
         private VisualElement toolbar;
         private bool mouseOverDropdownButton = false;
         private StyleColor? defaultButtonBackgroundColor = null;
@@ -39,7 +39,7 @@ namespace WorkstationDesigner.UI
             });
             SetupToolbarButton("edit-button");
             SetupToolbarButton("vr-button", new Dictionary<string, Action>{
-                //{ "view-in-vr-button", () => CameraSwitcher.activateXRRigCamera() }
+                //{ "view-in-vr-button", () => camS.activateXRRigCamera() }
             });
             SetupToolbarButton("view-button");
             SetupToolbarButton("help-button");
