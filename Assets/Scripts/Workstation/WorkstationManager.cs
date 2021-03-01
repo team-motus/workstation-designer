@@ -30,6 +30,8 @@ namespace WorkstationDesigner.Workstation
 
         private const string SaveDialogBodyPath = "UI/SaveDialogBody";
 
+        private static Action next = null;
+
         static WorkstationManager()
         {
             ResourceLoader.Load<VisualTreeAsset>(SaveDialogBodyPath);
@@ -46,31 +48,34 @@ namespace WorkstationDesigner.Workstation
         /// <summary>
         /// Check if there are unsaved changes and warn the user
         /// </summary>
-        private static void CheckUnsavedChanges()
+        private static void CheckUnsavedChanges(Action nextAction)
         {
             if (UnsavedChanges)
             {
+                next = nextAction;
+
                 // Set up save dialog
                 if (!DialogManager.ContainsKey(SAVE_DIALOG_KEY))
                 {
-                    VisualTreeAsset body = ResourceLoader.Get< VisualTreeAsset>(SaveDialogBodyPath);
-                    DialogManager.Create(SAVE_DIALOG_KEY, body.CloneTree(), new List<(string, Action<object>)>()
+                    VisualTreeAsset bodyAsset = ResourceLoader.Get<VisualTreeAsset>(SaveDialogBodyPath);
+                    VisualElement body = bodyAsset.CloneTree();
+                    DialogManager.Create(SAVE_DIALOG_KEY, body, new List<(string, Action<object>)>()
                     {
-                        ("Cancel", obj => {
-                            Debug.Log("Cancel");
+                        ("Cancel", obj => {}),
+                        ("No", obj => {
+                            Debug.Log("No");
+                            next();
                         }),
-                        ("Don't Save", obj => {
-                            Debug.Log("Don't Save");
-                        }),
-                        ("Save", obj => {
-                            Debug.Log("Save");
+                        ("Yes", obj => {
+                            Debug.Log("Yes");
+                            // TODO
+                            PromptSaveAs();
+                            next();
                         })
                     });
                 }
 
                 DialogManager.Open(SAVE_DIALOG_KEY);
-
-                Debug.LogWarning("There are unsaved changes!");
             }
         }
 
@@ -93,9 +98,10 @@ namespace WorkstationDesigner.Workstation
         /// </summary>
         public static void New()
         {
-            CheckUnsavedChanges();
-
-            CloseOpenWorkstation();
+            CheckUnsavedChanges(() =>
+            {
+                CloseOpenWorkstation();
+            });
         }
 
         /// <summary>
@@ -117,23 +123,24 @@ namespace WorkstationDesigner.Workstation
         /// <param name="fullFilename"></param>
         private static void Open(string fullFilename)
         {
-            CheckUnsavedChanges();
-
-            if (File.Exists(fullFilename))
+            CheckUnsavedChanges(() =>
             {
-                CloseOpenWorkstation();
+                if (File.Exists(fullFilename))
+                {
+                    CloseOpenWorkstation();
 
-                string json = File.ReadAllText(fullFilename);
-                WorkstationData workstationData = WorkstationData.FromJson(json);
+                    string json = File.ReadAllText(fullFilename);
+                    WorkstationData workstationData = WorkstationData.FromJson(json);
 
-                workstationData.PopulateWorkstationObject(SubstationPlacementManager.WorkstationParent);
+                    workstationData.PopulateWorkstationObject(SubstationPlacementManager.WorkstationParent);
 
-                SetOpenWorkstation(fullFilename);
-            }
-            else 
-            {
-                Debug.LogError("Save file not found.");
-            }
+                    SetOpenWorkstation(fullFilename);
+                }
+                else
+                {
+                    Debug.LogError("Save file not found.");
+                }
+            });
         }
 
         /// <summary>
