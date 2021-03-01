@@ -5,3 +5,7 @@
 .dialog-footer-button:hover {
     background-color: rgb(102, 102, 102);
 }
+
+.dialog-footer-button {
+    background-color: rgba(68, 68, 68, 255);
+}

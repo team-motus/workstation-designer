@@ -77,9 +77,7 @@ namespace WorkstationDesigner.UI
                 var callback = footerButtons[i].Item2;
 
                 var footerButtonContainer = dialogFooterButtonAsset.CloneTree();
-                
                 var footerButton = footerButtonContainer.Q("dialog-footer-button");
-                Debug.Log(footerButton.ClassListContains("dialog-footer-button"));
 
                 var footerButtonLabel = footerButton.Q<Label>("dialog-footer-button-label");
                 footerButtonLabel.text = label;
@@ -105,8 +103,8 @@ namespace WorkstationDesigner.UI
 
             if (activeDialog != null)
             {
-                ScreenManager.OverallContainer.Remove(screenOverlay);
-                ScreenManager.OverallContainer.Remove(activeDialog);
+                screenOverlay.RemoveFromHierarchy();
+                activeDialog.RemoveFromHierarchy();
                 activeDialog = null;
             }
         }
@@ -140,8 +138,6 @@ namespace WorkstationDesigner.UI
             }
             ScreenManager.OverallContainer.Add(screenOverlay);
             ScreenManager.OverallContainer.Add(activeDialog);
-
-            activeDialog.MarkDirtyRepaint();
         }
     }
 }
