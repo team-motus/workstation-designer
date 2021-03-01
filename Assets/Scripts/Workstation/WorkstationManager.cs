@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UIElements;
 using WorkstationDesigner.UI;
+using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.Workstation
 {
@@ -22,6 +26,15 @@ namespace WorkstationDesigner.Workstation
         private const string DefaultPath = "";
         private const string FileExtension = "json";
 
+        private const string SAVE_DIALOG_KEY = "SaveDialog";
+
+        private const string SaveDialogBodyPath = "UI/SaveDialogBody";
+
+        static WorkstationManager()
+        {
+            ResourceLoader.Load<VisualTreeAsset>(SaveDialogBodyPath);
+        }
+
         /// <summary>
         /// Indicate that the open workstation has changed and needs to be saved
         /// </summary>
@@ -37,6 +50,26 @@ namespace WorkstationDesigner.Workstation
         {
             if (UnsavedChanges)
             {
+                // Set up save dialog
+                if (!DialogManager.ContainsKey(SAVE_DIALOG_KEY))
+                {
+                    VisualTreeAsset body = ResourceLoader.Get< VisualTreeAsset>(SaveDialogBodyPath);
+                    DialogManager.Create(SAVE_DIALOG_KEY, body.CloneTree(), new List<(string, Action<object>)>()
+                    {
+                        ("Cancel", obj => {
+                            Debug.Log("Cancel");
+                        }),
+                        ("Don't Save", obj => {
+                            Debug.Log("Don't Save");
+                        }),
+                        ("Save", obj => {
+                            Debug.Log("Save");
+                        })
+                    });
+                }
+
+                DialogManager.Open(SAVE_DIALOG_KEY);
+
                 Debug.LogWarning("There are unsaved changes!");
             }
         }

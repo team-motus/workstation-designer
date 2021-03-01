@@ -1,0 +1,7 @@
+#dialog-close-button-container:hover {
+    background-color: rgba(232, 17, 35, 255);
+}
+
+.dialog-footer-button:hover {
+    background-color: rgba(102, 102, 102, 255);
+}
