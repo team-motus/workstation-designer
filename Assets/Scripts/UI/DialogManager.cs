@@ -13,10 +13,18 @@ namespace WorkstationDesigner.UI
         private static VisualTreeAsset screenOverlayAsset = null;
 
         private static VisualElement screenOverlay = null;
+
+        /// <summary>
+        /// The current open dialog
+        /// </summary>
         private static VisualElement activeDialog = null;
 
+        /// <summary>
+        /// Dictionary of all cached dialogs
+        /// </summary>
         private static Dictionary<string, (object, VisualElement)> dialogs = new Dictionary<string, (object, VisualElement)>();
 
+        // These values must match those in the UXML/USS files
         private const float DIALOG_WIDTH = 400; // px
         private const float DIALOG_HEIGHT = 400; // px
 
@@ -43,11 +51,22 @@ namespace WorkstationDesigner.UI
             }
         }
 
+        /// <summary>
+        /// Check if dialog key already exists
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static bool ContainsKey(string key)
         {
             return dialogs.ContainsKey(key);
         }
 
+        /// <summary>
+        /// Create a new dialog with a given key, body, and list of tuples of footer buttons and callbacks
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="dialogBody"></param>
+        /// <param name="footerButtons"></param>
         public static void Create(string key, VisualElement dialogBody, List<(string, Action<object>)> footerButtons)
         {
             if (ContainsKey(key))
@@ -57,6 +76,7 @@ namespace WorkstationDesigner.UI
 
             var element = dialogAsset.CloneTree();
 
+            // Setup dialog X button
             var closeButton = element.Q("dialog-close-button");
             closeButton.RegisterCallback<MouseDownEvent>(e =>
             {
@@ -66,9 +86,11 @@ namespace WorkstationDesigner.UI
                 }
             });
 
+            // Setup dialog body
             var dialogMain = element.Q("dialog-main");
             dialogMain.Add(dialogBody);
 
+            // Setup dialog footer
             var dialogFooter = element.Q("dialog-footer");
 
             for (var i = 0; i < footerButtons.Count; i++)
@@ -96,7 +118,7 @@ namespace WorkstationDesigner.UI
         }
 
         /// <summary>
-        /// Close open right click menu
+        /// Close the open dialog
         /// </summary>
         private static void Close()
         {
@@ -109,6 +131,11 @@ namespace WorkstationDesigner.UI
             }
         }
 
+        /// <summary>
+        /// Open the dialog with the given key with a given context
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="context"></param>
         public static void Open(string key, object context = null)
         {
             if (!ContainsKey(key))
@@ -123,12 +150,13 @@ namespace WorkstationDesigner.UI
 
             var dialogWindow = activeDialog.Q("dialog-window");
 
+            // Center dialog in screen
             dialogWindow.style.top = (Screen.height / 2 - DIALOG_HEIGHT / 2) * ScreenManager.dpiScaler;
             dialogWindow.style.left = (Screen.width / 2 - DIALOG_WIDTH / 2) * ScreenManager.dpiScaler;
 
-            // Place menu element in screen
             if(screenOverlay == null)
             {
+                // Setup screen overlay to cover back of screen (force user to address the dialog)
                 screenOverlay = screenOverlayAsset.CloneTree();
                 screenOverlay.style.position = Position.Absolute;
                 screenOverlay.style.top = 0;

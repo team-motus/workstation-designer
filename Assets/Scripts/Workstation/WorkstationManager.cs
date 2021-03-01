@@ -48,7 +48,7 @@ namespace WorkstationDesigner.Workstation
         /// <summary>
         /// Check if there are unsaved changes and warn the user
         /// </summary>
-        private static void CheckUnsavedChanges(Action nextAction)
+        public static void CheckUnsavedChanges(Action nextAction)
         {
             if (UnsavedChanges)
             {
@@ -63,12 +63,9 @@ namespace WorkstationDesigner.Workstation
                     {
                         ("Cancel", obj => {}),
                         ("No", obj => {
-                            Debug.Log("No");
                             next();
                         }),
                         ("Yes", obj => {
-                            Debug.Log("Yes");
-                            // TODO
                             PromptSaveAs();
                             next();
                         })

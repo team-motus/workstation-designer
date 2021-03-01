@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using WorkstationDesigner.Workstation;
 
 namespace WorkstationDesigner.Util
 {
@@ -11,11 +13,39 @@ namespace WorkstationDesigner.Util
 
         private static OnSceneStartDelegate? OnSceneStartCallback = null;
 
+        private static readonly Func<bool> wantsToQuitCallback = () =>
+        {
+            if (WorkstationManager.UnsavedChanges)
+            {
+                WorkstationManager.CheckUnsavedChanges(() =>
+                {
+                    // Remove callback to prevent infinite recursion
+                    Application.wantsToQuit -= wantsToQuitCallback;
+                    Application.Quit();
+                });
+                return false; // Prevent application quit
+            }
+            else
+            {
+                return true; // Allow quit to continue
+            }
+        };
+
+        static AppUtil()
+        {
+            // Check if there are unsaved changes before quitting the application
+            Application.wantsToQuit += wantsToQuitCallback;
+        }
+
         public static void Exit()
         {
             if (Application.isEditor)
             {
-                Debug.Log("Exited");
+                // Simulate exiting
+                WorkstationManager.CheckUnsavedChanges(() =>
+                {
+                    Debug.Log("Exited");
+                });
             }
             else
             {
