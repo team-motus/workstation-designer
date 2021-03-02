@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Substations;
 
@@ -57,7 +58,7 @@ namespace WorkstationDesigner
 				{
 					//TODO: Indicate this to the user
 				}
-				else if (Input.GetMouseButtonDown(0) && this.ActiveSubstation != null)
+				else if (Mouse.current.leftButton.wasPressedThisFrame && this.ActiveSubstation != null)
 				{
 					Vector3? maybePlacePoint = GetPlacementPoint();
 					if (maybePlacePoint.HasValue)
@@ -122,7 +123,7 @@ namespace WorkstationDesigner
 
 		public static Vector3? GetPlacementPoint()
 		{
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
 			// Make sure the mouse isn't over the UI
 			if (!MouseManager.GetMouseOver()) { return null; }

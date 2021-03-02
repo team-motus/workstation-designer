@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Substations;
 using WorkstationDesigner.UI;
@@ -45,7 +46,7 @@ namespace WorkstationDesigner
         {
             if (MouseManager.GetMouseButtonDown(1))
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
                 // Make sure the raycast hit something
                 if(Physics.Raycast(ray, out RaycastHit hit))
@@ -53,7 +54,7 @@ namespace WorkstationDesigner
                     if (hit.collider.gameObject == this.gameObject)
                     {
                         // Open right click menu
-                        RightClickMenuManager.Open(RIGHT_CLICK_MENU_KEY, Input.mousePosition, this.gameObject);
+                        RightClickMenuManager.Open(RIGHT_CLICK_MENU_KEY, Mouse.current.position.ReadValue(), this.gameObject);
                     }
                 }
             }
