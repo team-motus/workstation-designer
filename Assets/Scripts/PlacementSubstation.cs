@@ -1,4 +1,5 @@
 using UnityEngine;
+using WorkstationDesigner.Substations;
 
 namespace WorkstationDesigner
 {
@@ -9,32 +10,32 @@ namespace WorkstationDesigner
     {
         private const float ROTATE_SCALAR = 100;
 
-        public SubstationModel Substation { get; set; }
+        public SubstationBase Substation { get; set; }
         public bool IsIntersecting { get; private set; }
 
+        public void Awake()
+        {
+            this.gameObject.layer = 2; // Ignore raycast
+        }
+
         // Start is called before the first frame update
-        void Start()
+        public void Start()
         {
             this.IsIntersecting = false;
         }
 
         // Update is called once per frame
-        void Update()
+        public void Update()
         {
-            Vector3? maybePlacePoint = SubstationPlacementManager.GetPlacementPoint(this.Substation);
+            Vector3? maybePlacePoint = SubstationPlacementManager.GetPlacementPoint();
             if (maybePlacePoint.HasValue)
             {
                 Vector3 placePoint = maybePlacePoint.Value;
                 placePoint.y += this.transform.localScale.y / 2;
                 this.transform.position = placePoint;
 
-                if (!this.IsIntersecting) {
-                    this.GetComponent<Renderer>().enabled = true;
-                }
-                else
-                {
-                    this.GetComponent<Renderer>().enabled = false;
-                }
+
+                this.GetComponent<Renderer>().enabled = !this.IsIntersecting;
             }
             else
             {

@@ -1,10 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using WorkstationDesigner.Substations;
 
 namespace WorkstationDesigner.UI
 {
@@ -25,7 +24,7 @@ namespace WorkstationDesigner.UI
         public void OnGeometryChange(GeometryChangedEvent evt)
         {
             // Create some list of data, here simply numbers in interval [1, 1000]
-            List<SubstationModel> substationList = SubstationData.GetInstance().GetSubstations();
+            List<SubstationBase> substationList = SubstationManager.GetInstance().GetSubstations();
 
             // The "makeItem" function will be called as needed
             // when the ListView needs more items to render
@@ -63,7 +62,7 @@ namespace WorkstationDesigner.UI
 
         private void OnItemsChosen(IEnumerable<object> objects)
         {
-            placementManager.ActivateSubstation(objects.First() as SubstationModel);
+            placementManager.ActivateSubstation(objects.First() as SubstationBase);
         }
 
         private void OnSelectionChange(IEnumerable<object> objects)

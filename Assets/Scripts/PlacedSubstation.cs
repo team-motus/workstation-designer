@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using WorkstationDesigner.InputUtil;
+using WorkstationDesigner.Substations;
 using WorkstationDesigner.UI;
+using WorkstationDesigner.Workstation;
 
 namespace WorkstationDesigner
 {
@@ -11,21 +13,27 @@ namespace WorkstationDesigner
     /// </summary>
     public class PlacedSubstation : MonoBehaviour
     {
-        public SubstationModel Substation { get; set; }
+        public SubstationBase Substation { get; set; }
         private const string RIGHT_CLICK_MENU_KEY = "PlacedSubstation";
 
-        private void Awake()
+        public void Awake()
         {
+            WorkstationManager.MarkUnsavedChanges();
+
+            this.gameObject.layer = 0; // Default
+
             // Set up right click menu
             if (!RightClickMenuManager.ContainsKey(RIGHT_CLICK_MENU_KEY))
             {
                 RightClickMenuManager.Create(RIGHT_CLICK_MENU_KEY, new List<(string, Action<object>)>()
                 {
-                    ("Pick Up", obj => { 
+                    ("Pick Up", obj => {
+                        WorkstationManager.MarkUnsavedChanges();
                         SubstationPlacementManager.Instance.MakePlacementSubstation((GameObject)obj); 
                     }),
 
                     ("Delete", obj => {
+                        WorkstationManager.MarkUnsavedChanges();
                         Destroy((GameObject)obj);
                     })
                 });
