@@ -9,8 +9,11 @@ namespace WorkstationDesigner
     /// </summary>
     public class CameraSwitcher : MonoBehaviour
     {
-        public GameObject XRRig;
-        public GameObject EditorCamera;
+        private GameObject XRRig;
+        private GameObject EditorCamera;
+
+        private bool XRRigActive = false;
+        private bool EditorCameraActive = true;
 
         void Start()
         {
@@ -26,6 +29,8 @@ namespace WorkstationDesigner
         {
             XRRig.SetActive(true);
             EditorCamera.SetActive(false);
+            XRRigActive = true;
+            EditorCameraActive = false;
         }
 
         /// <summary>
@@ -35,6 +40,18 @@ namespace WorkstationDesigner
         {
             XRRig.SetActive(false);
             EditorCamera.SetActive(true);
+            XRRigActive = false;
+            EditorCameraActive = true;
+        }
+
+        public bool getXRRigStatus()
+        {
+            return XRRigActive;
+        }
+
+        public bool getEditorCameraStatus()
+        {
+            return EditorCameraActive;
         }
     }
 }

@@ -8,7 +8,9 @@ namespace WorkstationDesigner
     public class XRUI : MonoBehaviour
     {
         private GameObject canvas;
+        private GameObject rController;
         private Camera xrCam;
+        private CameraSwitcher status;
 
         //private Vector3 yRot;
         //private Vector3 camDistance;
@@ -19,38 +21,49 @@ namespace WorkstationDesigner
         public int height = 2;
 
         private bool showUI = false;
+
         void Start()
         {
             //xrCam = GameObject.FindWithTag("MainCamera");
             xrCam = Camera.main;
             canvas = GameObject.Find("Canvas");
-            GameObject temp = GameObject.Find("RightHand Controller");
-            c = temp.GetComponent<ActionBasedController>();
-
             canvas.SetActive(false);
+
+            GameObject temp = GameObject.Find("Camera Handler");
+            status = temp.GetComponent<CameraSwitcher>();
         }
 
         // Update is called once per frame
         void Update()
         {
-            //check for button press
-            if(c.activateAction.action.triggered == true && showUI == false)
+            if(status.getXRRigStatus() == true)
             {
-                updateXRUI();
-                canvas.SetActive(true);
-                showUI = true;
-            }
-            else if(c.activateAction.action.triggered == true && showUI == true)
-            {
-                canvas.SetActive(false);
-                showUI = false;
+                // Assign controller if it is null
+                if(rController == null)
+                {
+                    rController = GameObject.Find("RightHand Controller");
+                    c = rController.GetComponent<ActionBasedController>();
+                }
+
+                // Check for correct button press on the right hand controller
+                // Update UI and show it
+                if(c.activateAction.action.triggered == true && showUI == false)
+                {
+                    updateXRUI();
+                    canvas.SetActive(true);
+                    showUI = true;
+                }
+                // If the UI is active and the same button is pressed again, hide the UI
+                else if(c.activateAction.action.triggered == true && showUI == true)
+                {
+                    canvas.SetActive(false);
+                    showUI = false;
+                }
             }
         }
 
         void updateXRUI()
         {
-            //yRot = targetRotation();
-            //camDistance = targetDistance();
             canvas.transform.position = targetDistance();
             canvas.transform.eulerAngles = targetRotation();
         }
