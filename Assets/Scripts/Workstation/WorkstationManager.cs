@@ -27,14 +27,17 @@ namespace WorkstationDesigner.Workstation
         private const string FileExtension = "json";
 
         private const string SAVE_DIALOG_KEY = "SaveDialog";
+        private const string ERROR_DIALOG_KEY = "ErrorDialog";
 
         private const string SaveDialogBodyPath = "UI/SaveDialogBody";
+        private const string LoadErrorDialogBodyPath = "UI/LoadErrorDialogBody";
 
         private static Action next = null;
 
         static WorkstationManager()
         {
             ResourceLoader.Load<VisualTreeAsset>(SaveDialogBodyPath);
+            ResourceLoader.Load<VisualTreeAsset>(LoadErrorDialogBodyPath);
         }
 
         /// <summary>
@@ -52,7 +55,7 @@ namespace WorkstationDesigner.Workstation
         {
             if (UnsavedChanges)
             {
-                if(next != null)
+                if (next != null)
                 {
                     throw new Exception("Cannot overwrite next action callback, please wait for dialog to close");
                 }
@@ -83,6 +86,20 @@ namespace WorkstationDesigner.Workstation
             else
             {
                 nextAction();
+            }
+        }
+
+        private static void CreateErrorDialog()
+        {
+            if (!DialogManager.ContainsKey(ERROR_DIALOG_KEY))
+            {
+                VisualTreeAsset bodyAsset = ResourceLoader.Get<VisualTreeAsset>(LoadErrorDialogBodyPath);
+                VisualElement body = bodyAsset.CloneTree();
+
+                DialogManager.Create(ERROR_DIALOG_KEY, body, new List<(string, Action<object>)>()
+                {
+                    ("Okay", obj => {})
+                });
             }
         }
 
@@ -136,12 +153,31 @@ namespace WorkstationDesigner.Workstation
                 {
                     CloseOpenWorkstation();
 
-                    string json = File.ReadAllText(fullFilename);
-                    WorkstationData workstationData = WorkstationData.FromJson(json);
+                    try
+                    {
+                        string json = File.ReadAllText(fullFilename);
+                        WorkstationData workstationData = WorkstationData.FromJson(json);
 
-                    workstationData.PopulateWorkstationObject(SubstationPlacementManager.WorkstationParent);
+                        workstationData.PopulateWorkstationObject(SubstationPlacementManager.WorkstationParent);
 
-                    SetOpenWorkstation(fullFilename);
+                        SetOpenWorkstation(fullFilename);
+                    }
+                    catch (Exception e)
+                    {
+                        CreateErrorDialog();
+
+                        Debug.LogError(e);
+
+                        DialogManager.Open(ERROR_DIALOG_KEY, customizeDialog: dialogRootElement =>
+                        {
+                            Label errorDescription = dialogRootElement.Q<Label>("error-description");
+                            string filename = fullFilename.Replace("\\", "/");
+                            errorDescription.text = $"Failed to load file \"{filename}\"";
+
+                            Label errorDetails = dialogRootElement.Q<Label>("error-details");
+                            errorDetails.text = $"Details: {e.Message}";
+                        });
+                    }
                 }
                 else
                 {
@@ -172,7 +208,7 @@ namespace WorkstationDesigner.Workstation
         /// </summary>
         public static void Save()
         {
-            if(OpenWorkstationFullFilename != null)
+            if (OpenWorkstationFullFilename != null)
             {
                 Save(OpenWorkstationFullFilename);
             }

@@ -28,6 +28,8 @@ namespace WorkstationDesigner.UI
         private const float DIALOG_WIDTH = 400; // px
         private const float DIALOG_HEIGHT = 400; // px
 
+        public delegate void CustomizeDialogDelegate(VisualElement dialogRootElement);
+
         void Awake()
         {
             // Load assets
@@ -136,7 +138,7 @@ namespace WorkstationDesigner.UI
         /// </summary>
         /// <param name="key"></param>
         /// <param name="context"></param>
-        public static void Open(string key, object context = null)
+        public static void Open(string key, object context = null, CustomizeDialogDelegate customizeDialog = null)
         {
             if (!ContainsKey(key))
             {
@@ -147,6 +149,11 @@ namespace WorkstationDesigner.UI
 
             dialogs[key] = (context, dialogs[key].Item2); // Update context
             activeDialog = dialogs[key].Item2;
+
+            if (customizeDialog != null)
+            {
+                customizeDialog(activeDialog);
+            }
 
             var dialogWindow = activeDialog.Q("dialog-window");
 

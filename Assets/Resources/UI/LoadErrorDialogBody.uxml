@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="Dialog.uss" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:Label text="Error" display-tooltip-when-elided="true" name="header" style="font-size: 20px; color: rgb(255, 255, 255); -unity-text-align: middle-left; -unity-font-style: bold; margin-bottom: 10px;" />
+        <ui:Label text="Description" display-tooltip-when-elided="true" name="error-description" style="font-size: 14px; color: rgb(255, 255, 255); -unity-text-align: middle-left; -unity-font-style: bold; white-space: normal; margin-bottom: 10px;" />
+        <ui:Label text="Details" display-tooltip-when-elided="true" name="error-details" style="font-size: 12px; color: rgb(255, 255, 255); -unity-text-align: middle-left; -unity-font-style: bold; white-space: normal;" />
+    </ui:VisualElement>
+</ui:UXML>

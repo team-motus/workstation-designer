@@ -7,5 +7,5 @@
 }
 
 .dialog-footer-button {
-    background-color: rgba(68, 68, 68, 255);
+    background-color: rgb(68, 68, 68);
 }
