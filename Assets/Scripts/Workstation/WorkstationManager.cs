@@ -52,6 +52,10 @@ namespace WorkstationDesigner.Workstation
         {
             if (UnsavedChanges)
             {
+                if(next != null)
+                {
+                    throw new Exception("Cannot overwrite next action callback, please wait for dialog to close");
+                }
                 next = nextAction;
 
                 // Set up save dialog
@@ -64,15 +68,21 @@ namespace WorkstationDesigner.Workstation
                         ("Cancel", obj => {}),
                         ("No", obj => {
                             next();
+                            next = null;
                         }),
                         ("Yes", obj => {
                             PromptSaveAs();
                             next();
+                            next = null;
                         })
                     });
                 }
 
                 DialogManager.Open(SAVE_DIALOG_KEY);
+            }
+            else
+            {
+                nextAction();
             }
         }
 

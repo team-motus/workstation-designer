@@ -53,10 +53,10 @@ namespace WorkstationDesigner.Util
             }
         }
 
-        public static void LoadSceneAsync(string sceneName, OnSceneStartDelegate onSceneStart = null)
+        public static void LoadScene(string sceneName, OnSceneStartDelegate onSceneStart = null)
         {
             OnSceneStartCallback = onSceneStart;
-            SceneManager.LoadSceneAsync(sceneName);
+            SceneManager.LoadScene(sceneName);
         }
 
         public static void OnSceneStart()
