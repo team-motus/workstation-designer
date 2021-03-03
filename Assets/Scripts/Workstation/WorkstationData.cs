@@ -29,6 +29,17 @@ namespace WorkstationDesigner.Workstation
         [JsonProperty]
         public List<SubstationData> SubstationList { get; private set; }
 
+        /// <summary>
+        /// The API version
+        /// </summary>
+        public const string CurrentAPIVersion = "0.0.1";
+
+        /// <summary>
+        /// The API version of this object
+        /// </summary>
+        [JsonProperty]
+        public string APIVersion { get; private set; } = CurrentAPIVersion;
+
         public WorkstationData()
         {
             SubstationList = new List<SubstationData>();
