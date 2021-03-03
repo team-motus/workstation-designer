@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UIElements;
 using WorkstationDesigner.UI;
+using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.Workstation
 {
@@ -22,6 +26,17 @@ namespace WorkstationDesigner.Workstation
         private const string DefaultPath = "";
         private const string FileExtension = "json";
 
+        private const string SAVE_DIALOG_KEY = "SaveDialog";
+
+        private const string SaveDialogBodyPath = "UI/SaveDialogBody";
+
+        private static Action next = null;
+
+        static WorkstationManager()
+        {
+            ResourceLoader.Load<VisualTreeAsset>(SaveDialogBodyPath);
+        }
+
         /// <summary>
         /// Indicate that the open workstation has changed and needs to be saved
         /// </summary>
@@ -33,11 +48,41 @@ namespace WorkstationDesigner.Workstation
         /// <summary>
         /// Check if there are unsaved changes and warn the user
         /// </summary>
-        private static void CheckUnsavedChanges()
+        public static void CheckUnsavedChanges(Action nextAction)
         {
             if (UnsavedChanges)
             {
-                Debug.LogWarning("There are unsaved changes!");
+                if(next != null)
+                {
+                    throw new Exception("Cannot overwrite next action callback, please wait for dialog to close");
+                }
+                next = nextAction;
+
+                // Set up save dialog
+                if (!DialogManager.ContainsKey(SAVE_DIALOG_KEY))
+                {
+                    VisualTreeAsset bodyAsset = ResourceLoader.Get<VisualTreeAsset>(SaveDialogBodyPath);
+                    VisualElement body = bodyAsset.CloneTree();
+                    DialogManager.Create(SAVE_DIALOG_KEY, body, new List<(string, Action<object>)>()
+                    {
+                        ("Cancel", obj => {}),
+                        ("No", obj => {
+                            next();
+                            next = null;
+                        }),
+                        ("Yes", obj => {
+                            PromptSaveAs();
+                            next();
+                            next = null;
+                        })
+                    });
+                }
+
+                DialogManager.Open(SAVE_DIALOG_KEY);
+            }
+            else
+            {
+                nextAction();
             }
         }
 
@@ -60,9 +105,10 @@ namespace WorkstationDesigner.Workstation
         /// </summary>
         public static void New()
         {
-            CheckUnsavedChanges();
-
-            CloseOpenWorkstation();
+            CheckUnsavedChanges(() =>
+            {
+                CloseOpenWorkstation();
+            });
         }
 
         /// <summary>
@@ -84,23 +130,24 @@ namespace WorkstationDesigner.Workstation
         /// <param name="fullFilename"></param>
         private static void Open(string fullFilename)
         {
-            CheckUnsavedChanges();
-
-            if (File.Exists(fullFilename))
+            CheckUnsavedChanges(() =>
             {
-                CloseOpenWorkstation();
+                if (File.Exists(fullFilename))
+                {
+                    CloseOpenWorkstation();
 
-                string json = File.ReadAllText(fullFilename);
-                WorkstationData workstationData = WorkstationData.FromJson(json);
+                    string json = File.ReadAllText(fullFilename);
+                    WorkstationData workstationData = WorkstationData.FromJson(json);
 
-                workstationData.PopulateWorkstationObject(SubstationPlacementManager.WorkstationParent);
+                    workstationData.PopulateWorkstationObject(SubstationPlacementManager.WorkstationParent);
 
-                SetOpenWorkstation(fullFilename);
-            }
-            else 
-            {
-                Debug.LogError("Save file not found.");
-            }
+                    SetOpenWorkstation(fullFilename);
+                }
+                else
+                {
+                    Debug.LogError("Save file not found.");
+                }
+            });
         }
 
         /// <summary>

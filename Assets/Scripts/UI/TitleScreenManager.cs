@@ -49,7 +49,7 @@ namespace WorkstationDesigner.UI
             titleScreenElement.style.display = DisplayStyle.None;
             optionsScreenElement.style.display = DisplayStyle.None;
             
-            AppUtil.LoadSceneAsync(AppUtil.MainSceneName, () => {
+            AppUtil.LoadScene(AppUtil.MainSceneName, () => {
                 WorkstationManager.New();
             });
         }
@@ -59,7 +59,7 @@ namespace WorkstationDesigner.UI
             titleScreenElement.style.display = DisplayStyle.None;
             optionsScreenElement.style.display = DisplayStyle.None;
 
-            AppUtil.LoadSceneAsync(AppUtil.MainSceneName, () => {
+            AppUtil.LoadScene(AppUtil.MainSceneName, () => {
                 WorkstationManager.PromptOpen();
             });
         }
