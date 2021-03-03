@@ -3,7 +3,7 @@
     <ui:Template name="ToolbarManager" src="ToolbarManager.uxml" />
     <ui:VisualElement name="OverallContainer" style="flex-grow: 1; flex-direction: column-reverse; width: 100%; height: 100%;">
         <ui:VisualElement name="SidebarContainer" style="flex-grow: 1; flex-direction: row-reverse;">
-            <ui:Instance template="SubstationSelectionSidebar" name="SubstationSelectionSidebar" style="flex-basis: 20%; flex-grow: 0;" />
+            <ui:Instance template="SubstationSelectionSidebar" name="SubstationSelectionSidebar" />
             <WorkstationDesigner.UI.UIBackdrop style="flex-grow: 1;" />
         </ui:VisualElement>
         <ui:VisualElement name="ToolbarContainer" style="flex-basis: 5%; min-height: 30px; max-height: 30px;">
