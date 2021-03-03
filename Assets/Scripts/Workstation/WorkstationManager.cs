@@ -197,10 +197,6 @@ namespace WorkstationDesigner.Workstation
             {
                 Save(path);
             }
-            else
-            {
-                // TODO warn that it did not save
-            }
         }
 
         /// <summary>
