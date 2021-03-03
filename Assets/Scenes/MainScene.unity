@@ -123,6 +123,49 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 23800000, guid: 98f9ca15ad468cd4692884c5f0c25b27, type: 2}
+--- !u!1 &2785841
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2785842}
+  - component: {fileID: 2785843}
+  m_Layer: 0
+  m_Name: ResourceLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2785842
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785841}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2785843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e31ea643c15fa445a722cc6eb7ce734, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &36506370
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,6 +1527,7 @@ GameObject:
   - component: {fileID: 1164026817}
   - component: {fileID: 1164026818}
   - component: {fileID: 1164026819}
+  - component: {fileID: 1164026820}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -1583,6 +1627,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65b99375f1facce41a59922a0383d576, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+
 --- !u!1 &1184144620
 GameObject:
   m_ObjectHideFlags: 0
@@ -1603,11 +1648,13 @@ GameObject:
   m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!114 &1184144621
+
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+
   m_GameObject: {fileID: 1184144620}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -1682,6 +1729,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+
 --- !u!1 &1228289967
 GameObject:
   m_ObjectHideFlags: 0
@@ -1754,6 +1802,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1258011319
@@ -1802,6 +1851,7 @@ Transform:
   - {fileID: 1128925417}
   m_Father: {fileID: 2103421939}
   m_RootOrder: 0
+
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!850595691 &2093474107
 LightingSettings:
