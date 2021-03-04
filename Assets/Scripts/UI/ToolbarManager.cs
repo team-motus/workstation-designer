@@ -40,7 +40,9 @@ namespace WorkstationDesigner.UI
                 { "exit-button", () => AppUtil.Exit() } 
             });
             SetupToolbarButton("edit-button");
-            SetupToolbarButton("vr-button");
+            SetupToolbarButton("vr-button", new Dictionary<string, Action>{
+                { "enter-vr-button", () => UnityEngine.Debug.Log("TODO") }
+            });
             SetupToolbarButton("view-button");
             SetupToolbarButton("help-button");
 
