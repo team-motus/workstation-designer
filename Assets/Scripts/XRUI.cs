@@ -44,7 +44,7 @@ namespace WorkstationDesigner
 
                 // XR camear must have MainCamera tag applied to it
                 if(xrCam == null)
-                    xrCam = Camera.main;
+                    xrCam = Camera.current;
 
                 // Check for correct button press on the right hand controller
                 // Update UI and show it

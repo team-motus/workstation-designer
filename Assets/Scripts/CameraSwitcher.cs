@@ -18,7 +18,7 @@ namespace WorkstationDesigner
         void Start()
         {
             XRRig = GameObject.FindWithTag("XRRig");
-            EditorCamera = GameObject.FindWithTag("EditorCamera");
+            EditorCamera = GameObject.FindWithTag("MainCamera");
             activateEditorCamera();
         }
     
