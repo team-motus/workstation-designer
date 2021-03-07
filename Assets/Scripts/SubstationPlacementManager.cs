@@ -124,7 +124,7 @@ namespace WorkstationDesigner
 
 		public static Vector3? GetPlacementPoint()
 		{
-			return SceneUtil.GetCursorInWorld(true, true);
+			return SceneUtil.GetCursorInWorld(true, true, true);
 		}
 	}
 }
