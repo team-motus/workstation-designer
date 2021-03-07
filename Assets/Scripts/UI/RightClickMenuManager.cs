@@ -31,6 +31,8 @@ namespace WorkstationDesigner.UI
 
         private static bool openedThisFrame = false;
 
+        private static Action onClose = null;
+
         void Awake()
         {
             // Load assets
@@ -119,6 +121,10 @@ namespace WorkstationDesigner.UI
             {
                 ScreenManager.OverallContainer.Remove(activeRightClickMenu);
                 activeRightClickMenu = null;
+                if (onClose != null)
+                {
+                    onClose();
+                }
             }
         }
 
@@ -128,7 +134,7 @@ namespace WorkstationDesigner.UI
         /// <param name="key">The menu key</param>
         /// <param name="position">The position of the cursor</param>
         /// <param name="context">An object that is passed to the menu item button callbacks</param>
-        public static void Open(string key, Vector3 position, object context = null)
+        public static void Open(string key, Vector3 position, object context = null, Action onCloseCallback = null)
         {
             if (!ContainsKey(key))
             {
@@ -150,6 +156,7 @@ namespace WorkstationDesigner.UI
             menu.style.left = position.x * ScreenManager.dpiScaler;
 
             openedThisFrame = true;
+            onClose = onCloseCallback;
         }
     }
 }

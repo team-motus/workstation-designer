@@ -80,7 +80,7 @@ namespace WorkstationDesigner.UI
 
         private void OnItemsChosen(IEnumerable<object> objects)
         {
-            placementManager.ActivateSubstation(objects.First() as SubstationBase);
+            placementManager.CreateSubstation(objects.First() as SubstationBase);
         }
 
         private void OnSelectionChange(IEnumerable<object> objects)

@@ -11,16 +11,10 @@ namespace WorkstationDesigner
 	/// </summary>
 	public class SubstationPlacementManager : MonoBehaviour
 	{
-		public static GameObject WorkstationParent = null;
+		public static GameObject WorkstationParent { get; private set; } = null;
 
-		private SubstationBase ActiveSubstation;
-		private GameObject PlacementSubstationObject;
+		private GameObject heldSubstation = null;
 		public static SubstationPlacementManager Instance = null;
-
-		public SubstationPlacementManager()
-		{
-			this.ActiveSubstation = null;
-		}
 
         public void Awake()
         {
@@ -51,74 +45,62 @@ namespace WorkstationDesigner
 			}
         }
 
-        public void Update()
+		public void Update()
 		{
-			if (this.PlacementSubstationObject != null)
+			// Check if we should place the held substation
+			if (this.heldSubstation != null &&
+				!this.heldSubstation.GetComponent<SubstationComponent>().IsIntersecting &&
+				GetPlacementPoint().HasValue &&
+				Mouse.current.leftButton.wasPressedThisFrame)
 			{
-				if (this.PlacementSubstationObject.GetComponent<PlacementSubstation>().IsIntersecting)
-				{
-					//TODO: Indicate this to the user
-				}
-				else if (Mouse.current.leftButton.wasPressedThisFrame && this.ActiveSubstation != null)
-				{
-					if (GetPlacementPoint().HasValue)
-					{
-						// Replace PlacementSubstation with PlacedSubstation
-						MakePlacedSubstation(this.PlacementSubstationObject);
-					}
-				}
+				PlaceSubstation();
 			}
 		}
 
-		/// <summary>
-		/// Replace PlacedSubstation with PlacementSubstation
-		/// </summary>
-		/// <param name="obj"></param>
-		public void MakePlacementSubstation(GameObject obj)
+		public void PlaceSubstation()
         {
-			if (obj.GetComponent<PlacedSubstation>() != null)
+			if (this.heldSubstation != null)
 			{
-				obj.AddComponent<PlacementSubstation>().Substation = obj.GetComponent<PlacedSubstation>().Substation;
-				Destroy(obj.GetComponent<PlacedSubstation>());
+				this.heldSubstation.GetComponent<SubstationComponent>().SetPlaced(true);
+				this.heldSubstation = null;
+			}
+			else
+			{
+				throw new System.Exception("Cannot place substation (none held)");
+			}
+		}
 
-				// Set SubstationPlacementManager
-				this.ActiveSubstation = obj.GetComponent<PlacementSubstation>().Substation;
-				this.PlacementSubstationObject = obj;
+		public void PickUpSubstation(GameObject gameObject)
+        {
+			if (this.heldSubstation == null)
+			{
+				this.heldSubstation = gameObject;
+
+				SubstationComponent objectComponent = this.heldSubstation.GetComponent<SubstationComponent>();
+
+				objectComponent.SetPlaced(false);
+			} else
+            {
+				throw new System.Exception("Cannot pick up a second substation");
             }
 		}
 
-		/// <summary>
-		/// Replace PlacementSubstation with PlacedSubstation
-		/// </summary>
-		/// <param name="obj"></param>
-		public void MakePlacedSubstation(GameObject obj)
+		public void CreateSubstation(SubstationBase substation)
 		{
-			if (obj.GetComponent<PlacementSubstation>() != null)
+			// Destroy currently held substation
+			if (this.heldSubstation != null)
 			{
-				obj.AddComponent<PlacedSubstation>().Substation = obj.GetComponent<PlacementSubstation>().Substation;
-				Destroy(obj.GetComponent<PlacementSubstation>());
-
-				// Reset SubstationPlacementManager
-				this.ActiveSubstation = null;
-				this.PlacementSubstationObject = null;
-			}
-		}
-
-		public void ActivateSubstation(SubstationBase substation)
-		{
-			this.ActiveSubstation = substation;
-
-			if (this.PlacementSubstationObject != null)
-			{
-				Destroy(this.PlacementSubstationObject);
+				Destroy(this.heldSubstation);
+				this.heldSubstation = null;
 			}
 
-			this.PlacementSubstationObject = this.ActiveSubstation.Instantiate();
-			this.PlacementSubstationObject.GetComponent<Renderer>().enabled = false;
-			this.PlacementSubstationObject.transform.parent = WorkstationParent.transform;
+			// Create new object
+			var newObject = substation.Instantiate();
+			newObject.GetComponent<Renderer>().enabled = false;
+			newObject.transform.parent = WorkstationParent.transform;
+			newObject.AddComponent<SubstationComponent>().Substation = substation;
 
-			PlacementSubstation placementSubstation = this.PlacementSubstationObject.AddComponent<PlacementSubstation>();
-			placementSubstation.Substation = this.ActiveSubstation;
+			PickUpSubstation(newObject);
 		}
 
 		public static Vector3? GetPlacementPoint()
