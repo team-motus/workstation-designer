@@ -137,13 +137,22 @@ namespace WorkstationDesigner
                     {
                         Selected = true;
 
+                        // Set up escape button to deselect this substation
+                        Action escAction = () =>
+                        {
+                            RightClickMenuManager.Close();
+                            Selected = false;
+                            this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
+                        };
+                        EscManager.PushEscAction(escAction);
+
                         this.GetComponent<Renderer>().sharedMaterial = HighlightedMaterial;
 
                         // Open right click menu
                         RightClickMenuManager.Open(RIGHT_CLICK_MENU_KEY, Mouse.current.position.ReadValue(), this.gameObject, () =>
                         {
-                            this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
-                            Selected = false;
+                            EscManager.PopEscAction(escAction);
+                            escAction();
                         });
                     }
                 }

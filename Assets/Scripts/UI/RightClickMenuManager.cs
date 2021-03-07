@@ -49,7 +49,7 @@ namespace WorkstationDesigner.UI
             }
         }
 
-        void LateUpdate()
+        void Update()
         {
             // Close the menu if the mouse clicks but it wasn't the click that opened the menu
             if (!openedThisFrame)
@@ -114,7 +114,7 @@ namespace WorkstationDesigner.UI
         /// <summary>
         /// Close open right click menu
         /// </summary>
-        private static void Close()
+        public static void Close()
         {
 
             if (activeRightClickMenu != null)
