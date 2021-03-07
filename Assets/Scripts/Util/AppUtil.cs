@@ -34,7 +34,10 @@ namespace WorkstationDesigner.Util
         static AppUtil()
         {
             // Check if there are unsaved changes before quitting the application
-            Application.wantsToQuit += wantsToQuitCallback;
+            if (!Application.isEditor)
+            {
+                Application.wantsToQuit += wantsToQuitCallback;
+            }
         }
 
         public static void Exit()
