@@ -61,8 +61,7 @@ namespace WorkstationDesigner
 				}
 				else if (Mouse.current.leftButton.wasPressedThisFrame && this.ActiveSubstation != null)
 				{
-					Vector3? maybePlacePoint = GetPlacementPoint();
-					if (maybePlacePoint.HasValue)
+					if (GetPlacementPoint().HasValue)
 					{
 						// Replace PlacementSubstation with PlacedSubstation
 						MakePlacedSubstation(this.PlacementSubstationObject);
