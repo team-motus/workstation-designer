@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - InteractionPoint
+  - CameraHandler
+  - XRRig
+  - EditorCamera
+  - XRCamera
   layers:
   - Default
   - TransparentFX
