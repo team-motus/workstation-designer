@@ -7,25 +7,18 @@ namespace WorkstationDesigner
     /// <summary>
     /// Handles whether the XR Rig or editor camera is active
     /// </summary>
-    public class CameraSwitcher : MonoBehaviour
+    public static class CameraSwitcher
     {
-        private GameObject XRRig;
-        private GameObject EditorCamera;
+        private static GameObject XRRig = GameObject.FindWithTag("XRRig");
+        private static GameObject EditorCamera = GameObject.FindWithTag("MainCamera");
 
-        private bool XRRigActive = false;
-        private bool EditorCameraActive = true;
-
-        void Start()
-        {
-            XRRig = GameObject.FindWithTag("XRRig");
-            EditorCamera = GameObject.FindWithTag("EditorCamera");
-            activateEditorCamera();
-        }
+        private static bool XRRigActive = false;
+        private static bool EditorCameraActive = true;
     
         /// <summary>
         /// Activates the XR rig and deactivates the editor camaera in the scene view
         /// </summary>
-        public void activateXRRigCamera()
+        public static void activateXRRigCamera()
         {
             XRRig.SetActive(true);
             EditorCamera.SetActive(false);
@@ -36,7 +29,7 @@ namespace WorkstationDesigner
         /// <summary>
         /// Activates the editor camera and deactivates the XR rig in the scene view
         /// </summary>
-        public void activateEditorCamera()
+        public static void activateEditorCamera()
         {
             XRRig.SetActive(false);
             EditorCamera.SetActive(true);
@@ -44,12 +37,12 @@ namespace WorkstationDesigner
             EditorCameraActive = true;
         }
 
-        public bool getXRRigStatus()
+        public static bool getXRRigStatus()
         {
             return XRRigActive;
         }
 
-        public bool getEditorCameraStatus()
+        public static bool getEditorCameraStatus()
         {
             return EditorCameraActive;
         }

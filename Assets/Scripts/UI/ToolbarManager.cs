@@ -41,7 +41,7 @@ namespace WorkstationDesigner.UI
             });
             SetupToolbarButton("edit-button");
             SetupToolbarButton("vr-button", new Dictionary<string, Action>{
-                { "enter-vr-button", () => UnityEngine.Debug.Log("TODO") }
+                { "enter-vr-button", () => CameraSwitcher.activateXRRigCamera() }
             });
             SetupToolbarButton("view-button");
             SetupToolbarButton("help-button");
