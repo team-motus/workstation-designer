@@ -39,6 +39,8 @@ namespace WorkstationDesigner.Tools
         private static VisualTreeAsset tapeMeasurePanelAsset = null;
         private static VisualElement tapeMeasurePanel = null;
 
+        private static Action EscAction = () => { UsingTapeMeasure = false; };
+
         public void Awake()
         {
             if (Instance != null)
@@ -57,14 +59,21 @@ namespace WorkstationDesigner.Tools
 
         public void Update()
         {
-            /*
-            // TODO this doesn't seem to work
             if (UsingTapeMeasure != lastUsingTapeMeasure)
             {
+                if (UsingTapeMeasure)
+                {
+                    EscManager.PushEscAction(EscAction);
+                }
+                else
+                {
+                    EscManager.PopEscAction(EscAction);
+                }
+
+                // TODO this doesn't seem to work
                 // Set the cursor to a tape measure icon when active
-                Cursor.SetCursor(UsingTapeMeasure ? cursorTexture : null, Vector2.zero, CursorMode.Auto);
+                // UnityEngine.Cursor.SetCursor(UsingTapeMeasure ? cursorTexture : null, Vector2.zero, CursorMode.Auto);
             }
-            */
 
             UpdateTapeMeasure();
 
