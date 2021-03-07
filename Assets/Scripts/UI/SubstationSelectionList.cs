@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using WorkstationDesigner.Substations;
@@ -8,15 +9,22 @@ using WorkstationDesigner.Substations;
 namespace WorkstationDesigner.UI
 {
     /// <summary>
-    /// A sidebar that contains the list of substations, allowing them to be selected and placed in the workstation.
+    /// A list of substations, allowing them to be selected and placed in the workstation.
     /// </summary>
-    public class SubstationSelectionSidebar : VisualElement
+    public class SubstationSelectionList : VisualElement
     {
         private SubstationPlacementManager placementManager;
 
-        public new class UxmlFactory : UxmlFactory<SubstationSelectionSidebar, UxmlTraits> { }
+        private VisualElement leftSide;
+        private VisualElement SubstationListContainer;
+        private ListView listView;
 
-        public SubstationSelectionSidebar()
+        private static Background openIcon = Background.FromTexture2D(AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/UI/images/sidebar-open-icon.png"));
+        private static Background hiddenIcon = Background.FromTexture2D(AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/UI/images/sidebar-hidden-icon.png"));
+
+        public new class UxmlFactory : UxmlFactory<SubstationSelectionList, UxmlTraits> { }
+
+        public SubstationSelectionList()
         {
             RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
@@ -43,7 +51,7 @@ namespace WorkstationDesigner.UI
             // so it can calculate how many items to actually display
             const int itemHeight = 16;
 
-            var listView = new ListView(substationList, itemHeight, makeItem, bindItem);
+            listView = new ListView(substationList, itemHeight, makeItem, bindItem);
 
             listView.selectionType = SelectionType.Multiple;
 
@@ -52,10 +60,20 @@ namespace WorkstationDesigner.UI
 
             listView.style.flexGrow = 1.0f; 
 
-            var listContainer = this.Q("SubstationListContainer");
-            listContainer.Add(listView);
+            SubstationListContainer = this.Q("SubstationListContainer");
+            SubstationListContainer.Add(listView);
 
             placementManager = (SubstationPlacementManager) GameObject.Find("SubstationPlacementManager").GetComponent("SubstationPlacementManager");
+
+            leftSide = this.Q("left");
+
+            var sidebarCollapseButton = this.Q("sidebar-collapse-button");
+
+            sidebarCollapseButton.RegisterCallback<MouseDownEvent>(e =>
+            {
+                leftSide.style.display = (leftSide.style.display != DisplayStyle.None) ? DisplayStyle.None: DisplayStyle.Flex;
+                sidebarCollapseButton.style.backgroundImage = (leftSide.style.display != DisplayStyle.None) ? openIcon: hiddenIcon;
+            });
 
             UnregisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
@@ -67,6 +85,7 @@ namespace WorkstationDesigner.UI
 
         private void OnSelectionChange(IEnumerable<object> objects)
         {
+
         }
     }
 }

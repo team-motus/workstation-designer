@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
+using WorkstationDesigner.Tools;
 using WorkstationDesigner.Util;
 using WorkstationDesigner.Workstation;
 
@@ -42,6 +43,9 @@ namespace WorkstationDesigner.UI
             SetupToolbarButton("edit-button");
             SetupToolbarButton("vr-button", new Dictionary<string, Action>{
                 { "enter-vr-button", () => CameraSwitcher.activateXRRigCamera() }
+            });
+            SetupToolbarButton("tools-button", new Dictionary<string, Action>{
+                { "tape-measure-button", () => TapeMeasure.UsingTapeMeasure = !TapeMeasure.UsingTapeMeasure },
             });
             SetupToolbarButton("view-button");
             SetupToolbarButton("help-button");

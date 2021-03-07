@@ -17,7 +17,14 @@ namespace WorkstationDesigner.Util
 
         public static TResource Get<TResource>(string resourcePath)
         {
-            return (TResource)loadedResources[resourcePath];
+            try
+            {
+                return (TResource)loadedResources[resourcePath];
+            }
+            catch(Exception e)
+            {
+                throw new Exception($"Failed to load resource from path \"{resourcePath}\" with type {typeof(TResource).FullName}", e);
+            }
         }
 
         private void LoadResources()
