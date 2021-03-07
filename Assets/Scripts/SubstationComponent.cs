@@ -25,11 +25,16 @@ namespace WorkstationDesigner
         /// If the substation is placed in the workstation or is still being positioned
         /// </summary>
         public bool Placed { get; private set; }
+
         /// <summary>
-        /// 
-        /// If this held substation is intersecting a placed substation
+        /// If this substation is intersecting any other substations
         /// </summary>
-        public bool IsIntersecting { get; private set; }
+        public bool IsIntersecting => IntersectionCount != 0;
+
+        /// <summary>
+        /// Number of other substation intersecting this
+        /// </summary>
+        public int IntersectionCount { get; private set; } = 0;
 
         // Materials
         private static Material CheckIntersectionMaterial = null;
@@ -47,12 +52,6 @@ namespace WorkstationDesigner
             Placed = placedValue;
         }
 
-        private void SetIntersecting(bool intersectingValue)
-        {
-            IsIntersecting = intersectingValue;
-            this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
-        }
-
         /// <summary>
         /// Select a material to use when not highlighted depending on if it's intersecting or not
         /// </summary>
@@ -64,8 +63,6 @@ namespace WorkstationDesigner
 
         public void Awake()
         {
-            SetPlaced(true);
-
             WorkstationManager.MarkUnsavedChanges();
 
             // Load/backup materials
@@ -87,6 +84,8 @@ namespace WorkstationDesigner
             }
             this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
 
+            SetPlaced(true);
+
             // Set up right click menu
             if (!RightClickMenuManager.ContainsKey(RIGHT_CLICK_MENU_KEY))
             {
@@ -107,7 +106,7 @@ namespace WorkstationDesigner
 
         public void Start()
         {
-            this.IsIntersecting = false;
+            IntersectionCount = 0;
         }
 
         public void Update()
@@ -170,6 +169,7 @@ namespace WorkstationDesigner
                 this.GetComponent<Renderer>().enabled = false;
             }
 
+            // Rotation
             if (Keyboard.current[Key.X].isPressed)
             {
                 this.transform.Rotate(Vector3.up, ROTATE_SCALAR * Time.deltaTime, Space.World);
@@ -182,34 +182,41 @@ namespace WorkstationDesigner
 
         private void OnTriggerEnter(Collider collider)
         {
-            SetIntersecting(CheckIntersecting(collider));
+            var intersecting = GetIntersecting(collider);
+            if (intersecting != null)
+            {
+                IntersectionCount++;
+                // Update held component's shader
+                this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
+                if (!Placed)
+                {
+                    // Update placed component's shader when there's at least one collision
+                    intersecting.GetComponent<Renderer>().sharedMaterial = CheckIntersectionMaterial;
+                }
+            }
         }
 
-        private void OnTriggerExit(Collider collider)
+        private void OnTriggerExit(Collider otherCollider)
         {
-            SetIntersecting(!CheckIntersecting(collider));
+            if (GetIntersecting(otherCollider) != null)
+            {
+                IntersectionCount--;
+                if (Placed && !IsIntersecting)
+                {
+                    // Restore placed component's shader to default when all intersections end
+                    this.GetComponent<Renderer>().sharedMaterial = DefaultMaterial;
+                }
+            }
         }
 
         /// <summary>
-        /// Check if this object is colliding with a placed substation
+        /// Check if this object is colliding with another substation
         /// </summary>
-        /// <param name="collider"></param>
+        /// <param name="otherCollider"></param>
         /// <returns></returns>
-        private bool CheckIntersecting(Collider collider)
+        private SubstationComponent GetIntersecting(Collider otherCollider)
         {
-            if (Placed)
-            {
-                return false;
-            }
-
-            var collidingObject = collider.gameObject.GetComponent<SubstationComponent>();
-            var result = collidingObject != null && collidingObject.Placed;
-            if (result)
-            {
-                // Set the other object to also check for intersection -- required for the IntersectionMaterial shader to work
-                collidingObject.GetComponent<Renderer>().sharedMaterial = CheckIntersectionMaterial;
-            }
-            return result;
+            return otherCollider.gameObject.GetComponent<SubstationComponent>();
         }
     }
 }
