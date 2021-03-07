@@ -10,20 +10,19 @@ namespace WorkstationDesigner
     /// </summary>
     public class ManualXRControlManager : MonoBehaviour
     {
-        CameraSwitcher camSwitch;
         void Start()
         {
-            GameObject temp = GameObject.Find("Camera Handler");
-            camSwitch = temp.GetComponent<CameraSwitcher>();
+            //Initial load of the scene set to the editor camera
+            CameraSwitcher.activateEditorCamera();
         }
 
         void Update()
         {
             if(Keyboard.current[Key.P].isPressed)
-                camSwitch.activateXRRigCamera();
+                CameraSwitcher.activateXRRigCamera();
 
             if(Keyboard.current[Key.O].isPressed)
-                camSwitch.activateEditorCamera();
+                CameraSwitcher.activateEditorCamera();
         }
     }
 }

@@ -13,7 +13,6 @@ namespace WorkstationDesigner
         private GameObject canvas;
         private GameObject rController = null;
         private Camera xrCam = null;
-        private CameraSwitcher status;
 
         private ActionBasedController c;
 
@@ -26,14 +25,11 @@ namespace WorkstationDesigner
         {
             canvas = GameObject.Find("Canvas");
             canvas.SetActive(false);
-
-            GameObject temp = GameObject.Find("Camera Handler");
-            status = temp.GetComponent<CameraSwitcher>();
         }
 
         void Update()
         {
-            if(status.getXRRigStatus() == true)
+            if(CameraSwitcher.getXRRigStatus() == true)
             {   
                 // Assign controller if it is null
                 if(rController == null)
