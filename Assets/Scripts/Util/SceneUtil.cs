@@ -6,12 +6,24 @@ namespace WorkstationDesigner.Util
 {
     public static class SceneUtil
 	{
-		public static float DistanceToScreenPlane(Transform transform)
+		/// <summary>
+		/// Calculate the distance from a position to the screen plane
+		/// </summary>
+		/// <param name="position"></param>
+		/// <returns></returns>
+		public static float DistanceToScreenPlane(Vector3 position)
         {
-			var offsetFromCamera = (Camera.main.transform.position - transform.position);
+			var offsetFromCamera = (Camera.main.transform.position - position);
 			return Vector3.Project(offsetFromCamera, Camera.main.transform.forward).magnitude;
 		}
 
+		/// <summary>
+		/// Get the cursor positon in the world
+		/// </summary>
+		/// <param name="requireNotOnUI">Set this to true if the cursor cannot be on top of the UI</param>
+		/// <param name="roundCoordinates">Set this to true to round the results to integer values</param>
+		/// <param name="requireOnGrid">Set this to true to require the cursor to be over the Grid object</param>
+		/// <returns></returns>
 		public static Vector3? GetCursorInWorld(bool requireNotOnUI = true, bool roundCoordinates = false, bool requireOnGrid = false)
 		{
 			// Make sure the mouse isn't over the UI
