@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WorkstationDesigner.Elements
+namespace WorkstationDesigner.ConstructionElements
 {
     /// <summary>
     /// A wood plank.
     /// </summary>
-    public class WoodPlank : Element
+    public class WoodPlank : ConstructionElement
     {
         public int Length;
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using WorkstationDesigner.Elements;
+using WorkstationDesigner.ConstructionElements;
 using WorkstationDesigner.Jobs;
 
 namespace WorkstationDesigner
@@ -25,8 +25,8 @@ namespace WorkstationDesigner
 
         public delegate void InitiateProductionMethod(int quantityToProduce);
 
-        public delegate bool FilterFunction(Element element);
-        public delegate void AddElementsMethod(Element element, int quantityToAdd);
+        public delegate bool FilterFunction(ConstructionElement element);
+        public delegate void AddElementsMethod(ConstructionElement element, int quantityToAdd);
 
         /// <summary>
         /// Base class for the interfaces substations can register with the TransportationManager.
@@ -46,9 +46,9 @@ namespace WorkstationDesigner
         /// </summary>
         private class Producable : Interface
         {
-            public Element Element;
+            public ConstructionElement Element;
             public InitiateProductionMethod InitiateProduction;
-            public Producable(SimSubstation substation, Element element, InitiateProductionMethod initiateProduction) : base(substation)
+            public Producable(SimSubstation substation, ConstructionElement element, InitiateProductionMethod initiateProduction) : base(substation)
             {
                 this.Element = element;
                 this.InitiateProduction = initiateProduction;
@@ -60,11 +60,11 @@ namespace WorkstationDesigner
         /// </summary>
         private class Availability : Interface
         {
-            public Element Element;
+            public ConstructionElement Element;
             public GetQuantityMethod GetQuantity;
             public RemoveQuantityMethod RemoveQuantity;
             
-            public Availability(SimSubstation substation, Element element, GetQuantityMethod getQuantity, RemoveQuantityMethod removeQuantity) : base(substation)
+            public Availability(SimSubstation substation, ConstructionElement element, GetQuantityMethod getQuantity, RemoveQuantityMethod removeQuantity) : base(substation)
             {
                 this.Element = element;
                 this.GetQuantity = getQuantity;
@@ -100,7 +100,7 @@ namespace WorkstationDesigner
         /// <param name="substation">The substation that can produce the element</param>
         /// <param name="element">The element that can be produced</param>
         /// <param name="initiateProduction">A callback used to initiate production of the element</param>
-        public static void RegisterProducable(SimSubstation substation, Element element, InitiateProductionMethod initiateProduction)
+        public static void RegisterProducable(SimSubstation substation, ConstructionElement element, InitiateProductionMethod initiateProduction)
         {
             Producable producable = new Producable(substation, element, initiateProduction);
             Producables.Add(producable);
@@ -129,7 +129,7 @@ namespace WorkstationDesigner
         /// <param name="element">The element that can be produced</param>
         /// <param name="getQuantity">A callback to get the remaining quantity of the element</param>
         /// <param name="removeQuantity">A callback to remove a quantity of the element (upon pickup)</param>
-        public static void RegisterAvailability(SimSubstation substation, Element element, GetQuantityMethod getQuantity, RemoveQuantityMethod removeQuantity)
+        public static void RegisterAvailability(SimSubstation substation, ConstructionElement element, GetQuantityMethod getQuantity, RemoveQuantityMethod removeQuantity)
         {
             Availability availability = new Availability(substation, element, getQuantity, removeQuantity);
             Availabilities.Add(availability);

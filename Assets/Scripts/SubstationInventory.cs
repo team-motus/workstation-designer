@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using WorkstationDesigner.Elements;
+using WorkstationDesigner.ConstructionElements;
 
 namespace WorkstationDesigner
 {
@@ -17,14 +17,14 @@ namespace WorkstationDesigner
         private class Stock
         {
             public int Quantity;
-            public Element Element;
+            public ConstructionElement Element;
 
             /// <summary>
             /// Create a new Stock.
             /// </summary>
             /// <param name="quantity">The quantity of the element stored</param>
             /// <param name="element">The element stored</param>
-            public Stock(int quantity, Element element)
+            public Stock(int quantity, ConstructionElement element)
             {
                 this.Quantity = quantity;
                 this.Element = element;
@@ -38,7 +38,7 @@ namespace WorkstationDesigner
         /// </summary>
         /// <param name="element">The element to search for</param>
         /// <returns></returns>
-        private Stock FindStock(Element element)
+        private Stock FindStock(ConstructionElement element)
         {
             return StockList.Find(stock => stock.Element == element);
         }
@@ -48,7 +48,7 @@ namespace WorkstationDesigner
         /// </summary>
         /// <param name="element">The element to add</param>
         /// <param name="quantity">The quantity of elements to add</param>
-        public void AddElements(Element element, int quantity)
+        public void AddElements(ConstructionElement element, int quantity)
         {
             Stock stock = FindStock(element);
             if (stock == null)
@@ -65,7 +65,7 @@ namespace WorkstationDesigner
         /// </summary>
         /// <param name="element">The element to remove</param>
         /// <param name="quantity">The quantity of elements to remove</param>
-        public void RemoveElements(Element element, int quantity)
+        public void RemoveElements(ConstructionElement element, int quantity)
         {
             Stock stock = FindStock(element);
             if (stock == null)
@@ -85,7 +85,7 @@ namespace WorkstationDesigner
         /// </summary>
         /// <param name="element">The element to get the quantity of</param>
         /// <returns>The quantity stored of the element</returns>
-        public int GetQuantity(Element element)
+        public int GetQuantity(ConstructionElement element)
         {
             return FindStock(element).Quantity;
         }

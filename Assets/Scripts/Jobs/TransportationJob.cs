@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using WorkstationDesigner.Elements;
+using WorkstationDesigner.ConstructionElements;
 
 namespace WorkstationDesigner.Jobs
 {
@@ -12,7 +12,7 @@ namespace WorkstationDesigner.Jobs
     public class TransportationJob : Job
     {
         public Action PickupCallback, DeliveryCallback;
-        public Element Element;
+        public ConstructionElement Element;
         public int Quantity;
         public Vector3 StartPos, EndPos;
 
@@ -25,7 +25,7 @@ namespace WorkstationDesigner.Jobs
         /// <param name="quantity">The quantity of the element to be transported</param>
         /// <param name="startPos">The position the worker will stand at during pickup</param>
         /// <param name="endPos">The position the worker will stand at during delivery</param>
-        public TransportationJob(Action pickupCallback, Action deliveryCallback, Element element, int quantity, Vector3 startPos, Vector3 endPos) : base()
+        public TransportationJob(Action pickupCallback, Action deliveryCallback, ConstructionElement element, int quantity, Vector3 startPos, Vector3 endPos) : base()
         {
             this.PickupCallback = pickupCallback;
             this.DeliveryCallback = deliveryCallback;

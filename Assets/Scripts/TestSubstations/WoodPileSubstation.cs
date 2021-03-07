@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using WorkstationDesigner.Elements;
+using WorkstationDesigner.ConstructionElements;
 
 namespace WorkstationDesigner.TestSubstations
 {

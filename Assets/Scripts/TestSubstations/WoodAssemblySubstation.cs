@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using WorkstationDesigner.Elements;
+using WorkstationDesigner.ConstructionElements;
 using WorkstationDesigner.Jobs;
 
 namespace WorkstationDesigner.TestSubstations
@@ -20,7 +20,7 @@ namespace WorkstationDesigner.TestSubstations
         /// </summary>
         /// <param name="element">The element to test</param>
         /// <returns>Whether the element can be accepted</returns>
-        private bool WoodPlankFilter(Element element)
+        private bool WoodPlankFilter(ConstructionElement element)
         {
             return (element is WoodPlank) && (element as WoodPlank).Length == 5;
         }
@@ -30,7 +30,7 @@ namespace WorkstationDesigner.TestSubstations
         /// </summary>
         /// <param name="plank">The type of plank delivered</param>
         /// <param name="quantity">The number of planks delivered</param>
-        private void DeliverWoodPlanks(Element plank, int quantity)
+        private void DeliverWoodPlanks(ConstructionElement plank, int quantity)
         {
             Inventory.AddElements(plank, quantity);
             if (Inventory.GetQuantity(plank) == PLANKS_NEEDED)
