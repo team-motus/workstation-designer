@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Substations;
+using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner
 {
@@ -123,24 +124,7 @@ namespace WorkstationDesigner
 
 		public static Vector3? GetPlacementPoint()
 		{
-			Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-
-			// Make sure the mouse isn't over the UI
-			if (!MouseManager.GetMouseOver()) { return null; }
-
-			// Make sure the raycast hit something
-			if (!Physics.Raycast(ray, out RaycastHit hit)) { return null; }
-
-			// Make sure the raycast hit the floor
-			if (hit.collider.gameObject != GameObject.Find("Grid")) { return null; }
-
-			Vector3 placePoint = hit.point;
-
-			// Snap to grid
-			placePoint.x = Mathf.Round(placePoint.x);
-			placePoint.z = Mathf.Round(placePoint.z);
-
-			return placePoint;
+			return SceneUtil.GetCursorInWorld(true, true);
 		}
 	}
 }

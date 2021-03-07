@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
+using WorkstationDesigner.Tools;
 using WorkstationDesigner.Util;
 using WorkstationDesigner.Workstation;
 
@@ -40,6 +41,9 @@ namespace WorkstationDesigner.UI
                 { "exit-button", () => AppUtil.Exit() } 
             });
             SetupToolbarButton("edit-button");
+            SetupToolbarButton("tools-button", new Dictionary<string, Action>{
+                { "tape-measure-button", () => TapeMeasure.UsingTapeMeasure = !TapeMeasure.UsingTapeMeasure },
+            });
             SetupToolbarButton("vr-button");
             SetupToolbarButton("view-button");
             SetupToolbarButton("help-button");
