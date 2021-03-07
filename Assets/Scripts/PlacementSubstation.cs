@@ -14,9 +14,17 @@ namespace WorkstationDesigner
         public SubstationBase Substation { get; set; }
         public bool IsIntersecting { get; private set; }
 
+        private static Material IntersectionMaterial = null;
+
         public void Awake()
         {
             this.gameObject.layer = 2; // Ignore raycast
+
+            if (IntersectionMaterial ==null)
+            {
+                IntersectionMaterial = Resources.Load<Material>("Materials/IntersectionMaterial");
+            }
+            this.GetComponent<Renderer>().sharedMaterial = IntersectionMaterial;
         }
 
         // Start is called before the first frame update
@@ -36,7 +44,7 @@ namespace WorkstationDesigner
                 this.transform.position = placePoint;
 
 
-                this.GetComponent<Renderer>().enabled = !this.IsIntersecting;
+                this.GetComponent<Renderer>().enabled = true;
             }
             else
             {
@@ -51,7 +59,6 @@ namespace WorkstationDesigner
             {
                 this.transform.Rotate(Vector3.up, -ROTATE_SCALAR * Time.deltaTime, Space.World);
             }
-
         }
 
         private void OnTriggerEnter(Collider collider)

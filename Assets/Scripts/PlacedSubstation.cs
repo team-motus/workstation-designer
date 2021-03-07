@@ -17,11 +17,18 @@ namespace WorkstationDesigner
         public SubstationBase Substation { get; set; }
         private const string RIGHT_CLICK_MENU_KEY = "PlacedSubstation";
 
+        private static Material IntersectionMaterial = null;
+
         public void Awake()
         {
             WorkstationManager.MarkUnsavedChanges();
 
             this.gameObject.layer = 0; // Default
+            if (IntersectionMaterial == null)
+            {
+                IntersectionMaterial = Resources.Load<Material>("Materials/IntersectionMaterial");
+            }
+            this.GetComponent<Renderer>().sharedMaterial = IntersectionMaterial;
 
             // Set up right click menu
             if (!RightClickMenuManager.ContainsKey(RIGHT_CLICK_MENU_KEY))
