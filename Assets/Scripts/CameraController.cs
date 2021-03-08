@@ -30,7 +30,7 @@ namespace WorkstationDesigner.Scripts
         /// </summary>
         public void Update()
         {
-            if (movementEnabled)
+            if (movementEnabled && CameraSwitcher.getEditorCameraStatus())
             {
                 if (rotationEnabled && UpdateCursorMotion())
                 {
@@ -115,7 +115,7 @@ namespace WorkstationDesigner.Scripts
         /// <returns>True if cursor was moved</returns>
         private bool UpdateCursorMotion()
         {
-            if (MouseManager.GetMouseButton(0) && Camera.main.pixelRect.Contains(Mouse.current.position.ReadValue()))
+            if (MouseManager.GetMouseButton(0) && Camera.main != null && Camera.main.pixelRect.Contains(Mouse.current.position.ReadValue()))
             {
                 cursorMotion = -Mouse.current.delta.ReadValue() * MOUSE_SENSITIVITY_SCALAR;
                 // cursorMotion.y *= -1;
