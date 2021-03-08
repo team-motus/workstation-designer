@@ -30,8 +30,8 @@ namespace WorkstationDesigner.Workstation
         /// <returns></returns>
         public static SubstationData FromGameObject(GameObject substationGameObject)
         {
-            var placedSubstation = substationGameObject.GetComponent<PlacedSubstation>();
-            if (placedSubstation != null)
+            var placedSubstation = substationGameObject.GetComponent<SubstationComponent>();
+            if (placedSubstation != null && placedSubstation.Placed)
             {
                 return new SubstationData
                 {
@@ -39,7 +39,7 @@ namespace WorkstationDesigner.Workstation
                     Substation = placedSubstation.Substation
                 };
             }
-            throw new Exception("GameObject does not have PlacedSubstation component");
+            throw new Exception("GameObject does not have placed substation component");
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace WorkstationDesigner.Workstation
 
             this.Transform.SetTransform(substationGameObject.transform);
             
-            substationGameObject.AddComponent<PlacedSubstation>().Substation = this.Substation;
+            substationGameObject.AddComponent<SubstationComponent>().Substation = this.Substation;
             
             return substationGameObject;
         }
