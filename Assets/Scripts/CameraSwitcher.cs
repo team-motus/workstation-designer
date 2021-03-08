@@ -10,7 +10,7 @@ namespace WorkstationDesigner
     public static class CameraSwitcher
     {
         private static GameObject XRRig = GameObject.FindWithTag("XRRig");
-        private static GameObject EditorCamera = GameObject.FindWithTag("MainCamera");
+        private static GameObject EditorCamera = GameObject.Find("Editor Camera");
 
         private static bool XRRigActive = false;
         private static bool EditorCameraActive = true;
