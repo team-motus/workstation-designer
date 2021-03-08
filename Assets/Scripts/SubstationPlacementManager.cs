@@ -170,9 +170,14 @@ namespace WorkstationDesigner
 			var newObject = substation.Instantiate();
 			newObject.GetComponent<Renderer>().enabled = false;
 			newObject.transform.parent = WorkstationParent.transform;
-			newObject.AddComponent<SubstationComponent>().Substation = substation;
+			var substationComponent = newObject.AddComponent<SubstationComponent>();
+			substationComponent.Substation = substation;
 
-			PickUpSubstation(new HeldSubstation(newObject, null, placeCallback));
+			PickUpSubstation(new HeldSubstation(newObject, null, () =>
+			{
+				substationComponent.SetSelected(true);
+				placeCallback();
+			}));
 		}
 
 		public static Vector3? GetPlacementPoint()

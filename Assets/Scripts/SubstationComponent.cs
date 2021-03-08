@@ -61,6 +61,33 @@ namespace WorkstationDesigner
             return IsIntersecting ? IntersectionMaterial : DefaultMaterial;
         }
 
+        /// <summary>
+        /// Set this substation as selected or not
+        /// 
+        /// This changes the highlighting as well
+        /// </summary>
+        /// <param name="selected"></param>
+        public void SetSelected(bool selected)
+        {
+            if (selected != Selected)
+            {
+                if (selected)
+                {
+                    foreach (var i in SubstationPlacementManager.WorkstationParent.GetComponentsInChildren<SubstationComponent>())
+                    {
+                        i.SetSelected(false);
+                    }
+                    this.GetComponent<Renderer>().sharedMaterial = HighlightedMaterial;
+                }
+                else
+                {
+                    this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
+                }
+
+                Selected = selected;
+            }
+        }
+
         public void Awake()
         {
             WorkstationManager.MarkUnsavedChanges();
@@ -135,18 +162,15 @@ namespace WorkstationDesigner
                 {
                     if (hit.collider.gameObject == this.gameObject)
                     {
-                        Selected = true;
+                        SetSelected(true);
 
                         // Set up escape button to deselect this substation
                         Action escAction = () =>
                         {
                             RightClickMenuManager.Close();
-                            Selected = false;
-                            this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
+                            SetSelected(false);
                         };
                         EscManager.PushEscAction(escAction);
-
-                        this.GetComponent<Renderer>().sharedMaterial = HighlightedMaterial;
 
                         // Open right click menu
                         RightClickMenuManager.Open(RIGHT_CLICK_MENU_KEY, Mouse.current.position.ReadValue(), this.gameObject, () =>
