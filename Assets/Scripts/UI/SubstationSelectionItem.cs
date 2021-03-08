@@ -4,22 +4,22 @@ using WorkstationDesigner.Substations;
 
 namespace WorkstationDesigner.UI
 {
-    public class SubstationSelector : VisualElement
+    public class SubstationSelectionItem : VisualElement
     {
         private SubstationBase substation;
 
-        public new class UxmlFactory : UxmlFactory<SubstationSelector, UxmlTraits> { }
+        public new class UxmlFactory : UxmlFactory<SubstationSelectionItem, UxmlTraits> { }
 
-        public SubstationSelector()
+        public SubstationSelectionItem()
         {
-            var selector = Resources.Load<VisualTreeAsset>("UI/SubstationSelector");
+            var selector = Resources.Load<VisualTreeAsset>("UI/SubstationSelectionItem");
             selector.CloneTree(this);
         }
 
         public void SetSubstation(SubstationBase substation)
         {
             this.substation = substation;
-            (this.Q("SubstationName") as Label).text = substation.Name;
+            (this.Q("substation-name") as Label).text = substation.Name;
         }
 
         public string GetName()

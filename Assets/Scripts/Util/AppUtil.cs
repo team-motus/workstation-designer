@@ -11,7 +11,7 @@ namespace WorkstationDesigner.Util
 
         public delegate void OnSceneStartDelegate();
 
-        private static OnSceneStartDelegate? OnSceneStartCallback = null;
+        private static OnSceneStartDelegate OnSceneStartCallback = null;
 
         private static readonly Func<bool> wantsToQuitCallback = () =>
         {
