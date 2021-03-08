@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using WorkstationDesigner.InputUtil;
 
 namespace WorkstationDesigner.UI
 {
@@ -15,14 +16,42 @@ namespace WorkstationDesigner.UI
         private static VisualElement screenOverlay = null;
 
         /// <summary>
+        /// Represents a dialog
+        /// </summary>
+        private class Dialog
+        {
+            /// <summary>
+            /// Context associated with what opened this dialog
+            /// </summary>
+            public object Context;
+
+            /// <summary>
+            /// The actual dialog VisualElement
+            /// </summary>
+            public VisualElement Element { get; private set; }
+
+            /// <summary>
+            /// What to do when the Escape button is pressed while the dialog is open
+            /// </summary>
+            public Action EscAction { get; private set; }
+
+            public Dialog(object context, VisualElement visualElement, Action escAction)
+            {
+                this.Context = context;
+                this.Element = visualElement;
+                this.EscAction = escAction;
+            }
+        }
+
+        /// <summary>
         /// The current open dialog
         /// </summary>
-        private static VisualElement activeDialog = null;
+        private static Dialog activeDialog = null;
 
         /// <summary>
         /// Dictionary of all cached dialogs
         /// </summary>
-        private static Dictionary<string, (object, VisualElement)> dialogs = new Dictionary<string, (object, VisualElement)>();
+        private static Dictionary<string, Dialog> dialogs = new Dictionary<string, Dialog>();
 
         // These values must match those in the UXML/USS files
         private const float DIALOG_WIDTH = 400; // px
@@ -69,7 +98,7 @@ namespace WorkstationDesigner.UI
         /// <param name="key"></param>
         /// <param name="dialogBody"></param>
         /// <param name="footerButtons"></param>
-        public static void Create(string key, VisualElement dialogBody, List<(string, Action<object>)> footerButtons)
+        public static void Create(string key, VisualElement dialogBody, Action<object> closeButtonCallback, List<(string, Action<object>)> footerButtons)
         {
             if (ContainsKey(key))
             {
@@ -82,9 +111,10 @@ namespace WorkstationDesigner.UI
             var closeButton = element.Q("dialog-close-button");
             closeButton.RegisterCallback<MouseDownEvent>(e =>
             {
-                if(e.button == 0)
+                if (e.button == 0)
                 {
                     Close();
+                    closeButtonCallback(dialogs[key].Context);
                 }
             });
 
@@ -111,12 +141,16 @@ namespace WorkstationDesigner.UI
                     if (e.button == 0)
                     {
                         Close();
-                        callback(dialogs[key].Item1);
+                        callback(dialogs[key].Context);
                     }
                 });
                 dialogFooter.Add(footerButtonContainer);
             }
-            dialogs.Add(key, (null, element));
+            dialogs.Add(key, new Dialog(null, element, () =>
+            {
+                Close();
+                closeButtonCallback(dialogs[key].Context);
+            }));
         }
 
         /// <summary>
@@ -125,10 +159,12 @@ namespace WorkstationDesigner.UI
         private static void Close()
         {
 
-            if (activeDialog != null)
+            if (activeDialog?.Element != null)
             {
                 screenOverlay.RemoveFromHierarchy();
-                activeDialog.RemoveFromHierarchy();
+                activeDialog?.Element.RemoveFromHierarchy();
+                EscManager.PopEscAction(activeDialog?.EscAction);
+                activeDialog.Context = null;
                 activeDialog = null;
             }
         }
@@ -147,15 +183,17 @@ namespace WorkstationDesigner.UI
 
             Close();
 
-            dialogs[key] = (context, dialogs[key].Item2); // Update context
-            activeDialog = dialogs[key].Item2;
+            activeDialog = dialogs[key];
+            activeDialog.Context = context; // Update context
+
+            EscManager.PushEscAction(activeDialog.EscAction);
 
             if (customizeDialog != null)
             {
-                customizeDialog(activeDialog);
+                customizeDialog(activeDialog.Element);
             }
 
-            var dialogWindow = activeDialog.Q("dialog-window");
+            var dialogWindow = activeDialog.Element.Q("dialog-window");
 
             // Center dialog in screen
             dialogWindow.style.top = (Screen.height / 2 - DIALOG_HEIGHT / 2) * ScreenManager.dpiScaler;
@@ -172,7 +210,7 @@ namespace WorkstationDesigner.UI
                 screenOverlay.style.bottom = 0;
             }
             ScreenManager.OverallContainer.Add(screenOverlay);
-            ScreenManager.OverallContainer.Add(activeDialog);
+            ScreenManager.OverallContainer.Add(activeDialog.Element);
         }
     }
 }

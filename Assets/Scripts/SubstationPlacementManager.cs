@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Substations;
 using WorkstationDesigner.Util;
+using WorkstationDesigner.Workstation;
 
 namespace WorkstationDesigner
 {
@@ -13,13 +15,62 @@ namespace WorkstationDesigner
 	{
 		public static GameObject WorkstationParent { get; private set; } = null;
 
-		private GameObject heldSubstation = null;
+		/// <summary>
+		/// Represents the currently held substation and where it was picked up from
+		/// </summary>
+		private class HeldSubstation
+		{
+			/// <summary>
+			/// The currently held substation GameObject
+			/// </summary>
+			public GameObject SubstationGameObject { get; private set; }
+
+			/// <summary>
+			/// The position information for where the held substation was picked up from
+			/// </summary>
+			private readonly TransformData initialTransformState;
+
+			/// <summary>
+			/// Cancel the movement and place the held substation
+			/// </summary>
+			public Action EscapeAction { get; private set; }
+
+			/// <summary>
+			/// A substation object to pick up and its initial transform state
+			/// </summary>
+			/// <param name="substationGameObject">The substation GameObject</param>
+			/// <param name="initialTransformState">Either the substation's transform if it was picked up or null if was just created</param>
+			public HeldSubstation(GameObject substationGameObject, Transform initialTransformState)
+			{
+				this.SubstationGameObject = substationGameObject;
+				this.initialTransformState = initialTransformState != null ? TransformData.FromTransform(initialTransformState) : null;
+
+				EscapeAction = () =>
+				{
+					// Either return to its original position or delete it if it was just created
+					if (this.initialTransformState != null)
+					{
+						this.initialTransformState.SetTransform(this.SubstationGameObject.transform);
+						Instance.PlaceSubstation();
+					}
+					else
+					{
+						Instance.PlaceSubstation();
+						Destroy(this.SubstationGameObject);
+					}
+				};
+			}
+
+			public HeldSubstation() : this(null, null) { }
+		}
+
+		private HeldSubstation heldSubstation = null;
 		public static SubstationPlacementManager Instance = null;
 
-        public void Awake()
-        {
-			if(WorkstationParent == null)
-            {
+		public void Awake()
+		{
+			if (WorkstationParent == null)
+			{
 				WorkstationParent = GameObject.Find("WorkstationParent");
 				if (WorkstationParent == null)
 				{
@@ -37,19 +88,19 @@ namespace WorkstationDesigner
 			}
 		}
 
-        public void OnDestroy()
-        {
-            if(Instance == this)
-            {
+		public void OnDestroy()
+		{
+			if (Instance == this)
+			{
 				Instance = null;
 			}
-        }
+		}
 
 		public void Update()
 		{
 			// Check if we should place the held substation
 			if (this.heldSubstation != null &&
-				!this.heldSubstation.GetComponent<SubstationComponent>().IsIntersecting &&
+				!this.heldSubstation.SubstationGameObject.GetComponent<SubstationComponent>().IsIntersecting &&
 				GetPlacementPoint().HasValue &&
 				Mouse.current.leftButton.wasPressedThisFrame)
 			{
@@ -58,10 +109,11 @@ namespace WorkstationDesigner
 		}
 
 		public void PlaceSubstation()
-        {
+		{
 			if (this.heldSubstation != null)
 			{
-				this.heldSubstation.GetComponent<SubstationComponent>().SetPlaced(true);
+				this.heldSubstation.SubstationGameObject.GetComponent<SubstationComponent>().SetPlaced(true);
+				EscManager.PopEscAction(this.heldSubstation.EscapeAction);
 				this.heldSubstation = null;
 			}
 			else
@@ -71,18 +123,25 @@ namespace WorkstationDesigner
 		}
 
 		public void PickUpSubstation(GameObject gameObject)
-        {
+		{
+			PickUpSubstation(gameObject, gameObject.transform);
+		}
+
+		private void PickUpSubstation(GameObject gameObject, Transform initialTransformState)
+		{
 			if (this.heldSubstation == null)
 			{
-				this.heldSubstation = gameObject;
+				this.heldSubstation = new HeldSubstation(gameObject, initialTransformState);
+				EscManager.PushEscAction(this.heldSubstation.EscapeAction);
 
-				SubstationComponent objectComponent = this.heldSubstation.GetComponent<SubstationComponent>();
+				SubstationComponent objectComponent = this.heldSubstation.SubstationGameObject.GetComponent<SubstationComponent>();
 
 				objectComponent.SetPlaced(false);
-			} else
-            {
+			}
+			else
+			{
 				throw new System.Exception("Cannot pick up a second substation");
-            }
+			}
 		}
 
 		public void CreateSubstation(SubstationBase substation)
@@ -90,7 +149,7 @@ namespace WorkstationDesigner
 			// Destroy currently held substation
 			if (this.heldSubstation != null)
 			{
-				Destroy(this.heldSubstation);
+				Destroy(this.heldSubstation.SubstationGameObject);
 				this.heldSubstation = null;
 			}
 
@@ -100,7 +159,7 @@ namespace WorkstationDesigner
 			newObject.transform.parent = WorkstationParent.transform;
 			newObject.AddComponent<SubstationComponent>().Substation = substation;
 
-			PickUpSubstation(newObject);
+			PickUpSubstation(newObject, null);
 		}
 
 		public static Vector3? GetPlacementPoint()
