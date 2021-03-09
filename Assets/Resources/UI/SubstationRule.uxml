@@ -3,7 +3,7 @@
         <ui:VisualElement style="flex-direction: row; flex-grow: 1; flex-shrink: 0;">
             <ui:VisualElement name="substation-rule-details" style="flex-grow: 1;">
                 <ui:VisualElement name="substation-rule-header" style="padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px;">
-                    <ui:Label text="Type" display-tooltip-when-elided="true" name="header-label" style="color: rgb(255, 255, 255); font-size: 16px;" />
+                    <ui:Label text="Type" display-tooltip-when-elided="true" name="header-label" style="color: rgb(255, 255, 255); font-size: 14px;" />
                 </ui:VisualElement>
                 <ui:VisualElement name="substation-inputs" />
                 <ui:VisualElement name="io-divider" style="border-left-color: rgb(63, 63, 70); border-right-color: rgb(63, 63, 70); border-top-color: rgb(63, 63, 70); border-bottom-color: rgb(63, 63, 70); border-bottom-width: 2px;" />

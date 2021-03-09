@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using WorkstationDesigner.Substations;
@@ -7,6 +7,9 @@ using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.UI
 {
+    /// <summary>
+    /// Substation rules editor sidebar
+    /// </summary>
     public class SubstationRulesEditor : SidebarManager.ISidebar
     {
         private static VisualTreeAsset substationEditorAsset = null;
@@ -20,9 +23,19 @@ namespace WorkstationDesigner.UI
         private VisualElement activeRulesListElement;
         private VisualElement allRulesListElement;
 
+        /// <summary>
+        /// List of all possible rules
+        /// </summary>
         private List<Rule> allRules;
+
+        /// <summary>
+        /// List of rules active on the substation
+        /// </summary>
         private List<Rule> activeRules;
 
+        /// <summary>
+        /// Represents a substation rule - TODO: this is a placeholder for the backend implementation
+        /// </summary>
         public class Rule
         {
             public string Type;
@@ -41,6 +54,7 @@ namespace WorkstationDesigner.UI
 
         public SubstationRulesEditor(SubstationBase substation)
         {
+            // Set up the various assets involved
             if (substationEditorAsset == null)
             {
                 substationEditorAsset = Resources.Load<VisualTreeAsset>("UI/SubstationEditor");
@@ -78,11 +92,12 @@ namespace WorkstationDesigner.UI
 
             substationEditor = substationEditorAsset.CloneTree().Q("substation-editor");
 
-            var scrollView = substationEditor.Q<ScrollView>("scroll-view");
+            // Add lists to the scroll view
+            var editorScrollView = substationEditor.Q<ScrollView>("scroll-view");
+            editorScrollView.Q("active-rule-list").Add(activeRulesListElement);
+            editorScrollView.Q("all-rule-list").Add(allRulesListElement);
 
-            scrollView.Q("active-rule-list").Add(activeRulesListElement);
-            scrollView.Q("all-rule-list").Add(allRulesListElement);
-
+            // Setup the save button
             var saveButton = substationEditor.Q("save-button");
             saveButton.RegisterCallback<MouseDownEvent>(e =>
             {
@@ -94,12 +109,20 @@ namespace WorkstationDesigner.UI
             });
         }
 
+        /// <summary>
+        /// Set up a VisualElement that displays a list of substation rules
+        /// </summary>
+        /// <param name="rules"></param>
+        /// <param name="active">True if the list is the active list</param>
+        /// <returns></returns>
         private static VisualElement MakeRuleListElement(List<Rule> rules, bool active)
         {
+            // Create an element to hold the list
             var list = new VisualElement();
 
             foreach (var rule in rules)
             {
+                // Create a new substation rule element
                 var ruleElement = substationRuleAsset.CloneTree().Q("substation-rule");
 
                 // Set header to rule type
@@ -112,20 +135,28 @@ namespace WorkstationDesigner.UI
                 {
                     if (e.button == 0)
                     {
-                        Debug.Log("TODO Add / Remove");
+                        if (active)
+                        {
+                            Debug.Log("TODO Remove");
+                        }
+                        else
+                        {
+                            Debug.Log("TODO Add");
+                        }
                     }
                 });
 
+                // Set the rule button icon
                 var ruleButtonIcon = ruleButton.Q("substation-rule-button-icon");
                 ruleButtonIcon.style.backgroundImage = active ? removeIcon.Value : addIcon.Value;
 
-                // Set up inputs and outputs to rule
+                // Set up the list of inputs of the rule
                 var inputContainer = ruleElement.Q("substation-inputs");
-                var outputContainer = ruleElement.Q("substation-outputs");
 
+                // If there are no rules, then display an element saying that
                 if (rule.InputCount == 0)
                 {
-                    var ruleIOElement = CreateRuleIOElement("No Inputs");
+                    var ruleIOElement = CreateRuleIOElement("No Inputs", null);
 
                     var editButton = ruleIOElement.Q("substation-rule-io-edit-button");
                     editButton.RemoveFromHierarchy();
@@ -135,16 +166,14 @@ namespace WorkstationDesigner.UI
 
                 for (var i = 0; i < rule.InputCount; i++)
                 {
-                    var ruleIOElement = CreateRuleIOElement($"Input {i + 1}");
-
-                    inputContainer.Add(ruleIOElement);
+                    inputContainer.Add(CreateRuleIOElement($"Input {i + 1}", () => Debug.Log("TODO Edit")));
                 }
 
+                // Set up the list of outputs of the rule
+                var outputContainer = ruleElement.Q("substation-outputs");
                 for (var i = 0; i < rule.OutputCount; i++)
                 {
-                    var ruleIOElement = CreateRuleIOElement($"Input {i + 1}");
-
-                    outputContainer.Add(ruleIOElement);
+                    outputContainer.Add(CreateRuleIOElement($"Output {i + 1}", () => Debug.Log("TODO Edit")));
                 }
 
                 // Hide all edit buttons if not active
@@ -159,7 +188,12 @@ namespace WorkstationDesigner.UI
             return list;
         }
 
-        private static VisualElement CreateRuleIOElement(string labelText)
+        /// <summary>
+        /// Create a new rule input/output element given its label
+        /// </summary>
+        /// <param name="labelText"></param>
+        /// <returns></returns>
+        private static VisualElement CreateRuleIOElement(string labelText, Action editCallback)
         {
 
             var ruleIOElement = substationRuleIOAsset.CloneTree().Q("substation-rule-io");
@@ -170,9 +204,9 @@ namespace WorkstationDesigner.UI
             var editButton = ruleIOElement.Q("substation-rule-io-edit-button");
             editButton.RegisterCallback<MouseDownEvent>(e =>
             {
-                if (e.button == 0)
+                if (e.button == 0 && editCallback != null)
                 {
-                    Debug.Log("TODO Edit");
+                    editCallback();
                 }
             });
 

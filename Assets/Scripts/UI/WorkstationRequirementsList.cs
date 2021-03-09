@@ -6,6 +6,9 @@ using UnityEngine.UIElements;
 
 namespace WorkstationDesigner.UI
 {
+    /// <summary>
+    /// Workstation requirements list sidebar
+    /// </summary>
     public class WorkstationRequirementsList : SidebarManager.ISidebar
     {
         private static VisualTreeAsset requirementsItemAsset = null;
@@ -15,6 +18,9 @@ namespace WorkstationDesigner.UI
 
         private List<Requirement> requirements;
 
+        /// <summary>
+        /// Represents a workstation requirement -  TODO: this is a placeholder for the backend implementation
+        /// </summary>
         public class Requirement
         {
             public string Name { get; private set; }
@@ -30,6 +36,7 @@ namespace WorkstationDesigner.UI
 
         public WorkstationRequirementsList()
         {
+            // Load assets
             if (requirementsItemAsset == null)
             {
                 requirementsItemAsset = Resources.Load<VisualTreeAsset>("UI/WorkstationRequirementsItem");
@@ -63,7 +70,7 @@ namespace WorkstationDesigner.UI
 
         private void OnRequirementSelected(Requirement requirement)
         {
-            Debug.Log($"Requirement Selected {requirement.Name}");
+            Debug.Log($"TODO Requirement Selected {requirement.Name}");
             SidebarManager.SetSidebar(new SubstationSelectionList(requirement));
         }
 

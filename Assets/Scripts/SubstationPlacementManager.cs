@@ -115,6 +115,9 @@ namespace WorkstationDesigner
 			}
 		}
 
+		/// <summary>
+		/// Place the currently held substation
+		/// </summary>
 		public void PlaceSubstation()
 		{
 			if (this.heldSubstation != null)
@@ -135,11 +138,19 @@ namespace WorkstationDesigner
 			}
 		}
 
+		/// <summary>
+		/// Pick up a substation GameObject
+		/// </summary>
+		/// <param name="gameObject"></param>
 		public void PickUpSubstation(GameObject gameObject)
 		{
 			PickUpSubstation(new HeldSubstation(gameObject, gameObject.transform, null));
 		}
 
+		/// <summary>
+		/// Pick up a substation represented as a HeldSubstation
+		/// </summary>
+		/// <param name="newHeldSubstation"></param>
 		private void PickUpSubstation(HeldSubstation newHeldSubstation)
 		{
 			if (this.heldSubstation == null)
@@ -157,6 +168,11 @@ namespace WorkstationDesigner
 			}
 		}
 
+		/// <summary>
+		/// Create a new substation to place in the scene
+		/// </summary>
+		/// <param name="substation"></param>
+		/// <param name="placeCallback"></param>
 		public void CreateSubstation(SubstationBase substation, Action placeCallback)
 		{
 			// Destroy currently held substation
@@ -180,6 +196,10 @@ namespace WorkstationDesigner
 			}));
 		}
 
+		/// <summary>
+		/// Get possible point at which a new substation will be placed
+		/// </summary>
+		/// <returns></returns>
 		public static Vector3? GetPlacementPoint()
 		{
 			return SceneUtil.GetCursorInWorld(true, true, true);
