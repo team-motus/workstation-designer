@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.UI
 {
@@ -16,8 +17,8 @@ namespace WorkstationDesigner.UI
         private Label SidebarHeader;
         private VisualElement SidebarBody;
 
-        private static Background openIcon = Background.FromTexture2D(AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/UI/images/sidebar-open-icon.png"));
-        private static Background hiddenIcon = Background.FromTexture2D(AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/UI/images/sidebar-hidden-icon.png"));
+        private static Background? openIcon = null;
+        private static Background? hiddenIcon = null;
 
         private ISidebar activeSidebar = null;
 
@@ -25,6 +26,15 @@ namespace WorkstationDesigner.UI
 
         public SidebarManager()
         {
+            if (!openIcon.HasValue)
+            {
+                openIcon = Background.FromTexture2D(Resources.Load<Texture2D>("UI/images/sidebar-open-icon"));
+            }
+            if (!hiddenIcon.HasValue)
+            {
+                hiddenIcon = Background.FromTexture2D(Resources.Load<Texture2D>("UI/images/sidebar-hidden-icon"));
+            }
+
             RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
 
@@ -40,7 +50,7 @@ namespace WorkstationDesigner.UI
             sidebarCollapseButton.RegisterCallback<MouseDownEvent>(e =>
             {
                 leftSide.style.display = (leftSide.style.display != DisplayStyle.None) ? DisplayStyle.None : DisplayStyle.Flex;
-                sidebarCollapseButton.style.backgroundImage = (leftSide.style.display != DisplayStyle.None) ? openIcon : hiddenIcon;
+                sidebarCollapseButton.style.backgroundImage = (leftSide.style.display != DisplayStyle.None) ? openIcon.Value : hiddenIcon.Value;
             });
 
             UnregisterCallback<GeometryChangedEvent>(OnGeometryChange);

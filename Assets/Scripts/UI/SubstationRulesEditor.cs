@@ -13,8 +13,8 @@ namespace WorkstationDesigner.UI
         private static VisualTreeAsset substationRuleAsset = null;
         private static VisualTreeAsset substationRuleIOAsset = null;
 
-        private static Background addIcon = Background.FromTexture2D(AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/UI/images/add-icon-white.png"));
-        private static Background removeIcon = Background.FromTexture2D(AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/UI/images/close-icon-white.png"));
+        private static Background? addIcon = null;
+        private static Background? removeIcon = null;
 
         private VisualElement substationEditor;
         private VisualElement activeRulesListElement;
@@ -52,6 +52,15 @@ namespace WorkstationDesigner.UI
             if (substationRuleIOAsset == null)
             {
                 substationRuleIOAsset = Resources.Load<VisualTreeAsset>("UI/substationRuleIO");
+            }
+
+            if (!addIcon.HasValue)
+            {
+                addIcon = Background.FromTexture2D(Resources.Load<Texture2D>("UI/images/add-icon-white"));
+            }
+            if (!removeIcon.HasValue)
+            {
+                removeIcon = Background.FromTexture2D(Resources.Load<Texture2D>("UI/images/close-icon-white"));
             }
 
             allRules = new List<Rule>();
@@ -106,8 +115,9 @@ namespace WorkstationDesigner.UI
                         Debug.Log("TODO Add / Remove");
                     }
                 });
+
                 var ruleButtonIcon = ruleButton.Q("substation-rule-button-icon");
-                ruleButtonIcon.style.backgroundImage = active ? removeIcon : addIcon;
+                ruleButtonIcon.style.backgroundImage = active ? removeIcon.Value : addIcon.Value;
 
                 // Set up inputs and outputs to rule
                 var inputContainer = ruleElement.Q("substation-inputs");
