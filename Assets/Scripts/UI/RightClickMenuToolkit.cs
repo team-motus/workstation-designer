@@ -9,7 +9,7 @@ namespace WorkstationDesigner.UI
     /// <summary>
     /// Manages right click menus, their creation, opening, and callbacks
     /// </summary>
-    public class RightClickMenuManager: MonoBehaviour
+    public class RightClickMenuToolkit: MonoBehaviour
     {
         // Assets
         private static VisualTreeAsset rightClickMenuAsset = null;

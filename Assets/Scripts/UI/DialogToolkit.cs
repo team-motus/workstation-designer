@@ -6,7 +6,7 @@ using WorkstationDesigner.InputUtil;
 
 namespace WorkstationDesigner.UI
 {
-    public class DialogManager : MonoBehaviour
+    public class DialogToolkit : MonoBehaviour
     {
         // Assets
         private static VisualTreeAsset dialogAsset = null;
