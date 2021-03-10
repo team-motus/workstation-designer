@@ -36,14 +36,21 @@ namespace WorkstationDesigner
 			public Action EscapeAction { get; private set; }
 
 			/// <summary>
+			/// A callback to perform when the held substation is placed
+			/// </summary>
+			public Action PlaceCallback { get; private set; }
+
+			/// <summary>
 			/// A substation object to pick up and its initial transform state
 			/// </summary>
 			/// <param name="substationGameObject">The substation GameObject</param>
 			/// <param name="initialTransformState">Either the substation's transform if it was picked up or null if was just created</param>
-			public HeldSubstation(GameObject substationGameObject, Transform initialTransformState)
+			/// <param name="placeCallback">A callback to perform when the held substation is placed</param>
+			public HeldSubstation(GameObject substationGameObject, Transform initialTransformState, Action placeCallback)
 			{
 				this.SubstationGameObject = substationGameObject;
 				this.initialTransformState = initialTransformState != null ? TransformData.FromTransform(initialTransformState) : null;
+				this.PlaceCallback = placeCallback;
 
 				EscapeAction = () =>
 				{
@@ -61,7 +68,7 @@ namespace WorkstationDesigner
 				};
 			}
 
-			public HeldSubstation() : this(null, null) { }
+			public HeldSubstation() : this(null, null, null) { }
 		}
 
 		private HeldSubstation heldSubstation = null;
@@ -108,12 +115,21 @@ namespace WorkstationDesigner
 			}
 		}
 
+		/// <summary>
+		/// Place the currently held substation
+		/// </summary>
 		public void PlaceSubstation()
 		{
 			if (this.heldSubstation != null)
 			{
 				this.heldSubstation.SubstationGameObject.GetComponent<SubstationComponent>().SetPlaced(true);
 				EscManager.PopEscAction(this.heldSubstation.EscapeAction);
+
+				if (this.heldSubstation.PlaceCallback != null)
+				{
+					this.heldSubstation.PlaceCallback();
+				}
+
 				this.heldSubstation = null;
 			}
 			else
@@ -122,16 +138,24 @@ namespace WorkstationDesigner
 			}
 		}
 
+		/// <summary>
+		/// Pick up a substation GameObject
+		/// </summary>
+		/// <param name="gameObject"></param>
 		public void PickUpSubstation(GameObject gameObject)
 		{
-			PickUpSubstation(gameObject, gameObject.transform);
+			PickUpSubstation(new HeldSubstation(gameObject, gameObject.transform, null));
 		}
 
-		private void PickUpSubstation(GameObject gameObject, Transform initialTransformState)
+		/// <summary>
+		/// Pick up a substation represented as a HeldSubstation
+		/// </summary>
+		/// <param name="newHeldSubstation"></param>
+		private void PickUpSubstation(HeldSubstation newHeldSubstation)
 		{
 			if (this.heldSubstation == null)
 			{
-				this.heldSubstation = new HeldSubstation(gameObject, initialTransformState);
+				this.heldSubstation = newHeldSubstation;
 				EscManager.PushEscAction(this.heldSubstation.EscapeAction);
 
 				SubstationComponent objectComponent = this.heldSubstation.SubstationGameObject.GetComponent<SubstationComponent>();
@@ -140,11 +164,16 @@ namespace WorkstationDesigner
 			}
 			else
 			{
-				throw new System.Exception("Cannot pick up a second substation");
+				throw new Exception("Cannot pick up a second substation");
 			}
 		}
 
-		public void CreateSubstation(SubstationBase substation)
+		/// <summary>
+		/// Create a new substation to place in the scene
+		/// </summary>
+		/// <param name="substation"></param>
+		/// <param name="placeCallback"></param>
+		public void CreateSubstation(SubstationBase substation, Action placeCallback)
 		{
 			// Destroy currently held substation
 			if (this.heldSubstation != null)
@@ -157,11 +186,20 @@ namespace WorkstationDesigner
 			var newObject = substation.Instantiate();
 			newObject.GetComponent<Renderer>().enabled = false;
 			newObject.transform.parent = WorkstationParent.transform;
-			newObject.AddComponent<SubstationComponent>().Substation = substation;
+			var substationComponent = newObject.AddComponent<SubstationComponent>();
+			substationComponent.Substation = substation;
 
-			PickUpSubstation(newObject, null);
+			PickUpSubstation(new HeldSubstation(newObject, null, () =>
+			{
+				substationComponent.SetSelected(true);
+				placeCallback();
+			}));
 		}
 
+		/// <summary>
+		/// Get possible point at which a new substation will be placed
+		/// </summary>
+		/// <returns></returns>
 		public static Vector3? GetPlacementPoint()
 		{
 			return SceneUtil.GetCursorInWorld(true, true, true);

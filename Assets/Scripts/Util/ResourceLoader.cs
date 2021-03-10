@@ -10,13 +10,42 @@ namespace WorkstationDesigner.Util
 
         private static Queue<(string, Type)> loadQueue = new Queue<(string, Type)>();
 
+        /// <summary>
+        /// Load a resource within the Assets/Resources folder (do not provide file extension)
+        /// </summary>
+        /// <typeparam name="TResource"></typeparam>
+        /// <param name="resourcePath"></param>
         public static void Load<TResource>(string resourcePath)
         {
+            if (resourcePath.Contains("."))
+            {
+                Debug.LogWarning($"Attempting to load resource at path \"{resourcePath}\". This path should not contain a file extension");
+            }
             loadQueue.Enqueue((resourcePath, typeof(TResource)));
         }
 
+        /// <summary>
+        /// Check if a resource has been loaded
+        /// </summary>
+        /// <param name="resourcePath"></param>
+        /// <returns></returns>
+        public static bool HasLoaded(string resourcePath)
+        {
+            return loadedResources.ContainsKey(resourcePath);
+        }
+
+        /// <summary>
+        /// Fetch a loaded resource
+        /// </summary>
+        /// <typeparam name="TResource"></typeparam>
+        /// <param name="resourcePath"></param>
+        /// <returns></returns>
         public static TResource Get<TResource>(string resourcePath)
         {
+            if (!HasLoaded(resourcePath))
+            {
+                throw new Exception($"No resource laoded at path \"{resourcePath}\"");
+            }
             try
             {
                 return (TResource)loadedResources[resourcePath];
