@@ -37,11 +37,11 @@ namespace WorkstationDesigner
         /// </summary>
         public int IntersectionCount { get; private set; } = 0;
 
-        // Materials
-        private static Material CheckIntersectionMaterial = null;
-        private static Material IntersectionMaterial = null;
-        private static Material HighlightedMaterial = null;
-        private Dictionary<Renderer, Material[]> DefaultMaterials = null;
+        // Shaders/Materials
+        private static Shader CheckIntersectionShader = null;
+        private static Shader IntersectionShader = null;
+        private static Shader HighlightedShader = null;
+        private Dictionary<Renderer, Shader[]> DefaultShaders = null;
 
         private Vector3? bottomPoint = null;
 
@@ -58,39 +58,40 @@ namespace WorkstationDesigner
         }
 
         /// <summary>
-        /// Update the materials for this substation given its status
+        /// Update the shaders for this substation given its status
         /// </summary>
-        /// <param name="forceCheckIntersectionMaterial">Force the material to be set to CheckIntersectionMaterial</param>
-        private void UpdateMaterials(bool forceCheckIntersectionMaterial = false)
+        /// <param name="forceCheckIntersectionShader">Force the shader to be set to CheckIntersection</param>
+        private void UpdateShaders(bool forceCheckIntersectionShader = false)
         {
-            MapRenderers(renderer => UpdateMaterials(renderer, forceCheckIntersectionMaterial));
+            MapRenderers(renderer => UpdateMaterials(renderer, forceCheckIntersectionShader));
         }
 
         /// <summary>
-        /// Update the materials for a given renderer given the substation status
+        /// Update the shaders for a given renderer given the substation status
         /// </summary>
-        /// <param name="renderer">The render whose materials will be changed</param>
-        /// <param name="forceCheckIntersectionMaterial">Force the material to be set to CheckIntersectionMaterial</param>
-        private void UpdateMaterials(Renderer renderer, bool forceCheckIntersectionMaterial)
+        /// <param name="renderer">The render whose shaders will be changed</param>
+        /// <param name="forceCheckIntersectionShader">Force the shader to be set to CheckIntersection</param>
+        private void UpdateMaterials(Renderer renderer, bool forceCheckIntersectionShader)
         {
             var newMaterials = new Material[renderer.materials.Length];
             for (var i = 0; i < newMaterials.Length; i++)
             {
-                if (forceCheckIntersectionMaterial)
+                newMaterials[i] = renderer.materials[i];
+                if (forceCheckIntersectionShader)
                 {
-                    newMaterials[i] = CheckIntersectionMaterial;
+                    newMaterials[i].shader = CheckIntersectionShader;
                 }
                 else if (Selected)
                 {
-                    newMaterials[i] = HighlightedMaterial;
+                    newMaterials[i].shader = HighlightedShader;
                 }
                 else if (IsIntersecting)
                 {
-                    newMaterials[i] = IntersectionMaterial;
+                    newMaterials[i].shader = IntersectionShader;
                 }
                 else
                 {
-                    newMaterials[i] = DefaultMaterials[renderer][i];
+                    newMaterials[i].shader = DefaultShaders[renderer][i];
                 }
             }
 
@@ -116,7 +117,7 @@ namespace WorkstationDesigner
                 }
 
                 Selected = selected;
-				UpdateMaterials();
+				UpdateShaders();
             }
         }
 
@@ -124,27 +125,35 @@ namespace WorkstationDesigner
         {
             WorkstationManager.MarkUnsavedChanges();
 
-            // Load/backup materials
-            if (DefaultMaterials == null)
+            // Load/backup shaders/materials
+            if (DefaultShaders == null)
             {
-                DefaultMaterials = new Dictionary<Renderer, Material[]>();
-                MapRenderers(renderer => DefaultMaterials.Add(renderer, renderer.materials));
+                DefaultShaders = new Dictionary<Renderer, Shader[]>();
+                MapRenderers(renderer => {
+                    var shaders = new Shader[renderer.materials.Length];
+                    for(var i = 0; i <shaders.Length; i++)
+                    {
+                        shaders[i] = renderer.materials[i].shader;
+                    }
+                    DefaultShaders.Add(renderer, shaders);
+
+                });
             }
-            if (CheckIntersectionMaterial == null)
+            if (CheckIntersectionShader == null)
             {
-                CheckIntersectionMaterial = Resources.Load<Material>("Materials/CheckIntersectionMaterial");
+                CheckIntersectionShader = Shader.Find("Custom/CheckIntersection");
             }
-            if (IntersectionMaterial == null)
+            if (IntersectionShader == null)
             {
-                IntersectionMaterial = Resources.Load<Material>("Materials/IntersectionMaterial");
+                IntersectionShader = Shader.Find("Custom/Intersection");
             }
-            if (HighlightedMaterial == null)
+            if (HighlightedShader == null)
             {
-                HighlightedMaterial = Resources.Load<Material>("Materials/HighlightedMaterial");
+                HighlightedShader = Shader.Find("Custom/Wireframe");
             }
 
             SetPlaced(true);
-            UpdateMaterials();
+            UpdateShaders();
 
             // Set up right click menu
             if (!RightClickMenuToolkit.ContainsKey(RIGHT_CLICK_MENU_KEY))
@@ -276,9 +285,9 @@ namespace WorkstationDesigner
             {
                 IntersectionCount += enter ? 1 : -1;
                 // Update held component's shader
-                UpdateMaterials();
+                UpdateShaders();
                 // Update placed component's shader when there's at least one collision
-                intersecting.UpdateMaterials(enter);
+                intersecting.UpdateShaders(enter);
             }
         }
 
