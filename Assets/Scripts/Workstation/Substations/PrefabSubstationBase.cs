@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.Workstation.Substations
 {
@@ -18,6 +19,13 @@ namespace WorkstationDesigner.Workstation.Substations
             gameObject.transform.parent = parent.transform;
 
             var collider = parent.AddComponent<BoxCollider>();
+            var bounds = SceneUtil.GetBounds(parent);
+
+            if (bounds.HasValue)
+            {
+                collider.size = bounds.Value.size;
+                collider.center = bounds.Value.center;
+            }
             collider.isTrigger = true;
 
             var rigidBody = parent.AddComponent<Rigidbody>();

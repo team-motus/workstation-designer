@@ -278,7 +278,7 @@ namespace WorkstationDesigner
                 // Update held component's shader
                 UpdateMaterials();
                 // Update placed component's shader when there's at least one collision
-                intersecting.UpdateMaterials(true);
+                intersecting.UpdateMaterials(enter);
             }
         }
 

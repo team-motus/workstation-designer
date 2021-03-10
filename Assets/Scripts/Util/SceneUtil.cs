@@ -4,7 +4,7 @@ using WorkstationDesigner.InputUtil;
 
 namespace WorkstationDesigner.Util
 {
-    public static class SceneUtil
+	public static class SceneUtil
 	{
 		/// <summary>
 		/// Calculate the distance from a position to the screen plane
@@ -12,7 +12,7 @@ namespace WorkstationDesigner.Util
 		/// <param name="position"></param>
 		/// <returns></returns>
 		public static float DistanceToScreenPlane(Vector3 position)
-        {
+		{
 			var offsetFromCamera = (Camera.main.transform.position - position);
 			return Vector3.Project(offsetFromCamera, Camera.main.transform.forward).magnitude;
 		}
@@ -50,29 +50,39 @@ namespace WorkstationDesigner.Util
 		}
 
 		/// <summary>
+		/// Get bounds of GameObject and its children in world space
+		/// </summary>
+		/// <param name="gameObject"></param>
+		/// <returns></returns>
+		public static Bounds? GetBounds(GameObject gameObject)
+		{
+			bool set = false;
+			Bounds bounds = new Bounds();
+			foreach (var i in gameObject.GetComponentsInChildren<Renderer>())
+			{
+				bounds.Encapsulate(i.bounds);
+				set = true;
+			}
+
+			return set ? (Bounds?)bounds : null;
+		}
+
+		/// <summary>
 		/// Get bottom point of a GameObject's renderer relative to its position
 		/// </summary>
 		/// <param name="gameObject"></param>
 		/// <returns></returns>
 		public static Vector3? GetBottomPoint(GameObject gameObject)
 		{
-			Vector3? minPoint = null;
-			foreach (var i in gameObject.GetComponentsInChildren<Renderer>())
-			{
-				Bounds bounds = i.bounds;
-				if (!minPoint.HasValue || bounds.min.y < minPoint.Value.y)
-				{
-					minPoint = bounds.min;
-				}
-			}
+			Bounds? bounds = GetBounds(gameObject);
 
-			if (minPoint.HasValue)
+			if (bounds.HasValue)
 			{
 				// Set relative to transform position
-				minPoint -= gameObject.transform.position;
+				return bounds.Value.min - gameObject.transform.position;
 			}
 
-			return minPoint;
+			return null;
 		}
 	}
 }
