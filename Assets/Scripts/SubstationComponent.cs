@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using WorkstationDesigner.InputUtil;
-using WorkstationDesigner.Substations;
+using WorkstationDesigner.Workstation.Substations;
 using WorkstationDesigner.UI;
 using WorkstationDesigner.Workstation;
 
@@ -40,7 +40,7 @@ namespace WorkstationDesigner
         private static Material CheckIntersectionMaterial = null;
         private static Material IntersectionMaterial = null;
         private static Material HighlightedMaterial = null;
-        private Material DefaultMaterial = null;
+        private Dictionary<Renderer, Material[]> DefaultMaterials = null;
 
         /// <summary>
         /// Set substation placed and change appropriate behavior
@@ -53,12 +53,43 @@ namespace WorkstationDesigner
         }
 
         /// <summary>
-        /// Select a material to use when not highlighted depending on if it's intersecting or not
+        /// Update the materials for this substation given its status
         /// </summary>
-        /// <returns></returns>
-        private Material GetUnhighlightedMaterial()
+        /// <param name="forceCheckIntersectionMaterial">Force the material to be set to CheckIntersectionMaterial</param>
+        private void UpdateMaterials(bool forceCheckIntersectionMaterial = false)
         {
-            return IsIntersecting ? IntersectionMaterial : DefaultMaterial;
+            MapRenderers(renderer => UpdateMaterials(renderer, forceCheckIntersectionMaterial));
+        }
+
+        /// <summary>
+        /// Update the materials for a given renderer given the substation status
+        /// </summary>
+        /// <param name="renderer">The render whose materials will be changed</param>
+        /// <param name="forceCheckIntersectionMaterial">Force the material to be set to CheckIntersectionMaterial</param>
+        private void UpdateMaterials(Renderer renderer, bool forceCheckIntersectionMaterial)
+        {
+            var newMaterials = new Material[renderer.materials.Length];
+            for (var i = 0; i < newMaterials.Length; i++)
+            {
+                if (forceCheckIntersectionMaterial)
+                {
+                    newMaterials[i] = CheckIntersectionMaterial;
+                }
+                else if (Selected)
+                {
+                    newMaterials[i] = HighlightedMaterial;
+                }
+                else if (IsIntersecting)
+                {
+                    newMaterials[i] = IntersectionMaterial;
+                }
+                else
+                {
+                    newMaterials[i] = DefaultMaterials[renderer][i];
+                }
+            }
+
+            renderer.materials = newMaterials;
         }
 
         /// <summary>
@@ -77,14 +108,10 @@ namespace WorkstationDesigner
                     {
                         i.SetSelected(false);
                     }
-                    this.GetComponent<Renderer>().sharedMaterial = HighlightedMaterial;
-                }
-                else
-                {
-                    this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
                 }
 
                 Selected = selected;
+				UpdateMaterials();
             }
         }
 
@@ -93,9 +120,10 @@ namespace WorkstationDesigner
             WorkstationManager.MarkUnsavedChanges();
 
             // Load/backup materials
-            if (DefaultMaterial == null)
+            if (DefaultMaterials == null)
             {
-                DefaultMaterial = this.GetComponent<Renderer>().sharedMaterial;
+                DefaultMaterials = new Dictionary<Renderer, Material[]>();
+                MapRenderers(renderer => DefaultMaterials.Add(renderer, renderer.materials));
             }
             if (CheckIntersectionMaterial == null)
             {
@@ -109,9 +137,9 @@ namespace WorkstationDesigner
             {
                 HighlightedMaterial = Resources.Load<Material>("Materials/HighlightedMaterial");
             }
-            this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
 
             SetPlaced(true);
+            UpdateMaterials();
 
             // Set up right click menu
             if (!RightClickMenuToolkit.ContainsKey(RIGHT_CLICK_MENU_KEY))
@@ -195,11 +223,11 @@ namespace WorkstationDesigner
                 placePoint.y += this.transform.localScale.y / 2;
                 this.transform.position = placePoint;
 
-                this.GetComponent<Renderer>().enabled = true;
+                SetVisible(true);
             }
             else
             {
-                this.GetComponent<Renderer>().enabled = false;
+                SetVisible(false);
             }
 
             // Rotation
@@ -213,32 +241,31 @@ namespace WorkstationDesigner
             }
         }
 
-        private void OnTriggerEnter(Collider collider)
+        private void OnTriggerEnter(Collider otherCollider)
         {
-            var intersecting = GetIntersecting(collider);
-            if (intersecting != null)
-            {
-                IntersectionCount++;
-                // Update held component's shader
-                this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
-                if (!Placed)
-                {
-                    // Update placed component's shader when there's at least one collision
-                    intersecting.GetComponent<Renderer>().sharedMaterial = CheckIntersectionMaterial;
-                }
-            }
+            ProcessTriggerEvent(otherCollider, true);
         }
 
         private void OnTriggerExit(Collider otherCollider)
         {
-            if (GetIntersecting(otherCollider) != null)
+            ProcessTriggerEvent(otherCollider, false);
+        }
+
+        /// <summary>
+        /// Process a trigger event, used to check if two substations are intersecting
+        /// </summary>
+        /// <param name="otherCollider">The other collider involved in the event</param>
+        /// <param name="enter">True if its a trigger enter event, false if it's a triggger exit event</param>
+        private void ProcessTriggerEvent(Collider otherCollider, bool enter)
+        {
+            var intersecting = GetIntersecting(otherCollider);
+            if (intersecting != null && !Placed)
             {
-                IntersectionCount--;
-                if (Placed && !IsIntersecting)
-                {
-                    // Restore placed component's shader to default when all intersections end
-                    this.GetComponent<Renderer>().sharedMaterial = DefaultMaterial;
-                }
+                IntersectionCount += enter ? 1 : -1;
+                // Update held component's shader
+                UpdateMaterials();
+                // Update placed component's shader when there's at least one collision
+                intersecting.UpdateMaterials(true);
             }
         }
 
@@ -250,6 +277,30 @@ namespace WorkstationDesigner
         private SubstationComponent GetIntersecting(Collider otherCollider)
         {
             return otherCollider.gameObject.GetComponent<SubstationComponent>();
+        }
+
+        /// <summary>
+        /// Set the substation as visible or not
+        /// </summary>
+        /// <param name="visible"></param>
+        public void SetVisible(bool visible)
+        {
+            MapRenderers(renderer => renderer.enabled = visible);
+        }
+
+        /// <summary>
+        /// Apply an action to all the renderers in this substation GameObject and its children
+        /// </summary>
+        /// <param name="action"></param>
+        private void MapRenderers(Action<Renderer> action)
+        {
+            foreach (var childRenderer in this.gameObject.GetComponentsInChildren<Renderer>())
+            {
+                if (childRenderer != null)
+                {
+                    action(childRenderer);
+                }
+            }
         }
     }
 }

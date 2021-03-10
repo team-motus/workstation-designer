@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using WorkstationDesigner.Substations;
+using WorkstationDesigner.Workstation.Substations;
 using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.UI

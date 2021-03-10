@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using WorkstationDesigner.InputUtil;
-using WorkstationDesigner.Substations;
+using WorkstationDesigner.Workstation.Substations;
 using WorkstationDesigner.Util;
 using WorkstationDesigner.Workstation;
 
@@ -184,10 +184,10 @@ namespace WorkstationDesigner
 
 			// Create new object
 			var newObject = substation.Instantiate();
-			newObject.GetComponent<Renderer>().enabled = false;
 			newObject.transform.parent = WorkstationParent.transform;
 			var substationComponent = newObject.AddComponent<SubstationComponent>();
 			substationComponent.Substation = substation;
+			substationComponent.SetVisible(false);
 
 			PickUpSubstation(new HeldSubstation(newObject, null, () =>
 			{

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WorkstationDesigner.Substations
+namespace WorkstationDesigner.Workstation.Substations
 {
     /// <summary>
     /// Manages loading and providing access to database of components.

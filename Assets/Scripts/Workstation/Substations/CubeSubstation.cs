@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WorkstationDesigner.Substations
+namespace WorkstationDesigner.Workstation.Substations
 {
     /// <summary>
     /// An example substation that's simply a box the size of the substation footprint
