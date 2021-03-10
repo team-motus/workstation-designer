@@ -253,13 +253,48 @@ namespace WorkstationDesigner
             }
 
             // Rotation
-            if (Keyboard.current[Key.X].isPressed)
+
+            const Key RotateLeftKey = Key.X;
+            const Key RotateRightKey = Key.C;
+            const Key RoundRotationKey = Key.LeftCtrl;
+
+            if (Keyboard.current[RoundRotationKey].isPressed)
             {
-                this.transform.Rotate(Vector3.up, ROTATE_SCALAR * Time.deltaTime, Space.World);
+                // Round rotation to 90 degrees
+                var rotation = this.transform.eulerAngles;
+                rotation.x = Mathf.Round(rotation.x / 90) * 90;
+                rotation.y = Mathf.Round(rotation.y / 90) * 90;
+                rotation.z = Mathf.Round(rotation.z / 90) * 90;
+                if (Keyboard.current[RotateLeftKey].wasPressedThisFrame)
+                {
+                    // Snap to nearest 90 degrees if it's not approximately there already, otherwise rotate by 90 degrees
+                    if (MathUtil.ApproxEquals(this.transform.eulerAngles, rotation))
+                    {
+                        rotation.y += 90;
+                    }
+                    transform.eulerAngles = rotation;
+                }
+                else if (Keyboard.current[RotateRightKey].wasPressedThisFrame)
+                {
+                    // Snap to nearest 90 degrees if it's not approximately there already, otherwise rotate by 90 degrees
+                    if (MathUtil.ApproxEquals(this.transform.eulerAngles, rotation))
+                    {
+                        rotation.y -= 90;
+                    }
+                    transform.eulerAngles = rotation;
+                }
             }
-            if (Keyboard.current[Key.C].isPressed)
+            else
             {
-                this.transform.Rotate(Vector3.up, -ROTATE_SCALAR * Time.deltaTime, Space.World);
+                // Continuous rotation
+                if (Keyboard.current[RotateLeftKey].isPressed)
+                {
+                    this.transform.Rotate(Vector3.up, ROTATE_SCALAR * Time.deltaTime, Space.World);
+                }
+                else if (Keyboard.current[RotateRightKey].isPressed)
+                {
+                    this.transform.Rotate(Vector3.up, -ROTATE_SCALAR * Time.deltaTime, Space.World);
+                }
             }
         }
 
