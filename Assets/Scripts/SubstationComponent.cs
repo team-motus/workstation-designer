@@ -6,6 +6,7 @@ using WorkstationDesigner.InputUtil;
 using WorkstationDesigner.Workstation.Substations;
 using WorkstationDesigner.UI;
 using WorkstationDesigner.Workstation;
+using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner
 {
@@ -42,13 +43,17 @@ namespace WorkstationDesigner
         private static Material HighlightedMaterial = null;
         private Dictionary<Renderer, Material[]> DefaultMaterials = null;
 
+        private Vector3? bottomPoint = null;
+
         /// <summary>
         /// Set substation placed and change appropriate behavior
         /// </summary>
         /// <param name="placedValue"></param>
         public void SetPlaced(bool placedValue)
         {
-            this.gameObject.layer = placedValue ? 0 : 2; // Default or Ignore raycast Layer
+            foreach (var i in gameObject.GetComponentsInChildren<Transform>()) {
+                i.gameObject.layer = placedValue ? 0 : 2; // Default or Ignore raycast Layer
+            }
             Placed = placedValue;
         }
 
@@ -216,11 +221,19 @@ namespace WorkstationDesigner
         /// </summary>
         private void UpdateNotPlaced()
         {
+            if (bottomPoint == null)
+            {
+                bottomPoint = SceneUtil.GetBottomPoint(this.gameObject);
+            }
             Vector3? maybePlacePoint = SubstationPlacementManager.GetPlacementPoint();
             if (maybePlacePoint.HasValue)
             {
                 Vector3 placePoint = maybePlacePoint.Value;
-                placePoint.y += this.transform.localScale.y / 2;
+                if (bottomPoint.HasValue)
+                {
+                    // Ensure bottom of model is touching the grid
+                    placePoint.y = -bottomPoint.Value.y;
+                }
                 this.transform.position = placePoint;
 
                 SetVisible(true);

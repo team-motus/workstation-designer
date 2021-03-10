@@ -48,5 +48,31 @@ namespace WorkstationDesigner.Util
 
 			return point;
 		}
+
+		/// <summary>
+		/// Get bottom point of a GameObject's renderer relative to its position
+		/// </summary>
+		/// <param name="gameObject"></param>
+		/// <returns></returns>
+		public static Vector3? GetBottomPoint(GameObject gameObject)
+		{
+			Vector3? minPoint = null;
+			foreach (var i in gameObject.GetComponentsInChildren<Renderer>())
+			{
+				Bounds bounds = i.bounds;
+				if (!minPoint.HasValue || bounds.min.y < minPoint.Value.y)
+				{
+					minPoint = bounds.min;
+				}
+			}
+
+			if (minPoint.HasValue)
+			{
+				// Set relative to transform position
+				minPoint -= gameObject.transform.position;
+			}
+
+			return minPoint;
+		}
 	}
 }
