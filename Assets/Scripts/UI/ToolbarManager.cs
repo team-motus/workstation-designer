@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UIElements;
 using WorkstationDesigner.Tools;
 using WorkstationDesigner.Util;
@@ -9,6 +10,10 @@ namespace WorkstationDesigner.UI
 {
     public class ToolbarManager : VisualElement
     {
+        // Assets
+        private static VisualTreeAsset dropdownMenuAsset = null;
+        private static VisualTreeAsset dropdownMenuItemAsset = null;
+
         private VisualElement toolbar;
         private bool mouseOverDropdownButton = false;
         private StyleColor? defaultButtonBackgroundColor = null;
@@ -18,6 +23,16 @@ namespace WorkstationDesigner.UI
 
         public ToolbarManager()
         {
+            // Load assets
+            if (dropdownMenuAsset == null)
+            {
+                dropdownMenuAsset = Resources.Load<VisualTreeAsset>("UI/ToolbarDropdownMenu");
+            }
+            if (dropdownMenuItemAsset == null)
+            {
+                dropdownMenuItemAsset = Resources.Load<VisualTreeAsset>("UI/ToolbarDropdownMenuItem");
+            }
+
             RegisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
 
@@ -31,24 +46,27 @@ namespace WorkstationDesigner.UI
         /// <param name="evt"></param>
         private void OnGeometryChange(GeometryChangedEvent evt)
         {
-            toolbar = this.Q("Toolbar");
+            toolbar = this.Q("Toolbar").Q("toolbar-container");
 
-            SetupToolbarButton("file-button", new Dictionary<string, Action>{
-                { "new-workstation-button", () => WorkstationManager.New() },
-                { "open-workstation-button", () => WorkstationManager.PromptOpen() },
-                { "save-workstation-button", () => WorkstationManager.Save() },
-                { "save-as-workstation-button", () => WorkstationManager.PromptSaveAs() },
-                { "exit-button", () => AppUtil.Exit() } 
+            // Create toolbar buttons
+            CreateToolbarButton("file-button", "File", new List<(string, string, Action)>{
+                ( "new-workstation-button", "New", () => WorkstationManager.New() ),
+                ( "open-workstation-button", "Open", () => WorkstationManager.PromptOpen() ),
+                ( "save-workstation-button", "Save", () => WorkstationManager.Save() ),
+                ( "save-as-workstation-button", "Save As...", () => WorkstationManager.PromptSaveAs()),
+                ( "exit-button", "Exit", () => AppUtil.Exit() )
             });
-            SetupToolbarButton("edit-button");
-            SetupToolbarButton("vr-button", new Dictionary<string, Action>{
-                { "enter-vr-button", () => CameraSwitcher.activateXRRigCamera() }
+            // CreateToolbarButton("edit-button", "Edit");
+            CreateToolbarButton("tools-button", "Tools", new List<(string, string, Action)>{
+                ( "tape-measure-button", "Tape Measure", () => TapeMeasure.UsingTapeMeasure = !TapeMeasure.UsingTapeMeasure ),
             });
-            SetupToolbarButton("tools-button", new Dictionary<string, Action>{
-                { "tape-measure-button", () => TapeMeasure.UsingTapeMeasure = !TapeMeasure.UsingTapeMeasure },
+            CreateToolbarButton("vr-button", "VR", new List<(string, string, Action)>{
+                ( "enter-vr-button", "Enter VR", () => CameraSwitcher.activateXRRigCamera() )
             });
-            SetupToolbarButton("view-button");
-            SetupToolbarButton("help-button");
+            // CreateToolbarButton("view-button", "View");
+            CreateToolbarButton("help-button", "Help", new List<(string, string, Action)>{
+                ( "view-help-online-button", "View Help Online", () => System.Diagnostics.Process.Start("https://github.com/team-motus/workstation-designer") )
+            });
 
             UnregisterCallback<GeometryChangedEvent>(OnGeometryChange);
         }
@@ -63,18 +81,18 @@ namespace WorkstationDesigner.UI
         /// <param name="enabled"></param>
         public static void SetToolbarDropdownItemEnabled(string toolbarButtonName, string dropdownItemName, bool enabled)
         {
-            var toolbar = ScreenManager.OverallContainer.Q("Toolbar");
-            if(toolbar == null)
+            var toolbar = ScreenManager.OverallContainer.Q("Toolbar").Q("toolbar-container");
+            if (toolbar == null)
             {
                 throw new Exception("Failed to find toolbar");
             }
             var button = toolbar.Q(toolbarButtonName);
-            if(button == null)
+            if (button == null)
             {
                 throw new Exception("Failed to find toolbar button " + toolbarButtonName);
             }
             var dropdownItem = button.Q(dropdownItemName);
-            if(dropdownItem == null)
+            if (dropdownItem == null)
             {
                 throw new Exception("Failed to find dropdown item " + dropdownItem);
             }
@@ -82,20 +100,25 @@ namespace WorkstationDesigner.UI
         }
 
         /// <summary>
-        /// Setup a toolbar button with a given name and callbacks for its dropdown buttons
+        /// Create a toolbar button with a dropdown menu
         /// </summary>
-        /// <param name="name">The name of the toolbar button in the UXML</param>
-        /// <param name="dropdownCallbacks">A dictionary of dropdown button names to ClickEvent callbacks</param>
-        private void SetupToolbarButton(string name, Dictionary<string, Action> dropdownCallbacks = null)
+        /// <param name="elementName">The name of the toolbar VisualElement</param>
+        /// <param name="label">The label on the button</param>
+        /// <param name="dropdownMenuItems">A list of dropdown menu items</param>
+        private void CreateToolbarButton(string elementName, string label, List<(string name, string label, Action clickCallback)> dropdownMenuItems = null)
         {
-            var toolbarButtonParent = toolbar.Q(name);
-            var toolbarButton = toolbarButtonParent.Q("button");
-            var dropdownMenu = toolbarButtonParent.Q("dropdown-menu");
+            var toolbarButtonContainer = dropdownMenuAsset.CloneTree().Q("toolbar-button-container");
+            toolbarButtonContainer.name = elementName;
+            toolbar.Add(toolbarButtonContainer);
+
+            var toolbarButton = toolbarButtonContainer.Q<Button>("button");
+            toolbarButton.text = label;
+            var dropdownMenu = toolbarButtonContainer.Q("dropdown-menu");
 
             if (!defaultButtonBackgroundColor.HasValue)
             {
                 // Backup button background color so we can restore it after changing it programatically later
-                defaultButtonBackgroundColor = toolbarButton.resolvedStyle.backgroundColor;
+                defaultButtonBackgroundColor = toolbarButtonContainer.resolvedStyle.backgroundColor;
             }
             if (!defaultDropdownBackgroundColor.HasValue)
             {
@@ -103,10 +126,17 @@ namespace WorkstationDesigner.UI
                 defaultDropdownBackgroundColor = dropdownMenu.resolvedStyle.backgroundColor;
             }
 
-            toolbarButton.RegisterCallback<ClickEvent>(e => {
+            if (dropdownMenuItems == null || dropdownMenuItems.Count == 0)
+            {
+                return;
+            }
+
+            toolbarButton.RegisterCallback<ClickEvent>(e =>
+            {
                 SetDropdownVisible(toolbarButton, dropdownMenu, true);
-            }); 
-            toolbarButton.RegisterCallback<FocusOutEvent>(e => {
+            });
+            toolbarButton.RegisterCallback<FocusOutEvent>(e =>
+            {
                 // Clicking on dropdown buttons also loses focus on the toolbarButton, 
                 // so here we check to make sure the mouse isn't over one of those buttons when the focus is lost.
                 // If it is over, then we close the dropdown in the dropdown button callback below.
@@ -114,31 +144,34 @@ namespace WorkstationDesigner.UI
                 {
                     SetDropdownVisible(toolbarButton, dropdownMenu, false);
                 }
-            }); 
-            
-            
-            if (dropdownCallbacks != null && dropdownCallbacks.Count > 0)
+            });
+
+            // Setup all dropdown button callbacks
+            foreach (var dropdownCallback in dropdownMenuItems)
             {
-                // Setup all dropdown button callbacks
-                foreach (var dropdownCallback in dropdownCallbacks)
-                {
-                    SetupDropdownCallback(toolbarButton, dropdownMenu, dropdownCallback.Key, dropdownCallback.Value);
-                }
+                CreateDropdownMenuItem(toolbarButtonContainer, dropdownMenu, dropdownCallback.name, dropdownCallback.label, dropdownCallback.clickCallback);
             }
         }
 
         /// <summary>
-        /// Set up a callback for a dropdown button
+        /// Set up a dropdown menu item
         /// </summary>
+        /// <param name="toolbarButtonContainer"></param>
         /// <param name="dropdownMenu">The dropdown menu in which the button lies</param>
-        /// <param name="buttonName">The name of the button</param>
-        /// <param name="callback">The callback to perform when the button is clicked</param>
-        private void SetupDropdownCallback(VisualElement toolbarButton, VisualElement dropdownMenu, string buttonName, Action callback)
+        /// <param name="dropdownMenuItemName">The name of the button</param>
+        /// <param name="dropdownMenuItemLabel"></param>
+        /// <param name="clickCallback">The callback to perform when the button is clicked</param>
+        private void CreateDropdownMenuItem(VisualElement toolbarButtonContainer, VisualElement dropdownMenu, string dropdownMenuItemName, string dropdownMenuItemLabel, Action clickCallback)
         {
-            var dropdownButton = dropdownMenu.Q(buttonName);
+            var dropdownButton = dropdownMenuItemAsset.CloneTree().Q("toolbar-dropdown-menu-item");
+            dropdownMenu.Add(dropdownButton);
+            dropdownButton.name = dropdownMenuItemName;
+            dropdownButton.Q<Button>().text = dropdownMenuItemLabel;
+
+            // var dropdownButton = dropdownMenu.Q(buttonName);
             if (dropdownButton == null)
             {
-                throw new Exception($"ToolbarManager: failed to set up toolbar button dropdown callback for button with name \"{buttonName}\"");
+                throw new Exception($"ToolbarManager: failed to set up toolbar button dropdown callback for button with name \"{dropdownMenuItemName}\"");
             }
             else
             {
@@ -149,18 +182,19 @@ namespace WorkstationDesigner.UI
                 // When the button is clicked, close the dropdown menu then call the provided callback
                 dropdownButton.RegisterCallback<ClickEvent>(e =>
                 {
-                    SetDropdownVisible(toolbarButton, dropdownMenu, false);
-                    callback();
+                    SetDropdownVisible(toolbarButtonContainer, dropdownMenu, false);
+                    clickCallback();
                 });
             }
         }
 
-        private void SetDropdownVisible(VisualElement button, VisualElement dropdownMenu, bool visible)
+        private void SetDropdownVisible(VisualElement toolbarButtonContainer, VisualElement dropdownMenu, bool visible)
         {
-            if(defaultButtonBackgroundColor.HasValue && defaultDropdownBackgroundColor.HasValue)
+            if (defaultButtonBackgroundColor.HasValue && defaultDropdownBackgroundColor.HasValue)
             {
+                // TODO this causes a bug where the on hover styling of the toolbar button itself no longer renders
                 // Set button's background color to match that of dropdown menu if it's open
-                button.style.backgroundColor = visible ? defaultDropdownBackgroundColor.Value : defaultButtonBackgroundColor.Value;
+                toolbarButtonContainer.style.backgroundColor = visible ? defaultDropdownBackgroundColor.Value : defaultButtonBackgroundColor.Value;
             }
 
             dropdownMenu.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;

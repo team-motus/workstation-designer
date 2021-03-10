@@ -114,9 +114,9 @@ namespace WorkstationDesigner
             SetPlaced(true);
 
             // Set up right click menu
-            if (!RightClickMenuManager.ContainsKey(RIGHT_CLICK_MENU_KEY))
+            if (!RightClickMenuToolkit.ContainsKey(RIGHT_CLICK_MENU_KEY))
             {
-                RightClickMenuManager.Create(RIGHT_CLICK_MENU_KEY, new List<(string, Action<object>)>()
+                RightClickMenuToolkit.Create(RIGHT_CLICK_MENU_KEY, new List<(string, Action<object>)>()
                 {
                     ("Pick Up", obj => {
                         WorkstationManager.MarkUnsavedChanges();
@@ -167,13 +167,13 @@ namespace WorkstationDesigner
                         // Set up escape button to deselect this substation
                         Action escAction = () =>
                         {
-                            RightClickMenuManager.Close();
+                            RightClickMenuToolkit.Close();
                             SetSelected(false);
                         };
                         EscManager.PushEscAction(escAction);
 
                         // Open right click menu
-                        RightClickMenuManager.Open(RIGHT_CLICK_MENU_KEY, Mouse.current.position.ReadValue(), this.gameObject, () =>
+                        RightClickMenuToolkit.Open(RIGHT_CLICK_MENU_KEY, Mouse.current.position.ReadValue(), this.gameObject, () =>
                         {
                             EscManager.PopEscAction(escAction);
                             escAction();
