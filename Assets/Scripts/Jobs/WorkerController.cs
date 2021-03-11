@@ -32,7 +32,7 @@ namespace WorkstationDesigner.Jobs
     {
         private Job CurrentJob;
 
-        private SubstationInventory Inventory = new SubstationInventory(); // TODO: Should create subclass that can check worker constraints (e.g. worker can only carry so much)
+        private ElementManifest Inventory = new ElementManifest(); // TODO: Should create subclass that can check worker constraints (e.g. worker can only carry so much)
         private TransportationState TransportationState;
         private AssemblyState AssemblyState;
 

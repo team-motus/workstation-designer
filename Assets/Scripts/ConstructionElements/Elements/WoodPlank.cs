@@ -2,31 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WorkstationDesigner.ConstructionElements
+namespace WorkstationDesigner.ConstructionElements.Elements
 {
     /// <summary>
     /// A wood plank.
     /// </summary>
     public class WoodPlank : ConstructionElement
     {
-        public int Length;
+        private const string LENGTH = "length";
+
+        public WoodPlank() : base("Wood Plank", new List<string>() { LENGTH }, 1, false)
+        {
+        }
 
         /// <summary>
         /// Create a wood plank of a certain length.
         /// </summary>
         /// <param name="length">The length of the wood plank in inches</param>
-        public WoodPlank(int length) : base(1)
+        public WoodPlank(double length) : this()
         {
-            this.Length = length;
+            SetParameterValue(LENGTH, length);
         }
 
-        /// <summary>
-        /// Create a text description of the wood plank.
-        /// </summary>
-        /// <returns>A text description of the wood plank</returns>
-        public override string ToString()
+        public double GetLength()
         {
-            return "Wood plank (" + Length + " inches)";
+            return GetParameterValue(LENGTH);
         }
     }
 }

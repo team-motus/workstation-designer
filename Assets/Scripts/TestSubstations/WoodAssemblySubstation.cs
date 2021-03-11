@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using WorkstationDesigner.ConstructionElements;
+using WorkstationDesigner.ConstructionElements.Elements;
 using WorkstationDesigner.Jobs;
+using WorkstationDesigner.Rules;
 
 namespace WorkstationDesigner.TestSubstations
 {
@@ -12,45 +14,17 @@ namespace WorkstationDesigner.TestSubstations
     /// </summary>
     public class WoodAssemblySubstation : SimSubstation
     {
-        private const int PLANKS_NEEDED = 2;
-        private SubstationInventory Inventory = new SubstationInventory();
-
-        /// <summary>
-        /// Filter used to determine whether a particular element can be accepted as input.
-        /// </summary>
-        /// <param name="element">The element to test</param>
-        /// <returns>Whether the element can be accepted</returns>
-        private bool WoodPlankFilter(ConstructionElement element)
+        protected override void CreateAvailableRules()
         {
-            return (element is WoodPlank) && (element as WoodPlank).Length == 5;
-        }
-
-        /// <summary>
-        /// Callback run upon delivery of wood planks.
-        /// </summary>
-        /// <param name="plank">The type of plank delivered</param>
-        /// <param name="quantity">The number of planks delivered</param>
-        private void DeliverWoodPlanks(ConstructionElement plank, int quantity)
-        {
-            Inventory.AddElements(plank, quantity);
-            if (Inventory.GetQuantity(plank) == PLANKS_NEEDED)
-            {
-                JobList.AddJob(new AssemblyJob(CompleteAssembly, GetCoords(), 5, "Add plank to assembly"));
-            }
-        }
-
-        /// <summary>
-        /// Callback run upon the completion of assembly.
-        /// </summary>
-        private void CompleteAssembly()
-        {
-            Debug.Log("ASSEMBLY COMPLETE!");
+            ProductionRule assemblyProduction = new ProductionRule(this, new AssemblyJob(GetCoords(), 2, "Putting together wood assembly"));
+            assemblyProduction.AddInput(new WoodPlank(), 2);
+            assemblyProduction.AddOutput(new WoodAssembly(), 1);
+            AvailableRules.Add(assemblyProduction);
         }
 
         // Start is called before the first frame update
         void Start()
         {
-            TransportationManager.RegisterRequirement(this, WoodPlankFilter, PLANKS_NEEDED, DeliverWoodPlanks);
         }
 
         // Update is called once per frame

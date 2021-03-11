@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using WorkstationDesigner.ConstructionElements;
+using WorkstationDesigner.ConstructionElements.Elements;
+using WorkstationDesigner.Rules;
 
 namespace WorkstationDesigner.TestSubstations
 {
@@ -11,7 +13,11 @@ namespace WorkstationDesigner.TestSubstations
     public class WoodPileSubstation : SimSubstation
     {
         private WoodPlank WoodPlank;
-        private SubstationInventory Inventory = new SubstationInventory();
+
+        protected override void CreateAvailableRules()
+        {
+            AvailableRules.Add(new SupplyRule(this, new WoodPlank(), 50));
+        }
 
         /// <summary>
         /// Callback used to get the quantity of wood plank available.
@@ -37,7 +43,7 @@ namespace WorkstationDesigner.TestSubstations
             this.WoodPlank = new WoodPlank(10);
             this.Inventory.AddElements(this.WoodPlank, 50);
 
-            TransportationManager.RegisterAvailability(this, this.WoodPlank, GetWoodQuantity, RemoveWood);
+            TransportationManagerOld.RegisterAvailability(this, this.WoodPlank, GetWoodQuantity, RemoveWood);
         }
 
         // Update is called once per frame

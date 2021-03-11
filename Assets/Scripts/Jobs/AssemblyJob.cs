@@ -23,9 +23,9 @@ namespace WorkstationDesigner.Jobs
         /// <param name="position">The position at which a worker should stand while assembling</param>
         /// <param name="executionTime">The amount of time in seconds the assembly takes to complete</param>
         /// <param name="description">A text description of the job</param>
-        public AssemblyJob(Action completionCallback, Vector3 position, int executionTime, String description)
+        public AssemblyJob(Vector3 position, int executionTime, String description)
         {
-            this.CompletionCallback = completionCallback;
+            this.CompletionCallback = null;
             this.Position = position;
             this.ExecutionTime = executionTime;
             this.Description = description;

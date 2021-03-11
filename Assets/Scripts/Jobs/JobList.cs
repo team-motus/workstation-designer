@@ -38,5 +38,10 @@ namespace WorkstationDesigner.Jobs
         {
             Jobs.Add(job);
         }
+
+        public static void Clear()
+        {
+            Jobs.Clear();
+        }
     }
 }

@@ -7,9 +7,9 @@ using WorkstationDesigner.ConstructionElements;
 namespace WorkstationDesigner
 {
     /// <summary>
-    /// A substation's inventory of elements.
+    /// A manifest that tracks construction elements and their quantities.
     /// </summary>
-    public class SubstationInventory
+    public class ElementManifest
     {
         /// <summary>
         /// Stock of a single element.
@@ -87,7 +87,37 @@ namespace WorkstationDesigner
         /// <returns>The quantity stored of the element</returns>
         public int GetQuantity(ConstructionElement element)
         {
-            return FindStock(element).Quantity;
+            Stock matchingStock = FindStock(element);
+            if (matchingStock == null)
+            {
+                return 0;
+            }
+            return matchingStock.Quantity;
+        }
+
+        /// <summary>
+        /// Check if this manifest is a subset of another.
+        /// </summary>
+        /// <param name="manifest">The manifest to check if this is a subset of.</param>
+        /// <returns>Whether the manifest is a subset of the provided manifest.</returns>
+        public bool Subset(ElementManifest manifest)
+        {
+            foreach (Stock stock in this.StockList)
+            {
+                if (stock.Quantity > manifest.GetQuantity(stock.Element))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public void ForEach(Action<ConstructionElement, int> callback)
+        {
+            foreach (Stock stock in StockList)
+            {
+                callback(stock.Element, stock.Quantity);
+            }
         }
     }
 }

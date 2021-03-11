@@ -18,7 +18,7 @@ namespace WorkstationDesigner
     /// The TransportationManager will work to fulfill the registered requirements, either by delivery from a substation that has
     /// the required elements available or by production of the required elements at a capable substation.
     /// </summary>
-    public static class TransportationManager
+    public static class TransportationManagerOld
     {
         public delegate int GetQuantityMethod();
         public delegate void RemoveQuantityMethod(int quantityToRemove);

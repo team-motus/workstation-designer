@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WorkstationDesigner.ConstructionElements;
+using WorkstationDesigner.Rules;
 
 namespace WorkstationDesigner
 {
@@ -9,6 +11,27 @@ namespace WorkstationDesigner
     /// </summary>
     public abstract class SimSubstation : MonoBehaviour
     {
+        public ElementManifest Inventory { get; private set; }
+        protected List<RuleBase> AvailableRules, InstantiatedRules;
+
+        protected abstract void CreateAvailableRules();
+
+        public SimSubstation()
+        {
+            AvailableRules = new List<RuleBase>();
+            CreateAvailableRules();
+        }
+
+        public void RemoveElements(ConstructionElement element, int quantity)
+        {
+            Inventory.RemoveElements(element, quantity);
+        }
+
+        public void AddElements(ConstructionElement element, int quantity)
+        {
+            Inventory.AddElements(element, quantity);
+        }
+
         // Start is called before the first frame update
         void Start()
         {
