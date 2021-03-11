@@ -164,7 +164,6 @@ namespace WorkstationDesigner.UI
                 screenOverlay.RemoveFromHierarchy();
                 activeDialog?.Element.RemoveFromHierarchy();
                 EscManager.PopEscAction(activeDialog?.EscAction);
-                activeDialog.Context = null;
                 activeDialog = null;
             }
         }

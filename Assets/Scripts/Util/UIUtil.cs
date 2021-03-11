@@ -19,16 +19,24 @@ namespace WorkstationDesigner.Util
         {
             List<VisualElement> result = new List<VisualElement>();
 
-            foreach (var i in parent.Children())
+            MapVisualElementChildren(parent, item =>
             {
-                if (i.name == name)
+                if (item.name == name)
                 {
-                    result.Add(i);
+                    result.Add(item);
                 }
-                result.AddRange(FindAllWithName(i, name));
-            }
+            });
 
             return result;
+        }
+
+        public static void MapVisualElementChildren(VisualElement parent, Action<VisualElement> action)
+        {
+            foreach (var i in parent.Children())
+            {
+                action(i);
+                MapVisualElementChildren(i, action);
+            }
         }
     }
 }

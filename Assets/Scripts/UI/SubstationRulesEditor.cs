@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using WorkstationDesigner.Workstation.Substations;
 using WorkstationDesigner.Util;
+using System.Text.RegularExpressions;
 
 namespace WorkstationDesigner.UI
 {
@@ -15,6 +16,8 @@ namespace WorkstationDesigner.UI
         private static VisualTreeAsset substationEditorAsset = null;
         private static VisualTreeAsset substationRuleAsset = null;
         private static VisualTreeAsset substationRuleIOAsset = null;
+        private static VisualTreeAsset editSubstationRuleDialogBodyAsset = null;
+        private static VisualTreeAsset editSubstationRuleDialogItemAsset = null;
 
         private static Background? addIcon = null;
         private static Background? removeIcon = null;
@@ -22,6 +25,8 @@ namespace WorkstationDesigner.UI
         private VisualElement substationEditor;
         private VisualElement activeRulesListElement;
         private VisualElement allRulesListElement;
+
+        private const string EDIT_RULE_DIALOG_KEY = "EditRule";
 
         /// <summary>
         /// List of all possible rules
@@ -39,14 +44,39 @@ namespace WorkstationDesigner.UI
         public class Rule
         {
             public string Type;
-            public uint InputCount;
-            public uint OutputCount;
+            public List<string> Inputs;
+            public List<string> Outputs;
 
             public Rule(string type, uint inputCount, uint outputCount)
             {
                 this.Type = type;
-                this.InputCount = inputCount;
-                this.OutputCount = outputCount;
+                this.Inputs = new List<string>();
+                for(var i = 0; i < inputCount; i++)
+                {
+                    this.Inputs.Add($"Input {i + 1}");
+                }
+                this.Outputs = new List<string>();
+                for (var i = 0; i < outputCount; i++)
+                {
+                    this.Outputs.Add($"Output {i + 1}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Represents construction element properties - TODO: this is a placeholder for the backend implementation
+        /// </summary>
+        public class ConstructionElementProperties
+        {
+            public List<(string, double)> Properties;
+
+            public ConstructionElementProperties()
+            {
+                Properties = new List<(string, double)>();
+                for(var i = 0; i < 3; i++)
+                {
+                    Properties.Add(($"Property {i + 1}", 1.0));
+                }
             }
         }
 
@@ -67,6 +97,15 @@ namespace WorkstationDesigner.UI
             {
                 substationRuleIOAsset = Resources.Load<VisualTreeAsset>("UI/substationRuleIO");
             }
+            if (editSubstationRuleDialogBodyAsset == null)
+            {
+                editSubstationRuleDialogBodyAsset = Resources.Load<VisualTreeAsset>("UI/EditSubstationRuleDialogBody");
+            }
+            if (editSubstationRuleDialogItemAsset == null)
+            {
+                editSubstationRuleDialogItemAsset = Resources.Load<VisualTreeAsset>("UI/EditSubstationRuleDialogItem");
+            }
+            CreateEditRuleDialog();
 
             if (!addIcon.HasValue)
             {
@@ -154,7 +193,7 @@ namespace WorkstationDesigner.UI
                 var inputContainer = ruleElement.Q("substation-inputs");
 
                 // If there are no rules, then display an element saying that
-                if (rule.InputCount == 0)
+                if (rule.Inputs.Count == 0)
                 {
                     var ruleIOElement = CreateRuleIOElement("No Inputs", null);
 
@@ -164,16 +203,18 @@ namespace WorkstationDesigner.UI
                     inputContainer.Add(ruleIOElement);
                 }
 
-                for (var i = 0; i < rule.InputCount; i++)
+                for (var i = 0; i < rule.Inputs.Count; i++)
                 {
-                    inputContainer.Add(CreateRuleIOElement($"Input {i + 1}", () => Debug.Log("TODO Edit")));
+                    var testProperties = new ConstructionElementProperties();
+                    inputContainer.Add(CreateRuleIOElement(rule.Inputs[i], () => DialogToolkit.Open(EDIT_RULE_DIALOG_KEY, testProperties, e => CustomizeEditRuleDialog(e, testProperties))));
                 }
 
                 // Set up the list of outputs of the rule
                 var outputContainer = ruleElement.Q("substation-outputs");
-                for (var i = 0; i < rule.OutputCount; i++)
+                for (var i = 0; i < rule.Outputs.Count; i++)
                 {
-                    outputContainer.Add(CreateRuleIOElement($"Output {i + 1}", () => Debug.Log("TODO Edit")));
+                    var testProperties = new ConstructionElementProperties();
+                    outputContainer.Add(CreateRuleIOElement(rule.Outputs[i], () => DialogToolkit.Open(EDIT_RULE_DIALOG_KEY, testProperties, e => CustomizeEditRuleDialog(e, testProperties))));
                 }
 
                 // Hide all edit buttons if not active
@@ -211,6 +252,101 @@ namespace WorkstationDesigner.UI
             });
 
             return ruleIOElement;
+        }
+
+        /// <summary>
+        /// Create dialog body for editing rules
+        /// </summary>
+        private void CreateEditRuleDialog()
+        {
+            if (!DialogToolkit.ContainsKey(EDIT_RULE_DIALOG_KEY))
+            {
+                VisualElement body = editSubstationRuleDialogBodyAsset.CloneTree();
+
+                // Called on cancel
+                Action<object> cancelCallback = obj =>
+                {
+                    var properties = obj as ConstructionElementProperties;
+                    Debug.Log("TODO Cancel");
+                };
+
+                DialogToolkit.Create(
+                    EDIT_RULE_DIALOG_KEY,
+                    body,
+                    cancelCallback,
+                    new List<(string, Action<object>)>()
+                    {
+                        ("Cancel", obj => cancelCallback(obj)),
+                        ("Save", obj => {
+                            var properties = obj as ConstructionElementProperties;
+                            if (properties == null)
+                            {
+                                Debug.LogError("Error properties is null");
+                            }
+
+                            // Fetch each textField in order
+                            var textFields = new List<TextField>();
+                            UIUtil.MapVisualElementChildren(body, item =>
+                            {
+                                if (item is TextField textField)
+                                {
+                                    textFields.Add(textField);
+                                }
+                            });
+
+                            // Update values from textFields
+                            for (var i = 0; i < properties.Properties.Count; i++)
+                            {
+                                properties.Properties[i] = (properties.Properties[i].Item1, double.Parse(textFields[i].value));
+                            }
+
+                            // Print results - TODO remove
+                            var result = "";
+                            for (var i = 0; i < properties.Properties.Count; i++)
+                            {
+                                result += $"({properties.Properties[i].Item1}, {properties.Properties[i].Item2})\n";
+                            }
+                            Debug.Log("TODO Save\n{" + result + "}");
+                        })
+                    }
+                );
+            }
+        }
+
+        private static void CustomizeEditRuleDialog(VisualElement element, ConstructionElementProperties properties)
+        {
+            var list = element.Q<ScrollView>();
+            foreach (var i in properties.Properties)
+            {
+                var row = editSubstationRuleDialogItemAsset.CloneTree();
+                var textField = row.Q<TextField>();
+
+                // Set label and value from properties
+                textField.label = i.Item1;
+                textField.value = i.Item2.ToString();
+
+                // Only allow users to enter doubles into text fields
+                textField.RegisterCallback<ChangeEvent<string>>(e =>
+                {
+                    var orig = e.newValue;
+                    var value = Regex.Replace(e.newValue, @"[^0-9.-]", ""); // Only allow integers, ".", and "-"
+                    if (value.Length > 0)
+                    {
+                        var i = value.IndexOf('.');
+                        if (i != -1)
+                        {
+                            value = value.Substring(0, i + 1) + value.Substring(i).Replace(".", ""); // Only allow one "."
+                        }
+                        i = value.IndexOf('-');
+                        if (i != -1)
+                        {
+                            value = value.Substring(0, 1) + value.Substring(1).Replace("-", ""); // Only allow one "-" at the beginning
+                        }
+                    }
+                    textField.SetValueWithoutNotify(value);
+                });
+                list.Add(row);
+            }
         }
 
         public string GetHeaderText()

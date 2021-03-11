@@ -9,3 +9,7 @@
 .dialog-footer-button {
     background-color: rgb(68, 68, 68);
 }
+
+.edit-substation-rule-item > Label {
+    color: rgba(255, 255, 255, 255);
+}
