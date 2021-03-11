@@ -62,26 +62,32 @@ namespace WorkstationDesigner.Workstation
                 next = nextAction;
 
                 // Set up save dialog
-                if (!DialogManager.ContainsKey(SAVE_DIALOG_KEY))
+                if (!DialogToolkit.ContainsKey(SAVE_DIALOG_KEY))
                 {
                     VisualTreeAsset bodyAsset = ResourceLoader.Get<VisualTreeAsset>(SaveDialogBodyPath);
                     VisualElement body = bodyAsset.CloneTree();
-                    DialogManager.Create(SAVE_DIALOG_KEY, body, new List<(string, Action<object>)>()
-                    {
-                        ("Cancel", obj => {}),
-                        ("No", obj => {
-                            next();
-                            next = null;
-                        }),
-                        ("Yes", obj => {
-                            PromptSaveAs();
-                            next();
-                            next = null;
-                        })
-                    });
+                    DialogToolkit.Create(
+                        SAVE_DIALOG_KEY, 
+                        body, 
+                        obj => { next = null; },
+                        new List<(string, Action<object>)>()
+                        {
+                            ("Cancel", obj => {
+                                next = null;
+                            }),
+                            ("No", obj => {
+                                next();
+                                next = null;
+                            }),
+                            ("Yes", obj => {
+                                PromptSaveAs();
+                                next();
+                                next = null;
+                            })
+                        });
                 }
 
-                DialogManager.Open(SAVE_DIALOG_KEY);
+                DialogToolkit.Open(SAVE_DIALOG_KEY);
             }
             else
             {
@@ -91,15 +97,19 @@ namespace WorkstationDesigner.Workstation
 
         private static void CreateErrorDialog()
         {
-            if (!DialogManager.ContainsKey(ERROR_DIALOG_KEY))
+            if (!DialogToolkit.ContainsKey(ERROR_DIALOG_KEY))
             {
                 VisualTreeAsset bodyAsset = ResourceLoader.Get<VisualTreeAsset>(LoadErrorDialogBodyPath);
                 VisualElement body = bodyAsset.CloneTree();
 
-                DialogManager.Create(ERROR_DIALOG_KEY, body, new List<(string, Action<object>)>()
-                {
-                    ("Okay", obj => {})
-                });
+                DialogToolkit.Create(
+                    ERROR_DIALOG_KEY, 
+                    body, 
+                    obj => { },
+                    new List<(string, Action<object>)>()
+                    {
+                        ("Okay", obj => { })
+                    });
             }
         }
 
@@ -168,7 +178,7 @@ namespace WorkstationDesigner.Workstation
 
                         Debug.LogError(e);
 
-                        DialogManager.Open(ERROR_DIALOG_KEY, customizeDialog: dialogRootElement =>
+                        DialogToolkit.Open(ERROR_DIALOG_KEY, customizeDialog: dialogRootElement =>
                         {
                             Label errorDescription = dialogRootElement.Q<Label>("error-description");
                             string filename = fullFilename.Replace("\\", "/");

@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="substation-selection-item">
+        <ui:Label text="Substation Name" display-tooltip-when-elided="true" name="substation-name" style="color: rgb(255, 255, 255); height: 25px; padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px;" />
+    </ui:VisualElement>
+</ui:UXML>

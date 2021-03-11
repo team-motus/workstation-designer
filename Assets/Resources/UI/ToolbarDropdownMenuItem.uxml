@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="Toolbar.uss" />
+    <ui:Button text="New&#10;" display-tooltip-when-elided="true" name="toolbar-dropdown-menu-item" class="dropdown-menu-item" />
+</ui:UXML>

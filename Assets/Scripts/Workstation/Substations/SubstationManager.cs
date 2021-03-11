@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace WorkstationDesigner.Substations
+namespace WorkstationDesigner.Workstation.Substations
 {
     /// <summary>
     /// Manages loading and providing access to database of components.
@@ -32,6 +32,9 @@ namespace WorkstationDesigner.Substations
             RegisterSubstation(new CubeSubstation("Test Substation 1", 6, 6));
             RegisterSubstation(new CubeSubstation("Test Substation 2", 6, 12));
             RegisterSubstation(new CubeSubstation("Test Substation 3", 12, 12));
+            RegisterSubstation(new ChopSawSubstation("Chop Saw", 2, 6));
+            RegisterSubstation(new TableSawSubstation("Table Saw", 3, 3));
+            RegisterSubstation(new WorkbenchSubstation("Workbench", 5, 3));
         }
 
         public void RegisterSubstation(SubstationBase substation)

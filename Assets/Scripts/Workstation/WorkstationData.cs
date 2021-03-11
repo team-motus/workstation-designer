@@ -56,7 +56,8 @@ namespace WorkstationDesigner.Workstation
             foreach(Transform childTransform in workstationObject.transform)
             {
                 // Add each child as a substation if the child is a PlacedSubstation
-                if (childTransform.gameObject.GetComponent<PlacedSubstation>() != null)
+                var childSubstationObject = childTransform.gameObject.GetComponent<SubstationComponent>();
+                if (childSubstationObject != null && childSubstationObject.Placed)
                 {
                     data.SubstationList.Add(SubstationData.FromGameObject(childTransform.gameObject));
                 }
