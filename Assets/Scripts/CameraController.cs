@@ -12,10 +12,12 @@ namespace WorkstationDesigner.Scripts
     /// </summary>
     public class CameraController : MonoBehaviour
     {
-        private const float TRANSLATE_SPEED_SCALAR = 25; // Experimentally chosen
+        private const float TRANSLATE_SPEED_SCALAR = 10; // Experimentally chosen
         private const float MOUSE_SENSITIVITY_SCALAR = 0.2f; // Experimentally chosen
         private const float CURSOR_INERTIAL_SCALAR = 0.3f; // Experimentally chosen
         private const float MINIMUM_HEIGHT = 0.5f; // Experimentally chosen
+
+        private const float MAXIMUM_DISTNACE_FROM_ORIGIN = 150f; // Experimentally chosen
 
         public bool translationEnabled = true;
         public bool rotationEnabled = true;
@@ -52,7 +54,11 @@ namespace WorkstationDesigner.Scripts
                     Vector3 new_position = transform.position + Time.deltaTime * TRANSLATE_SPEED_SCALAR * translateVector;
 
                     // Set transform position but clamp Y to MINIMUM_HEIGHT
-                    transform.position = new Vector3(new_position.x, Mathf.Max(MINIMUM_HEIGHT, new_position.y), new_position.z);
+                    var newPosition = new Vector3(new_position.x, Mathf.Max(MINIMUM_HEIGHT, new_position.y), new_position.z);
+                    if (newPosition.magnitude <= MAXIMUM_DISTNACE_FROM_ORIGIN)
+                    {
+                        transform.position = newPosition;
+                    }
                 }
             }
         }

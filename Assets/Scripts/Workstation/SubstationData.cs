@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using UnityEngine;
-using WorkstationDesigner.Substations;
+using WorkstationDesigner.Workstation.Substations;
 
 namespace WorkstationDesigner.Workstation
 {

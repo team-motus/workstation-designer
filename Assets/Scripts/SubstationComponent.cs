@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using WorkstationDesigner.InputUtil;
-using WorkstationDesigner.Substations;
+using WorkstationDesigner.Workstation.Substations;
 using WorkstationDesigner.UI;
 using WorkstationDesigner.Workstation;
+using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner
 {
@@ -36,11 +37,13 @@ namespace WorkstationDesigner
         /// </summary>
         public int IntersectionCount { get; private set; } = 0;
 
-        // Materials
-        private static Material CheckIntersectionMaterial = null;
-        private static Material IntersectionMaterial = null;
-        private static Material HighlightedMaterial = null;
-        private Material DefaultMaterial = null;
+        // Shaders/Materials
+        private static Shader CheckIntersectionShader = null;
+        private static Shader IntersectionShader = null;
+        private static Shader HighlightedShader = null;
+        private Dictionary<Renderer, Shader[]> DefaultShaders = null;
+
+        private Vector3? bottomPoint = null;
 
         /// <summary>
         /// Set substation placed and change appropriate behavior
@@ -48,17 +51,51 @@ namespace WorkstationDesigner
         /// <param name="placedValue"></param>
         public void SetPlaced(bool placedValue)
         {
-            this.gameObject.layer = placedValue ? 0 : 2; // Default or Ignore raycast Layer
+            foreach (var i in gameObject.GetComponentsInChildren<Transform>()) {
+                i.gameObject.layer = placedValue ? 0 : 2; // Default or Ignore raycast Layer
+            }
             Placed = placedValue;
         }
 
         /// <summary>
-        /// Select a material to use when not highlighted depending on if it's intersecting or not
+        /// Update the shaders for this substation given its status
         /// </summary>
-        /// <returns></returns>
-        private Material GetUnhighlightedMaterial()
+        /// <param name="forceCheckIntersectionShader">Force the shader to be set to CheckIntersection</param>
+        private void UpdateShaders(bool forceCheckIntersectionShader = false)
         {
-            return IsIntersecting ? IntersectionMaterial : DefaultMaterial;
+            MapRenderers(renderer => UpdateMaterials(renderer, forceCheckIntersectionShader));
+        }
+
+        /// <summary>
+        /// Update the shaders for a given renderer given the substation status
+        /// </summary>
+        /// <param name="renderer">The render whose shaders will be changed</param>
+        /// <param name="forceCheckIntersectionShader">Force the shader to be set to CheckIntersection</param>
+        private void UpdateMaterials(Renderer renderer, bool forceCheckIntersectionShader)
+        {
+            var newMaterials = new Material[renderer.materials.Length];
+            for (var i = 0; i < newMaterials.Length; i++)
+            {
+                newMaterials[i] = renderer.materials[i];
+                if (forceCheckIntersectionShader)
+                {
+                    newMaterials[i].shader = CheckIntersectionShader;
+                }
+                else if (Selected)
+                {
+                    newMaterials[i].shader = HighlightedShader;
+                }
+                else if (IsIntersecting)
+                {
+                    newMaterials[i].shader = IntersectionShader;
+                }
+                else
+                {
+                    newMaterials[i].shader = DefaultShaders[renderer][i];
+                }
+            }
+
+            renderer.materials = newMaterials;
         }
 
         /// <summary>
@@ -77,14 +114,10 @@ namespace WorkstationDesigner
                     {
                         i.SetSelected(false);
                     }
-                    this.GetComponent<Renderer>().sharedMaterial = HighlightedMaterial;
-                }
-                else
-                {
-                    this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
                 }
 
                 Selected = selected;
+				UpdateShaders();
             }
         }
 
@@ -92,26 +125,35 @@ namespace WorkstationDesigner
         {
             WorkstationManager.MarkUnsavedChanges();
 
-            // Load/backup materials
-            if (DefaultMaterial == null)
+            // Load/backup shaders/materials
+            if (DefaultShaders == null)
             {
-                DefaultMaterial = this.GetComponent<Renderer>().sharedMaterial;
+                DefaultShaders = new Dictionary<Renderer, Shader[]>();
+                MapRenderers(renderer => {
+                    var shaders = new Shader[renderer.materials.Length];
+                    for(var i = 0; i <shaders.Length; i++)
+                    {
+                        shaders[i] = renderer.materials[i].shader;
+                    }
+                    DefaultShaders.Add(renderer, shaders);
+
+                });
             }
-            if (CheckIntersectionMaterial == null)
+            if (CheckIntersectionShader == null)
             {
-                CheckIntersectionMaterial = Resources.Load<Material>("Materials/CheckIntersectionMaterial");
+                CheckIntersectionShader = Shader.Find("Custom/CheckIntersection");
             }
-            if (IntersectionMaterial == null)
+            if (IntersectionShader == null)
             {
-                IntersectionMaterial = Resources.Load<Material>("Materials/IntersectionMaterial");
+                IntersectionShader = Shader.Find("Custom/Intersection");
             }
-            if (HighlightedMaterial == null)
+            if (HighlightedShader == null)
             {
-                HighlightedMaterial = Resources.Load<Material>("Materials/HighlightedMaterial");
+                HighlightedShader = Shader.Find("Custom/Wireframe");
             }
-            this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
 
             SetPlaced(true);
+            UpdateShaders();
 
             // Set up right click menu
             if (!RightClickMenuToolkit.ContainsKey(RIGHT_CLICK_MENU_KEY))
@@ -188,57 +230,99 @@ namespace WorkstationDesigner
         /// </summary>
         private void UpdateNotPlaced()
         {
+            if (bottomPoint == null)
+            {
+                bottomPoint = SceneUtil.GetBottomPoint(this.gameObject);
+            }
             Vector3? maybePlacePoint = SubstationPlacementManager.GetPlacementPoint();
             if (maybePlacePoint.HasValue)
             {
                 Vector3 placePoint = maybePlacePoint.Value;
-                placePoint.y += this.transform.localScale.y / 2;
+                if (bottomPoint.HasValue)
+                {
+                    // Ensure bottom of model is touching the grid
+                    placePoint.y = -bottomPoint.Value.y;
+                }
                 this.transform.position = placePoint;
 
-                this.GetComponent<Renderer>().enabled = true;
+                SetVisible(true);
             }
             else
             {
-                this.GetComponent<Renderer>().enabled = false;
+                SetVisible(false);
             }
 
             // Rotation
-            if (Keyboard.current[Key.X].isPressed)
+
+            const Key RotateLeftKey = Key.X;
+            const Key RotateRightKey = Key.C;
+            const Key RoundRotationKey = Key.LeftCtrl;
+
+            if (Keyboard.current[RoundRotationKey].isPressed)
             {
-                this.transform.Rotate(Vector3.up, ROTATE_SCALAR * Time.deltaTime, Space.World);
+                // Round rotation to 90 degrees
+                var rotation = this.transform.eulerAngles;
+                rotation.x = Mathf.Round(rotation.x / 90) * 90;
+                rotation.y = Mathf.Round(rotation.y / 90) * 90;
+                rotation.z = Mathf.Round(rotation.z / 90) * 90;
+                if (Keyboard.current[RotateLeftKey].wasPressedThisFrame)
+                {
+                    // Snap to nearest 90 degrees if it's not approximately there already, otherwise rotate by 90 degrees
+                    if (MathUtil.ApproxEquals(this.transform.eulerAngles, rotation))
+                    {
+                        rotation.y += 90;
+                    }
+                    transform.eulerAngles = rotation;
+                }
+                else if (Keyboard.current[RotateRightKey].wasPressedThisFrame)
+                {
+                    // Snap to nearest 90 degrees if it's not approximately there already, otherwise rotate by 90 degrees
+                    if (MathUtil.ApproxEquals(this.transform.eulerAngles, rotation))
+                    {
+                        rotation.y -= 90;
+                    }
+                    transform.eulerAngles = rotation;
+                }
             }
-            if (Keyboard.current[Key.C].isPressed)
+            else
             {
-                this.transform.Rotate(Vector3.up, -ROTATE_SCALAR * Time.deltaTime, Space.World);
+                // Continuous rotation
+                if (Keyboard.current[RotateLeftKey].isPressed)
+                {
+                    this.transform.Rotate(Vector3.up, ROTATE_SCALAR * Time.deltaTime, Space.World);
+                }
+                else if (Keyboard.current[RotateRightKey].isPressed)
+                {
+                    this.transform.Rotate(Vector3.up, -ROTATE_SCALAR * Time.deltaTime, Space.World);
+                }
             }
         }
 
-        private void OnTriggerEnter(Collider collider)
+        private void OnTriggerEnter(Collider otherCollider)
         {
-            var intersecting = GetIntersecting(collider);
-            if (intersecting != null)
-            {
-                IntersectionCount++;
-                // Update held component's shader
-                this.GetComponent<Renderer>().sharedMaterial = GetUnhighlightedMaterial();
-                if (!Placed)
-                {
-                    // Update placed component's shader when there's at least one collision
-                    intersecting.GetComponent<Renderer>().sharedMaterial = CheckIntersectionMaterial;
-                }
-            }
+            ProcessTriggerEvent(otherCollider, true);
         }
 
         private void OnTriggerExit(Collider otherCollider)
         {
-            if (GetIntersecting(otherCollider) != null)
+            ProcessTriggerEvent(otherCollider, false);
+        }
+
+        /// <summary>
+        /// Process a trigger event, used to check if two substations are intersecting
+        /// </summary>
+        /// <param name="otherCollider">The other collider involved in the event</param>
+        /// <param name="enter">True if its a trigger enter event, false if it's a triggger exit event</param>
+        private void ProcessTriggerEvent(Collider otherCollider, bool enter)
+        {
+            var intersecting = GetIntersecting(otherCollider);
+            if (intersecting != null && !Placed)
             {
-                IntersectionCount--;
-                if (Placed && !IsIntersecting)
-                {
-                    // Restore placed component's shader to default when all intersections end
-                    this.GetComponent<Renderer>().sharedMaterial = DefaultMaterial;
-                }
+                IntersectionCount += enter ? 1 : -1;
+                // Update held component's shader
+                UpdateShaders();
+                // Update placed component's shader when there's at least one collision
+                intersecting.UpdateShaders(enter);
             }
         }
 
@@ -250,6 +334,30 @@ namespace WorkstationDesigner
         private SubstationComponent GetIntersecting(Collider otherCollider)
         {
             return otherCollider.gameObject.GetComponent<SubstationComponent>();
+        }
+
+        /// <summary>
+        /// Set the substation as visible or not
+        /// </summary>
+        /// <param name="visible"></param>
+        public void SetVisible(bool visible)
+        {
+            MapRenderers(renderer => renderer.enabled = visible);
+        }
+
+        /// <summary>
+        /// Apply an action to all the renderers in this substation GameObject and its children
+        /// </summary>
+        /// <param name="action"></param>
+        private void MapRenderers(Action<Renderer> action)
+        {
+            foreach (var childRenderer in this.gameObject.GetComponentsInChildren<Renderer>())
+            {
+                if (childRenderer != null)
+                {
+                    action(childRenderer);
+                }
+            }
         }
     }
 }

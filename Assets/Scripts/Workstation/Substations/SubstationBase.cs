@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
-namespace WorkstationDesigner.Substations
+namespace WorkstationDesigner.Workstation.Substations
 {
     /// <summary>
     /// Represents a substation, its associated data, and means to create a new GameObject representation
