@@ -1,5 +1,4 @@
 # Workstation Designer
-============
 
 Workstation Designer is a program that allows users to build various stations in a modular factory setting utilizing AI workers.
 
@@ -27,9 +26,12 @@ If you are a Oculus PCVR user you can follow this [tutorial](https://support.ste
 ---
 
 ## Usage
-(How to section, use lots of images we have already taken of the UI)
-To create a new workstation click on the new workstation button (Image of main menu here)
-On the right side of the screen you will see a UI that can be used to place objects that will help your workers complete their task (Image of objects UI here)
+(How to section, use lots of images we have already taken of the UI).
+
+To create a new workstation click on the new workstation button (Image of main menu here).
+
+On the right side of the screen you will see a UI that can be used to place objects that will help your workers complete their task (Image of objects UI here).
+
 At the top of the screen you will see a toolbar that can be used for a number of actions including:
 - Saving/Loading
 - Entering VR
@@ -39,6 +41,7 @@ At the top of the screen you will see a toolbar that can be used for a number of
 
 ### Controls
 In `Edit Mode` users can use WASD and their mouse to navigate the factory environment.
+
 Edit Mode Control List:
 - W | Move Forward
 - A | Move Left
@@ -57,7 +60,7 @@ Edit Mode Control List:
 ---
 
 ## Inspiration
-The VR portion of the project was inspired by the tutorials of [Valem](https://www.youtube.com/channel/UCPJlesN59MzHPPCp0Lg8sLw/videos)
+The VR portion of the project was inspired by the tutorials of [Valem](https://www.youtube.com/channel/UCPJlesN59MzHPPCp0Lg8sLw/videos).
 
 
 ---
