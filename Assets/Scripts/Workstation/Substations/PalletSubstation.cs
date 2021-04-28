@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Newtonsoft.Json;
+using UnityEngine;
 using WorkstationDesigner.Util;
 
 namespace WorkstationDesigner.Workstation.Substations
@@ -7,14 +8,20 @@ namespace WorkstationDesigner.Workstation.Substations
     {
         private const string PrefabPath = "Prefabs/MODS/Substations/Pallet";
 
+        [JsonProperty]
         protected string ConstructionElementPrefabPath { get; private set; }
+
+        [JsonProperty]
         protected bool ExtendConstructionElementLength { get; private set; }
+
+        [JsonProperty]
         protected float ConstructionElementColorValueVariance { get; private set; }
 
         private const float StackHeight = 2f;
 
         public PalletSubstation(string name, int footprintLength1, int footprintLength2) : base(name, footprintLength1, footprintLength2, PrefabPath) { }
 
+        [JsonConstructor]
         public PalletSubstation(string name, int footprintLength1, int footprintLength2, 
             string constructionElementPrefabPath, bool extendConstructionElementLength = true, float constructionElementColorValueVariance = 0)
             : base(name, footprintLength1, footprintLength2, PrefabPath)
