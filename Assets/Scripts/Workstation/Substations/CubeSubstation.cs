@@ -20,7 +20,7 @@ namespace WorkstationDesigner.Workstation.Substations
             rigidBody.isKinematic = false; // Attach a non-kinematic rigidbody to enable collision detection
             rigidBody.useGravity = false;
 
-            gameObject.transform.localScale = new Vector3(this.FootprintDimensions.Item1, 6, this.FootprintDimensions.Item2);
+            gameObject.transform.localScale = new Vector3(this.FootprintDimensions.Item1, 4, this.FootprintDimensions.Item2);
 
             return gameObject;
         }

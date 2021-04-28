@@ -12,14 +12,18 @@ namespace WorkstationDesigner.Workstation.Substations
             this._PrefabPath = prefabPath;
         }
 
-        public override GameObject Instantiate()
+        /// <summary>
+        /// Calculate box collider to encompass substation
+        /// </summary>
+        /// <param name="gameObject"></param>
+        protected void RecalculateCollider(GameObject gameObject)
         {
-            var parent = new GameObject(this.GetType().Name);
-            var gameObject = GameObject.Instantiate(Resources.Load<GameObject>(_PrefabPath));
-            gameObject.transform.parent = parent.transform;
-
-            var collider = parent.AddComponent<BoxCollider>();
-            var bounds = SceneUtil.GetBounds(parent);
+            if(gameObject.GetComponent<BoxCollider>() != null)
+            {
+                Object.Destroy(gameObject.GetComponent<BoxCollider>());
+            }
+            var collider = gameObject.AddComponent<BoxCollider>();
+            var bounds = SceneUtil.GetBounds(gameObject);
 
             if (bounds.HasValue)
             {
@@ -27,6 +31,15 @@ namespace WorkstationDesigner.Workstation.Substations
                 collider.center = bounds.Value.center;
             }
             collider.isTrigger = true;
+        }
+
+        public override GameObject Instantiate()
+        {
+            var parent = new GameObject(this.GetType().Name);
+            var gameObject = GameObject.Instantiate(Resources.Load<GameObject>(_PrefabPath));
+            gameObject.transform.parent = parent.transform;
+
+            RecalculateCollider(parent);
 
             var rigidBody = parent.AddComponent<Rigidbody>();
             rigidBody.isKinematic = false; // Attach a non-kinematic rigidbody to enable collision detection
