@@ -68,7 +68,7 @@ namespace WorkstationDesigner.Util
 		}
 
 		/// <summary>
-		/// Get bottom point of a GameObject's renderer relative to its position
+		/// Get the center bottom point of a GameObject's renderer relative to its position
 		/// </summary>
 		/// <param name="gameObject"></param>
 		/// <returns></returns>
@@ -79,7 +79,10 @@ namespace WorkstationDesigner.Util
 			if (bounds.HasValue)
 			{
 				// Set relative to transform position
-				return bounds.Value.min - gameObject.transform.position;
+				return new Vector3(
+					bounds.Value.center.x - gameObject.transform.position.x,
+					bounds.Value.min.y - gameObject.transform.position.y,
+					bounds.Value.center.z - gameObject.transform.position.z);
 			}
 
 			return null;
