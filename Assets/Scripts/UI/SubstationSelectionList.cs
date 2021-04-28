@@ -15,10 +15,7 @@ namespace WorkstationDesigner.UI
 
         private List<SubstationBase> substationList;
 
-        public SubstationSelectionList() : this(null) { }
-
-
-        public SubstationSelectionList(WorkstationRequirementsList.Requirement requirement)
+        public SubstationSelectionList()
         {
             substationList = SubstationManager.GetInstance().GetSubstations();
 
@@ -62,7 +59,7 @@ namespace WorkstationDesigner.UI
         private void OnItemsChosen(IEnumerable<object> objects)
         {
             var subtation = objects.First() as SubstationBase;
-            placementManager.CreateSubstation(subtation, () => SidebarManager.SetSidebar(new SubstationRulesEditor(subtation)));
+            placementManager.CreateSubstation(subtation, () => { });
         }
 
         private void OnSelectionChange(IEnumerable<object> objects) { }

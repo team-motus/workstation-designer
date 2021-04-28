@@ -24,7 +24,7 @@ namespace WorkstationDesigner.UI
         private static Background? hiddenIcon = null;
 
         private ISidebar activeSidebar = null;
-        private static ISidebar defaulSideBar = new WorkstationRequirementsList();
+        private static ISidebar defaulSideBar = new SubstationSelectionList();
 
         public new class UxmlFactory : UxmlFactory<SidebarManager, UxmlTraits> { }
 
