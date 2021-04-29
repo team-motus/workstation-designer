@@ -29,11 +29,6 @@ namespace WorkstationDesigner.Workstation.Substations
 
         private void CreateSampleSubstations()
         {
-            // Test substations
-            RegisterSubstation(new CubeSubstation("Test Substation 1", 2, 2));
-            RegisterSubstation(new CubeSubstation("Test Substation 2", 3, 5));
-            RegisterSubstation(new CubeSubstation("Test Substation 3", 4, 6));
-
             // Misc substations
             RegisterSubstation(new ChopSawSubstation("Chop Saw", 2, 6));
             RegisterSubstation(new TableSawSubstation("Table Saw", 3, 3));
