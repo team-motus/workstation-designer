@@ -1,23 +1,18 @@
 # Workstation Designer
 
-Workstation Designer is a program that allows users to build various stations in a modular factory setting utilizing AI workers.
+The MODS Workstation Designer is a program for creating virtual representations of factory workstations for simulation in the main MODS application, which is in development a different team at OSU. Together, these tools will help modular construction factory managers and designers prototype the layout of their factory workstations in order to improve efficiency. Specially, these tools will help them visualize the full effect of design changes without needing to physically implement them.
 
 (Image of something cool here?)
 
 ---
 
-## Features
-- AI Workers
-- Moving
-- Placing Workstations
-- VR
-- Saving/Loading Workstation
-- UI
-
----
-
 ## Setup
-(I don't know, will we include a final build or something for the release?)
+1. Install Unity 2020.3.2f1.
+2. Clone this repository.
+3. Open this repository in Unity with Unity version 2020.3.2f1.
+4. In `/Assets/Scenes`, open either `TitleScreen.scene` or `MainScene.scene`. This will allow experimentation in the Unity editor.
+5. [Optional] Create C# project files: In the Unity Editor, navigate to `Edit > Preferences > External Tools`, and click the `Regenerate Project Files` button to generate the .csproj files for the project. This allows easy integration of Visual Studio for the C# script development.
+6. [Optional] Build the project: In the Unity Editor, navigate to `File > Build And Run` and select a folder to place the built project files.
 
 ### VR
 To use the workstation designer program in VR download Valve's Steam VR from [here](https://www.steamvr.com/en/), set it up and then run it while the workstation designer application is running.
@@ -61,9 +56,3 @@ Edit Mode Control List:
 
 ## Inspiration
 The VR portion of the project was inspired by the tutorials of [Valem](https://www.youtube.com/channel/UCPJlesN59MzHPPCp0Lg8sLw/videos).
-
-
----
-
-## License
-(I don't know)
