@@ -1,5 +1,4 @@
-﻿using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
+﻿using UnityEngine.UIElements;
 using WorkstationDesigner.Util;
 using WorkstationDesigner.Workstation;
 
@@ -8,7 +7,6 @@ namespace WorkstationDesigner.UI
     public class TitleScreenManager : VisualElement
     {
         private VisualElement titleScreenElement;
-        private VisualElement optionsScreenElement;
 
         public new class UxmlFactory : UxmlFactory<TitleScreenManager, UxmlTraits> { }
 
@@ -20,34 +18,17 @@ namespace WorkstationDesigner.UI
         void OnGeometryChange(GeometryChangedEvent evt)
         {
             titleScreenElement = this.Q("TitleScreen");
-            optionsScreenElement = this.Q("OptionsScreen");
 
             titleScreenElement?.Q("create-new-workstation")?.RegisterCallback<ClickEvent>(e => CreateNewWorkstation());
             titleScreenElement?.Q("load-workstation")?.RegisterCallback<ClickEvent>(e => LoadWorkstation());
-            titleScreenElement?.Q("options")?.RegisterCallback<ClickEvent>(e => OpenOptionsScreen());
             titleScreenElement?.Q("exit")?.RegisterCallback<ClickEvent>(e => AppUtil.Exit());
 
-            optionsScreenElement?.Q("back-button")?.RegisterCallback<ClickEvent>(ev => OpenTitleScreen());
-
             UnregisterCallback<GeometryChangedEvent>(OnGeometryChange);
-        }
-
-        void OpenTitleScreen()
-        {
-            titleScreenElement.style.display = DisplayStyle.Flex;
-            optionsScreenElement.style.display = DisplayStyle.None;
-        }
-
-        void OpenOptionsScreen()
-        {
-            titleScreenElement.style.display = DisplayStyle.None;
-            optionsScreenElement.style.display = DisplayStyle.Flex;
         }
 
         void CreateNewWorkstation()
         {
             titleScreenElement.style.display = DisplayStyle.None;
-            optionsScreenElement.style.display = DisplayStyle.None;
             
             AppUtil.LoadScene(AppUtil.MainSceneName, () => {
                 WorkstationManager.New();
@@ -57,7 +38,6 @@ namespace WorkstationDesigner.UI
         void LoadWorkstation()
         {
             titleScreenElement.style.display = DisplayStyle.None;
-            optionsScreenElement.style.display = DisplayStyle.None;
 
             AppUtil.LoadScene(AppUtil.MainSceneName, () => {
                 WorkstationManager.PromptOpen();
