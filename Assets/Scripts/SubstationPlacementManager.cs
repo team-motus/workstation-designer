@@ -192,6 +192,9 @@ namespace WorkstationDesigner
 			PickUpSubstation(new HeldSubstation(newObject, null, () =>
 			{
 				substationComponent.SetSelected(true);
+
+				Action selectAction = () => substationComponent.SetSelected(false);
+				EscManager.PushEscAction(selectAction);
 				placeCallback();
 			}));
 		}
