@@ -2,6 +2,8 @@
 
 The MODS Workstation Designer is a program for creating virtual representations of factory workstations for simulation in the main MODS application, which is in development a different team at OSU. Together, these tools will help modular construction factory managers and designers prototype the layout of their factory workstations in order to improve efficiency. Specially, these tools will help them visualize the full effect of design changes without needing to physically implement them.
 
+This project is the Oregon State University Senior Software Engineering Project for Curtiss Haldorson, Truman Hess, Matthew Macovsky, and Logan Traffas.
+
 ![Image of VR Perspective](./images/vr-perspective.png)
 
 ## Setup
