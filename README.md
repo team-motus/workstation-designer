@@ -2,6 +2,8 @@
 
 The MODS Workstation Designer is a program for creating virtual representations of factory workstations for simulation in the main MODS application, which is in development a different team at OSU. Together, these tools will help modular construction factory managers and designers prototype the layout of their factory workstations in order to improve efficiency. Specially, these tools will help them visualize the full effect of design changes without needing to physically implement them.
 
+![Image of VR Perspective](./images/vr-perspective.png)
+
 ---
 
 ## Setup
