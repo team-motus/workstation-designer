@@ -4,8 +4,6 @@ The MODS Workstation Designer is a program for creating virtual representations 
 
 ![Image of VR Perspective](./images/vr-perspective.png)
 
----
-
 ## Setup
 1. Install Unity 2020.3.2f1.
 2. Clone this repository.
@@ -41,9 +39,6 @@ The MODS Workstation Designer is a program for creating virtual representations 
 5. Open and existing or new workstation.
 6. Enter VR mode either through the UI or by pressing P.
 7. Enjoy VR mode.
-
-
----
 
 ## Usage
 
@@ -81,8 +76,6 @@ Right click on a placed substation to select it and open the context menu.
 - Snap your view in 45 degree increments using the right controller’s stick.
 - Press the right controller’s trigger button to open the VR UI.
 - Press the left controller’s trigger button to interact with the VR UI.
-
----
 
 ## References
 - The VR portion of the project was inspired by the tutorials of [Valem](https://www.youtube.com/channel/UCPJlesN59MzHPPCp0Lg8sLw/videos).
